@@ -1,0 +1,35 @@
+.loading-modal {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #eef4fa;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.loading-modal__loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 150px;
+}
+
+.loading-modal__loader p {
+  margin: 0;
+  font-size: 2.7em;
+  font-weight: 700;
+  color: #0a66c2;
+  letter-spacing: -2px;
+}
+
+.loading-modal__loader-logo {
+  color: #0a66c2;
+  font-size: 2.8em;
+}
+
+.loading-modal__barLoader {
+  color: #0a66c2;
+  margin: 0;
+  padding: 0;
+}

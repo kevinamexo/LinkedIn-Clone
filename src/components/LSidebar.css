@@ -1,0 +1,192 @@
+.LSidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 0;
+  /* padding-right: 10px; */
+  min-width: 227px;
+}
+
+.LSidebar-widget1 {
+  /* position: relative; */
+  position: sticky;
+  right: 0;
+  top: 90px;
+  min-width: 227px;
+  background-color: #fff;
+
+  border-radius: 7px;
+  border: 0.5px solid lightgray;
+  margin-right: 0;
+}
+
+.LSidebar__greeting {
+  border-bottom: 0.5px solid lightgray;
+  padding-bottom: 5px;
+}
+.LSidebar-coverImage-container {
+  width: 100%;
+  height: 54px;
+  /* background-color: blue; */
+  border-top-right-radius: 7px;
+  border-top-left-radius: 7px;
+}
+
+.LSidebar-coverImage {
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.LSidebar-profile-photo {
+  height: 72px;
+  width: 72px;
+  border-radius: 50%;
+  background-color: lightgray;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  cursor: pointer;
+}
+
+.LSidebar-profile-photo img {
+  border-radius: 50%;
+  height: 100%;
+  background-color: rgb(181, 181, 181);
+  width: 100%;
+  object-fit: cover;
+}
+
+.LSidebar__welcome {
+  font-weight: 600;
+  margin-top: 52px;
+  font-space: 1px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.LSidebar__addPhoto {
+  color: #0a66c2;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: -10px;
+}
+
+.LSidebar__welcome:hover,
+.LSidebar__addPhoto:hover {
+  text-decoration: underline #0a66c2;
+}
+
+.LSidebar__profileViews {
+  height: 70px;
+  border-bottom: 1px solid lightgray;
+  /* background-color: #fff; */
+  padding: 15px 0px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.LSidebar__profileViews > span {
+  /* height: 10px; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 10px;
+}
+
+.LSidebar__profileViews > span:hover {
+  background-color: lightgray;
+}
+
+.LSidebar__profileViews span p {
+  font-size: 12px;
+  font-weight: 600;
+  color: grey;
+  margin: 0;
+  padding: 0;
+}
+.LSidebar__profileViews span:nth-child(3) {
+  margin-top: 10px;
+}
+
+.LSidebar__profileViews .amount {
+  color: #0a66c2;
+  /* font-weight: bold; */
+  font-size: 15px;
+}
+
+.LSidebar__myItems {
+  height: 40px;
+  background-color: firebrick;
+}
+
+.LSidebar__myItems p {
+  font-size: 12px;
+  margin: 10px;
+  color: black;
+  font-weight: 600;
+  text-align: left;
+}
+.LSidebar__showMore {
+  color: rgb(96, 96, 96);
+  display: flex;
+  font-size: 14px;
+  /* height: 18px; */
+  cursor: pointer;
+  width: 230px;
+  border-radius: 3px;
+  justify-content: center;
+  margin: 5px;
+  padding: 2px;
+}
+
+.LSidebar__showMore:hover {
+  background-color: rgb(205, 205, 205);
+}
+.LSidebar__showMore p {
+  margin: 0;
+}
+.showMore__down {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 900px) {
+  .LSidebar {
+    width: 100%;
+    align-items: right;
+
+    /* justify-content: right; */
+    margin-right: 0;
+  }
+  .LSidebar-widget1 {
+    width: 200px;
+    min-width: 200px;
+    /* height: 165px; */
+  }
+}
+@media screen and (max-width: 765px) {
+  .LSidebar {
+    width: 100%;
+    align-items: center;
+    /* padding-right: 10px; */
+  }
+  .LSidebar-widget1 {
+    width: 90%;
+    /* height: 165px; */
+  }
+  .LSidebar__profileViews,
+  .LSidebar-widget2 {
+    display: none;
+  }
+
+  .LSidebar__greeting {
+    border-bottom: none;
+  }
+  .main-page {
+    padding-top: 10px;
+  }
+}

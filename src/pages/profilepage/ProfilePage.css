@@ -1,0 +1,247 @@
+.profilePage {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 70% 30%;
+}
+
+.profilePage__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profilePage__header,
+.profilePage__About,
+.profilePage__featured {
+  margin-top: 10px;
+  max-width: 776px;
+  /* height: 385px; */
+  position: relative;
+  padding-bottom: 10px;
+  width: 90%;
+  border-radius: 10px;
+  border: 0.5px solid rgb(215, 215, 215);
+}
+
+.profilePage__coverPhoto {
+  /* border-top-left-radius: 10px;
+  border-top-right-radius: 10px; */
+  border-radius: 10px 10px 0 0;
+  background-color: lightgray;
+  border: 1px solid lightgray;
+  height: 140px;
+}
+
+.profilePage__coverPhoto img {
+  /* border-top-left-radius: 10px;*/
+  border-radius: 10px 10px 0 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profilePage__header-profilePic {
+  max-height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background-color: grey;
+  position: absolute;
+  top: 40px;
+  left: 25px;
+}
+
+.profilePage__header-profilePic img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profilePage__details {
+  display: flex;
+  padding-top: 60px;
+  /* align-items: center; */
+  justify-content: flex-start;
+}
+
+.profilePage__details1,
+.profilePage__details2 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: 10px;
+}
+
+.profilePage__details1 p {
+  margin: 0;
+}
+.profilePage__details1 {
+  width: 60%;
+  padding-left: 20px;
+}
+
+.profilePage__details2 {
+  width: 40%;
+}
+
+.profileName {
+  font-size: 1.3em;
+  font-weight: 500;
+}
+
+.profilePosition {
+  font-size: 1em;
+  margin-top: 5px;
+}
+.profileLocation-contactInfo {
+  display: flex;
+  align-items: center;
+  width: 95%;
+  margin-top: 5px;
+}
+.profileLocation-contactInfo-contact {
+  font-size: 14px;
+  color: #0a66c2;
+  font-weight: 500;
+  cursor: pointer;
+}
+.profileLocation-contactInfo-contact:hover {
+  text-decoration: underline;
+}
+.profileLocation {
+  font-size: 14px;
+  color: rgb(152, 152, 152);
+  margin-top: 5px 0 0 0;
+  padding-right: 5px;
+}
+.profilePage__details2-organization {
+  display: flex;
+  align-items: center;
+  height: 27px;
+  margin-top: 5px 0 0 0;
+}
+.profilePage__details2-organization:nth-child(n + 2) {
+  margin-top: 5px;
+}
+
+.profilePage__details2-organization div {
+  height: 30px;
+  display: flex;
+  width: 30px;
+  align-items: baseline;
+}
+
+.profilePage__details2-organization div img {
+  height: 90%;
+  width: 90%;
+  object-fit: cover;
+}
+.profilePage__details2-organization p {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 0 4px;
+}
+
+.profilePage__details3 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 20px;
+  margin-top: 10px;
+}
+
+.profilePage__details3-Connections {
+  margin: 0;
+  font-size: 14px;
+  color: #0a66c2;
+  font-weight: 500;
+}
+
+.profilePage__details3-buttons {
+  margin-top: 10px;
+}
+.profilePage__details3-buttons .follow {
+  background-color: #0a66c2;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  outline: none;
+  border: none;
+  padding: 5px 20px;
+  border-radius: 15px;
+}
+
+.profilePage__details3-buttons .message {
+  border-radius: 15px;
+  margin-left: 10px;
+  padding: 5px 20px;
+  font-size: 16px;
+  background: none;
+  border: 1px solid rgb(137, 137, 137);
+}
+
+.profilePage__details3-buttons .follow:hover {
+  background-color: #0c4c8c;
+}
+
+.profilePage__details3-buttons .message:hover {
+  background-color: lightgray;
+  border: 2px solid grey;
+  padding: 4px 19px;
+}
+
+.profilePage__About {
+  min-height: 130px;
+  text-align: left;
+  color: rgb(62, 62, 62);
+  width: 90%;
+}
+
+.profilePage__About .about,
+.profilePage__About .about-full,
+.profilePage__About .title {
+  padding: 0 20px;
+  margin: 10px 0;
+}
+.profilePage__About .title {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.profilePage__About .about {
+  font-size: 14px;
+  line-height: 18px;
+  max-height: 36px;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  position: relative;
+  overflow: hidden;
+}
+.profilePage__About .about-full {
+  font-size: 14px;
+  /* position: relative; */
+  line-height: 18px;
+}
+
+.profilePage__About .seeMore {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  font-size: 14px;
+  color: rgb(111, 111, 111);
+  cursor: pointer;
+}
+
+@media screen and (max-width: 800px) {
+  .profilePage {
+    display: flex;
+  }
+  .profilePage .RSidebar {
+    display: none;
+  }
+}

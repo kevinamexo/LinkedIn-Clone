@@ -1,0 +1,13 @@
+.RSidebar {
+}
+
+.addToFeed {
+  position: sticky;
+  top: 90px;
+  padding: 0 7px 10px 7px;
+  min-width: 240px;
+  width: 75%;
+  background-color: #fff;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+}

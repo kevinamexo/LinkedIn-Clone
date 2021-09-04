@@ -1,0 +1,168 @@
+.loggedOut__page {
+  /* background-color: rgb(176, 176, 176); */
+  margin: 0;
+}
+.loggedOut-header {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  padding: 0 20px;
+  justify-content: space-between;
+}
+
+.loggedOut__header-logoSection {
+  display: flex;
+  align-items: center;
+}
+
+.loggedOut__header-logoSection {
+  color: #0a66c2;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.loggedOut__header-logo {
+  margin-left: 3px;
+  font-size: 22px;
+  border-radius: 2px;
+  color: #0a66c2;
+}
+.loggedOut__page-join,
+.loggedOut__page-signIn {
+  background-color: #fff;
+  height: 30px;
+  width: 84px;
+  outline: none;
+  font-size: 15px;
+  font-weight: 550;
+}
+
+.loggedOut__page-signIn {
+  border: 1px solid #0a66c2;
+  border-radius: 15px;
+  color: #0a66c2;
+}
+
+.loggedOut__page-join {
+  border: none;
+  margin-right: 10px;
+  color: grey;
+}
+
+.loggedOut__page-join:hover {
+  background-color: rgb(227, 226, 226);
+}
+
+.loggedOut__page-join:focus {
+  border: 2px solid #0a66c2;
+}
+
+.loggedOut__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loggedOut__welcome {
+  color: #0a66c2;
+  font-size: 45px;
+  font-weight: 300;
+  width: 65%;
+  /* padding-left: 55px; */
+  display: flex;
+  justify-content: center;
+}
+
+.loggedOut__welcome p {
+  text-align: left;
+}
+
+.loggedOut__page form {
+  width: 70%;
+  max-width: 500px;
+}
+
+.form-group {
+  position: relative;
+}
+.form-group input {
+  width: 90%;
+  font-size: 16px;
+  padding: 12px 10px;
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid grey;
+}
+
+.form-group__showPassword {
+  margin: 0;
+  position: absolute;
+  color: grey;
+  top: 10px;
+  right: 30px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.form-group__forgotPassword {
+  text-align: left;
+  margin-left: 5%;
+  display: block;
+  cursor: pointer;
+  color: rgb(87, 87, 87);
+}
+
+.form-group__forgotPassword:hover {
+  color: #0a66c2;
+  text-decoration: underline;
+}
+
+.form-group__loginButton {
+  background-color: #0a66c2;
+  color: #fff;
+  border: none;
+  width: 93%;
+  border-radius: 20px;
+  padding: 10px 0;
+  margin-top: 20px;
+  font-size: 24px;
+  /* height: 40px; */
+}
+
+.auth-error {
+  color: red;
+  text-align: left;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.form-error {
+  color: red;
+  margin-top: 5px;
+}
+
+@media screen and (min-width: 1160px) {
+  .loggedOut-header {
+    padding: 0 80px;
+  }
+  .loggedOut__page-signIn {
+    height: 40px;
+    width: 95px;
+    border-radius: 30px;
+  }
+  .loggedOut__page-join {
+    margin-right: 20px;
+  }
+  .loggedOut__header-logo {
+    font-size: 1.7em;
+  }
+  .loggedOut__header-logoSection p {
+    font-size: 35px;
+    font-weight: 700;
+  }
+}
+@media screen and (min-width: 755px) {
+  .loggedOut__welcome p {
+    text-align: center;
+  }
+}

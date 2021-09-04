@@ -1,0 +1,154 @@
+.feedPost {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 15px;
+  min-height: 150px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  background-color: #fff;
+  margin-top: 10px;
+}
+
+.feedPost__header {
+  height: 50px;
+  display: flex;
+}
+
+.feedPost__header p {
+  margin: 0;
+}
+
+.feedPost__header img {
+  height: 48px;
+  width: 48px;
+  object-fit: contain;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.feedPost__userDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.feedPost__userDetails-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(77, 77, 77);
+}
+
+.feedPost__userDetails-userSummary,
+.feedPost__userDetails-postTime {
+  font-size: 11px;
+  color: gray;
+  font-weight: light;
+}
+
+.feedPost__userDetails-postTime {
+  display: flex;
+  align-items: center;
+}
+
+.feedPost__body {
+  position: relative;
+}
+.feedPost__body-text {
+  min-height: 60px;
+  position: relative;
+  margin-top: 10px;
+}
+
+.feedPost__body-text-content {
+  font-size: 14px;
+  text-align: left;
+  line-height: 18px;
+  max-height: 54px;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  overflow: hidden;
+}
+
+.feedPost__body-text-contentFull {
+  font-size: 14px;
+  text-align: left;
+  line-height: 18px;
+}
+
+.feedPost__engagements {
+  /* background-color: rgb(244, 142, 142); */
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.feedPost__likes {
+  color: rgb(241, 241, 247);
+  background-color: rgb(105, 105, 211);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.feedPost__body-seeMore {
+  /* margin: 0; */
+  position: absolute;
+  right: 0;
+  bottom: -30px;
+  font-size: 14px;
+  color: rgb(111, 111, 111);
+  cursor: pointer;
+}
+
+.feedPost__actions {
+  margin-top: 25px;
+  border-top: 1px solid lightgray;
+  align-items: center;
+  display: flex;
+  height: 44px;
+  padding: 4px;
+  justify-content: left;
+}
+
+.feedPost__actions,
+.feedPost__action {
+  display: flex;
+  align-items: center;
+}
+
+.feedPost__action {
+  /* justify-content: space-evenly; */
+  height: 90%;
+  border-radius: 5px;
+  min-width: 100px;
+  outline: none;
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+  color: rgb(81, 81, 81);
+}
+
+.feedPost__action:hover {
+  background-color: rgb(234, 234, 234);
+}
+
+.feedPost__action:hover {
+}
+
+.feedPost__action-icon {
+  font-size: 2em;
+  margin-right: 5px;
+}
+
+.feedPost__body-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.feedPost__body-media img {
+  width: 100%;
+  height: 100%;
+}

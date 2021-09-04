@@ -1,0 +1,20 @@
+.app {
+  text-align: center;
+  /* overflow: hidden; */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+a {
+  cursor: pointer;
+}
+
+button {
+  outline: none;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}

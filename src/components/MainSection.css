@@ -1,0 +1,140 @@
+.mainSection__post {
+  height: 114px;
+  background-color: #fff;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  width: 95%;
+  margin: 0px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.mainSection__postInput,
+.mainSection__postTypes {
+  height: 48%;
+  display: flex;
+  align-items: center;
+}
+
+.mainSection__postInput {
+  width: 100%;
+  padding-top: 15px;
+  padding-left: 30px;
+  padding-right: 30px;
+  display: flex;
+}
+
+.mainSection__profilePic {
+  width: 70px;
+  font-size: 48px;
+  color: rgb(160, 160, 160);
+  margin-left: 10px;
+}
+
+.mainSection__startPost {
+  height: 45px;
+  width: 100% !important;
+  border: 1px solid rgb(171, 171, 171);
+  border-radius: 27px;
+  margin-left: 4px;
+  margin-right: 10px;
+  color: rgb(138, 138, 138);
+  font-size: 15px;
+  display: flex;
+  /* justify-content: f; */
+  padding: 0 12px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mainSection__startPost:hover {
+  background-color: lightgray;
+}
+
+.mainSection__postType,
+.mainSection__postTypes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mainSection__postTypes {
+  width: 90%;
+}
+
+.mainSection__postType {
+  height: 90%;
+  padding: 0 4px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.mainSection__postType:hover {
+  background-color: rgb(225, 225, 225);
+}
+
+.postType-photoIcon,
+.postType-articleIcon,
+.postType-vidIcon {
+  font-size: 25px;
+}
+
+.postType-label {
+  color: grey;
+  font-weight: 600;
+}
+
+.postType-eventIcon {
+  color: #e7a33e;
+}
+.postType-vidIcon {
+  color: #7fc15e;
+}
+.postType-label {
+  font-size: 14px;
+  color: #00000099;
+  margin-left: 8px;
+}
+.postType-photoIcon {
+  color: #70b5f9;
+}
+
+.postType-articleIcon {
+  color: #fc9295;
+}
+
+.mainSection__feed {
+  border-radius: 10px;
+  margin: 30px auto;
+  width: 95%;
+
+  /* min-height: 300px; */
+}
+
+.mainSection {
+  width: 100%;
+}
+
+.postType {
+  cursor: pointer;
+}
+.postType:hover {
+  background-color: lightgray;
+}
+
+@media screen and (max-width: 990px) {
+  .mainSection__post,
+  .mainSection__feed,
+  .LSidebar {
+    width: 90%;
+  }
+  .LSidebar {
+    width: 100%;
+    align-items: right;
+  }
+}
