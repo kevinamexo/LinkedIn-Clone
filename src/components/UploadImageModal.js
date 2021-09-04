@@ -1,10 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setShowUploadImage,
+  setCloseUploadImage,
+} from "../redux/features/modalsSlice";
 import { useDropzone } from "react-dropzone";
 import "./UploadImageModal.css";
 import { BsCloudUpload } from "react-icons/bs";
+import { AiOutlineClose } from "react-icons/ai";
 
 const UploadImageModal = () => {
   const [images, setImages] = useState([]);
+  const dispatch = useDispatch();
+  const { showUploadImage } = useSelector((state) => state.modals);
   let im = [];
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.map((file) => {
@@ -17,7 +25,8 @@ const UploadImageModal = () => {
   const { getInputProps, getRootProps } = useDropzone({ onDrop });
 
   useEffect(() => {
-    console.log(images.length);
+    console.log("Show Upload Image");
+    console.log(showUploadImage);
   }, []);
   const files = images.map((image) => (
     <div
@@ -30,51 +39,60 @@ const UploadImageModal = () => {
       />
     </div>
   ));
-  return (
-    <div className="uploadImageModal">
-      <div className="uploadImageModal-form">
-        <header>
-          <p>Upload your image</p>
-          {images !== [] && (
+  if (showUploadImage) {
+    return (
+      <div className="uploadImageModal">
+        <div className="uploadImageModal-form">
+          <header>
+            <p>Upload your image</p>
+            {/* {images !== [] && (
             <BsCloudUpload
               {...getRootProps()}
               className="uploadImageModal-form__headerUpload"
             />
-          )}
-        </header>
-        <div
-          className="uploadImageModal-formInputs"
-          style={
-            images.length > 0 && {
-              alignItems: "flex-start",
-              justifyContent: "space-evenly",
-              height: "100%",
+          )} */}
+            <AiOutlineClose
+              className="uploadImageModal__header-close"
+              onClick={() => dispatch(setCloseUploadImage())}
+            />
+          </header>
+          <div
+            className="uploadImageModal-formInputs"
+            style={
+              images.length > 0
+                ? {
+                    alignItems: "flex-start",
+                    justifyContent: "space-evenly",
+                    height: "100%",
+                  }
+                : {}
             }
-          }
-          {...getRootProps()}
-        >
-          <input {...getInputProps()} className="uploadImageModal-input" />
-          {images.length === 0 ? (
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} className="uploadImageModal-input" />
             <p className="uploadImageModal-choose">
               Select or drag images to upload
             </p>
-          ) : (
-            <div className="uploadImageModal__imagesPreview">
-              {images && <div style={{ display: "flex" }}>{files}</div>}
-            </div>
-          )}
+            {images.length === 0 && (
+              <div className="uploadImageModal__imagesPreview">
+                {images && <div>{files}</div>}
+              </div>
+            )}
+          </div>
+          <footer className="uploadImageModal-footer">
+            <button type="submit" className="uploadImageModal__footer-cancel">
+              Cancel
+            </button>
+            <button type="submit" className="uploadImageModal__footer-submit">
+              Done
+            </button>
+          </footer>
         </div>
-        <footer className="uploadImageModal-footer">
-          <button type="submit" className="uploadImageModal__footer-cancel">
-            Cancel
-          </button>
-          <button type="submit" className="uploadImageModal__footer-submit">
-            Done
-          </button>
-        </footer>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return <h2 onClick={() => dispatch(setShowUploadImage())}>NO MODAL </h2>;
+  }
 };
 
 export default UploadImageModal;

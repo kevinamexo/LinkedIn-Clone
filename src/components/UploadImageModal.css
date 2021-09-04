@@ -45,14 +45,25 @@
 
 .uploadImageModal-form__headerUpload {
   color: #0a66c2;
-  font-size: 1.3em;
+  font-size: 1.4em;
   cursor: pointer;
+}
+
+.uploadImageModal__header-close {
+  cursor: pointer;
+  font-size: 1.4em;
+}
+
+.uploadImageModal__header-close:hover {
+  font-weight: bold;
 }
 
 .uploadImageModal-formInputs {
   cursor: pointer;
   display: flex;
   justify-content: center;
+  height: 100%;
+  align-items: center;
 }
 
 .uploadImageModal-formInputs:hover .uploadImageModal-choose {
