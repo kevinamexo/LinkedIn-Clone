@@ -16,14 +16,17 @@ import {
   query,
   getDocs,
 } from "firebase/firestore";
+
+import InfiniteScroll from "react-infinite-scroll-component";
+
 const MainSection = () => {
   const [showCreatePostModal, setShowCreatePostModal] = useState(false);
   const [postInput, setPostInput] = useState("");
   const [loadingPost, setLoadingPosts] = useState(null);
   const { userObj } = useSelector((state) => state.user);
   const [feedPosts, setFeedPosts] = useState([]);
-
   //GET USER FEED, LIMIT TO 5 POSTS
+
   let latestPosts = [];
   const getFeed = async () => {
     try {
