@@ -25,9 +25,12 @@ import RSidebar from "../../components/RSidebar";
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [profileObj, setProfileObj] = useState({});
+  const [profileId, setProfileId] = useState("");
+
   const [pO, setPO] = useState(false); // flag for makikng sure profileObj is set
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [organizationId, setOrganizationId] = useState("");
+  const [profId, setProfId] = useState("");
   const [eduInst, setEduInst] = useState("");
   const [organizationData, setOrganizationData] = useState({});
   const [educationData, setEducationData] = useState({});
@@ -40,7 +43,7 @@ const ProfilePage = () => {
   const { username } = useParams();
 
   let profObj = {};
-  let profId;
+  // let profId = "";
   let currentUser = { ...userObj };
 
   //FETCH PROFILE DETAILS ON LOAD AND CHECK IF CURRENT USER FOLLOWS THIS USER
@@ -50,15 +53,13 @@ const ProfilePage = () => {
     const querySnapshot = await getDocs(q);
     let eduInstitute;
     querySnapshot.forEach((doc) => {
+      let o = doc.id;
+      setProfId(o);
+
       profObj = { ...doc.data() };
-      profId = doc.id;
       setProfileObj(doc.data());
       dispatch(setSelectedUser(doc.data()));
     });
-    console.log("PROFILE OBJECT");
-    console.log(profObj);
-    console.log("CURRUSER OBJECT");
-    console.log();
     if (profObj.followers.includes(currentUser.username)) {
       setFollowing(true);
     } else {
@@ -77,8 +78,6 @@ const ProfilePage = () => {
     org_querySnapshot.forEach((doc) => {
       orgObj = { ...doc.data() };
       setOrganizationData(doc.data());
-      console.log(doc.data());
-      console.log(orgObj);
     });
   };
 
@@ -92,7 +91,6 @@ const ProfilePage = () => {
     org_querySnapshot.forEach((doc) => {
       setEducationData(doc.data());
       eduObj = { ...doc.data() };
-      console.log("EDUCATION DATA");
     });
   };
 
@@ -101,30 +99,57 @@ const ProfilePage = () => {
       getOrganization();
       getEducation();
       setLoading(false);
-      console.log(eduObj);
     });
   };
 
-  const followUser = async (profileUsername, profileId, currUserName) => {
-    // const followersRef=
-    let followDocId;
+  // const followUser = async (profileUsername, profileId, currUserName) => {
+  //   console.log(profileId);
+
+  //   try {
+  //     const followsDocRef = query(
+  //       collection(db, "follows"),
+  //       where("username", "==", profileUsername)
+  //     );
+  //     const followsDocSnap = await getDocs(followsDocRef);
+  //     followsDocSnap.forEach((doc) => {
+  //       followDocId = doc.id;
+  //     });
+
+  //     console.log(followDocId);
+  //     const followDoc = doc(db, "follows", followDocId);
+  //     await updateDoc(followDoc, {
+  //       users: arrayUnion(currUserName),
+  //     });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  let followDocId;
+  let userDocId;
+  const followUser2 = async () => {
     try {
+      console.log(profId);
       const followsDocRef = query(
         collection(db, "follows"),
-        where("username", "==", profileUsername)
+        where("username", "==", profileObj.username)
       );
       const followsDocSnap = await getDocs(followsDocRef);
       followsDocSnap.forEach((doc) => {
         followDocId = doc.id;
       });
+
+      console.log(followDocId);
       const followDoc = doc(db, "follows", followDocId);
       await updateDoc(followDoc, {
-        users: arrayUnion(currUserName),
+        users: arrayUnion(userObj.username),
       });
-      const userFollowers = doc(db, "user", profileId);
-      await updateDoc(userFollowers, {
-        followers: arrayUnion(currUserName),
+
+      const userDoc = doc(db, "user", profId);
+      await updateDoc(userDoc, {
+        followers: arrayUnion(userObj.username),
       });
+
       setFollowing(true);
     } catch (e) {
       console.log(e);
@@ -207,12 +232,7 @@ const ProfilePage = () => {
               </p>
               <span className="profilePage__details3-buttons">
                 {!following && (
-                  <button
-                    className="follow"
-                    onClick={() =>
-                      followUser(profileObj.username, profId, userObj.username)
-                    }
-                  >
+                  <button className="follow" onClick={() => followUser2()}>
                     Follow
                   </button>
                 )}
