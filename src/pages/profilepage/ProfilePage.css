@@ -162,6 +162,8 @@
 
 .profilePage__details3-buttons {
   margin-top: 10px;
+  display: flex;
+  align-items: center;
 }
 .profilePage__details3-buttons .follow {
   background-color: #0a66c2;
@@ -172,6 +174,16 @@
   border: none;
   padding: 5px 20px;
   border-radius: 15px;
+}
+
+.loading-follow {
+  border-radius: 15px;
+  outline: none;
+  border: none;
+  background-color: #0a66c2;
+  height: 30px;
+  margin-top: -10px;
+  width: 100px;
 }
 
 .profilePage__details3-buttons .message {
@@ -243,5 +255,18 @@
   }
   .profilePage .RSidebar {
     display: none;
+  }
+}
+
+.follow .loadingSpinner {
+  animation: rotation 2s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
   }
 }

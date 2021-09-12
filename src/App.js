@@ -42,7 +42,6 @@ function App() {
     const q = query(collection(db, "user"), where("email", "==", userEmail));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      console.log(doc.data());
       dispatch(setActiveUserObj(doc.data()));
     });
   };

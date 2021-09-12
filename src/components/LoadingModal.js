@@ -15,7 +15,7 @@ const LoadingModal = ({ loading }) => {
   return (
     <div className="loading-modal">
       <div className="loading-modal__loader">
-        <p>LinkedIn</p>
+        <p>Linked</p>
         <GrLinkedin className="loading-modal__loader-logo" />
       </div>
       <BarLoader

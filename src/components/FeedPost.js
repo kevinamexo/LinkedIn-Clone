@@ -3,7 +3,7 @@ import "./FeedPost.css";
 import { IoMdGlobe } from "react-icons/io";
 import { AiOutlineLike, AiOutlineComment, AiTwotoneLike } from "react-icons/ai";
 import { CgComment } from "react-icons/cg";
-const FeedPost = () => {
+const FeedPost = ({ post }) => {
   const [showFullText, setShowFullText] = useState(false);
   return (
     <div className="feedPost">
@@ -38,12 +38,7 @@ const FeedPost = () => {
                 : "feedPost__body-text-content"
             }
           >
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged
+            {post.postText}
           </p>
           <p
             className="feedPost__body-seeMore"
@@ -55,12 +50,12 @@ const FeedPost = () => {
         <div className="feedPost__engagements">
           <AiTwotoneLike className="feedPost__likes" />
         </div>
-        <div className="feedPost__body-media">
+        {/* <div className="feedPost__body-media">
           <img
             src="https://www.techrepublic.com/a/hub/i/r/2021/05/04/1d1b6fe0-daef-4c62-a5d7-f759b0efd637/resize/1200x/2895ab36265228ff9a0b1b9ea7d39d80/cryptocurrency-market.jpg"
             alt="Post Media"
           />
-        </div>
+        </div> */}
       </div>
       <div className="feedPost__actions">
         <button className="feedPost__action">

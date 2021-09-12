@@ -54,7 +54,7 @@
   position: relative;
 }
 .feedPost__body-text {
-  min-height: 60px;
+  min-height: 20px;
   position: relative;
   margin-top: 10px;
 }
@@ -102,7 +102,7 @@
 }
 
 .feedPost__actions {
-  margin-top: 25px;
+  margin-top: 10px;
   border-top: 1px solid lightgray;
   align-items: center;
   display: flex;

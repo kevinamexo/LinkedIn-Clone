@@ -6,7 +6,7 @@ import { AiOutlineClose, AiFillCaretDown } from "react-icons/ai";
 import { IoMdGlobe } from "react-icons/io";
 import "./CreatePostModal.css";
 import TextareaAutosize from "react-textarea-autosize";
-
+// import { serverTimestamp } from "firebase/database";
 import { db } from "../firebase/firebaseConfig";
 import {
   query,
@@ -18,8 +18,10 @@ import {
   addDoc,
   getDoc,
   getDocs,
-  timestamp,
+  Timestamp,
 } from "firebase/firestore";
+
+import * as frb from "firebase/firestore";
 const CreatePostModal = ({ setShowCreatePostModal }) => {
   const [postInput, setPostInput] = useState("");
   const [error, setError] = useState("null");
@@ -37,15 +39,17 @@ const CreatePostModal = ({ setShowCreatePostModal }) => {
 
     try {
       //POST AND GET THE ID OF THE POST
+      let date = new Date();
+      console.log(date);
+      let timestamp = Timestamp.fromDate(date);
       const postRef = await addDoc(collection(db, "posts"), {
         postText: postInput,
         authorId: "kamexo97",
         postType: "text",
-        published: moment().format(format1),
+        published: timestamp,
       }).then((docRef) => {
         console.log("new Post Id" + docRef.id);
       });
-
       //FIND DOCUMENT IN FOLLOWS FOR THE USER THAT IS POSTING
       const followQ = query(
         collection(db, "follows"),
@@ -58,15 +62,17 @@ const CreatePostModal = ({ setShowCreatePostModal }) => {
         setFollowDocRefId(doc.id);
       });
 
+      console.log(timestamp);
       const followRef = doc(db, "follows", followDocRefId);
+      console.log("Adding second");
       const querySnapshot2 = await updateDoc(followRef, {
         recentPosts: arrayUnion({
           postText: postInput,
           authorId: "kamexo97",
           postType: "text",
-          published: time,
+          published: timestamp,
         }),
-        lastPost: time,
+        lastPost: timestamp,
       });
     } catch (e) {
       console.log(e);

@@ -34,7 +34,9 @@ const RSidebar = () => {
           <p>+</p>
         </span>
         {addToFeedItems &&
-          addToFeedItems.map((item) => <AddToFeedItem item={item} />)}
+          addToFeedItems.map((item, idx) => (
+            <AddToFeedItem item={item} key={idx} />
+          ))}
       </div>
     </div>
   );

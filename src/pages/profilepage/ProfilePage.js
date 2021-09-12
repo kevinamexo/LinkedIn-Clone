@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import LoadingModal from "../../components/LoadingModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { db } from "../../firebase/firebaseConfig";
+import ButtonLoader from "../../components/ButtonLoader";
 import {
   query,
   collection,
@@ -14,6 +15,7 @@ import {
   getDocs,
   updateDoc,
   arrayUnion,
+  arrayRemove,
   getDoc,
   orderBy,
   doc,
@@ -21,12 +23,17 @@ import {
 } from "firebase/firestore";
 
 import RSidebar from "../../components/RSidebar";
+import { css } from "@emotion/react";
+// import "./ButtonLoader.css";
+import { ImSpinner2 } from "react-icons/im";
+import ClipLoader from "react-spinners/ClipLoader";
+
+const override = css``;
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [profileObj, setProfileObj] = useState({});
   const [profileId, setProfileId] = useState("");
-
   const [pO, setPO] = useState(false); // flag for makikng sure profileObj is set
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [organizationId, setOrganizationId] = useState("");
@@ -37,6 +44,8 @@ const ProfilePage = () => {
   const [organizationName, setOrganizationName] = useState("");
   const [organizationLogo, setOrganizationLogo] = useState("");
   const [following, setFollowing] = useState(null);
+  const [loadingFollow, setLoadingFollow] = useState(null);
+
   const dispatch = useDispatch();
   const pageSize = 3;
   const { selectedUser, userObj } = useSelector((state) => state.user);
@@ -48,6 +57,7 @@ const ProfilePage = () => {
 
   //FETCH PROFILE DETAILS ON LOAD AND CHECK IF CURRENT USER FOLLOWS THIS USER
   const fetchProfileDetails = async () => {
+    setFollowing(true);
     setLoading(true);
     const q = query(collection(db, "user"), where("username", "==", username));
     const querySnapshot = await getDocs(q);
@@ -61,7 +71,6 @@ const ProfilePage = () => {
       dispatch(setSelectedUser(doc.data()));
     });
     if (profObj.followers.includes(currentUser.username)) {
-      setFollowing(true);
     } else {
       setFollowing(false);
     }
@@ -101,33 +110,10 @@ const ProfilePage = () => {
       setLoading(false);
     });
   };
-
-  // const followUser = async (profileUsername, profileId, currUserName) => {
-  //   console.log(profileId);
-
-  //   try {
-  //     const followsDocRef = query(
-  //       collection(db, "follows"),
-  //       where("username", "==", profileUsername)
-  //     );
-  //     const followsDocSnap = await getDocs(followsDocRef);
-  //     followsDocSnap.forEach((doc) => {
-  //       followDocId = doc.id;
-  //     });
-
-  //     console.log(followDocId);
-  //     const followDoc = doc(db, "follows", followDocId);
-  //     await updateDoc(followDoc, {
-  //       users: arrayUnion(currUserName),
-  //     });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
   let followDocId;
   let userDocId;
   const followUser2 = async () => {
+    setLoadingFollow(true);
     try {
       console.log(profId);
       const followsDocRef = query(
@@ -154,6 +140,36 @@ const ProfilePage = () => {
     } catch (e) {
       console.log(e);
     }
+    setLoadingFollow(false);
+  };
+
+  const unFollowUser = async () => {
+    setLoadingFollow(true);
+    try {
+      const followsDocRef = query(
+        collection(db, "follows"),
+        where("username", "==", profileObj.username)
+      );
+      const followsDocSnap = await getDocs(followsDocRef);
+      followsDocSnap.forEach((doc) => {
+        followDocId = doc.id;
+      });
+
+      console.log(followDocId);
+      const followDoc = doc(db, "follows", followDocId);
+      await updateDoc(followDoc, {
+        users: arrayRemove(userObj.username),
+      });
+
+      const userDoc = doc(db, "user", profId);
+      await updateDoc(userDoc, {
+        followers: arrayRemove(userObj.username),
+      });
+      setFollowing(false);
+    } catch (e) {
+      console.log(e);
+    }
+    setLoadingFollow(false);
   };
 
   useEffect(() => {
@@ -165,8 +181,9 @@ const ProfilePage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(educationData);
-  }, [educationData]);
+    console.log("following");
+    console.log(following);
+  }, [following]);
 
   if (loading === false) {
     return (
@@ -233,10 +250,23 @@ const ProfilePage = () => {
               <span className="profilePage__details3-buttons">
                 {!following && (
                   <button className="follow" onClick={() => followUser2()}>
-                    Follow
+                    {loadingFollow ? (
+                      <ImSpinner2 className="loadingSpinner" />
+                    ) : (
+                      "Follow"
+                    )}
                   </button>
                 )}
-                {following && <button className="follow">Message</button>}
+                {following && (
+                  <button className="follow" onClick={() => unFollowUser()}>
+                    {loadingFollow ? (
+                      <ImSpinner2 className="loadingSpinner" />
+                    ) : (
+                      "Following"
+                    )}
+                  </button>
+                )}
+
                 {following ? (
                   <button className="message">More</button>
                 ) : (
