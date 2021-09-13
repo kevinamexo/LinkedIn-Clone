@@ -18,7 +18,7 @@ const FeedPost = ({ post }) => {
             #1 New York Times Selling Author
           </p>
           <p className="feedPost__userDetails-postTime">
-            1d
+            1
             <IoMdGlobe
               style={{
                 marginLeft: "5px",

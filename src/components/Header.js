@@ -26,7 +26,11 @@ import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveUser, setUserLogoutState } from "../redux/features/userSlice";
 
-import { setSearchActive, setCloseModal } from "../redux/features/modalsSlice";
+import {
+  setSearchActive,
+  setCloseModal,
+  setCloseSearchModal,
+} from "../redux/features/modalsSlice";
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
@@ -58,10 +62,10 @@ const Header = () => {
   };
 
   const handleSearchActive = (e) => {
-    if (navbarSearchRef.current.contains(e.target)) {
+    if (navbarSearchRef.current && navbarSearchRef.current.contains(e.target)) {
       console.log("Contains Ref");
     } else {
-      dispatch(setCloseModal());
+      dispatch(setCloseSearchModal());
       console.log("Does not contain ref");
     }
   };

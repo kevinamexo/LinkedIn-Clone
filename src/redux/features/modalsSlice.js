@@ -36,6 +36,9 @@ const modalsSlice = createSlice({
       state.searchActive = true;
       state.modalActive = true;
     },
+    setCloseSearchModal: (state) => {
+      state.searchActive = false;
+    },
   },
 });
 
@@ -44,6 +47,7 @@ export const {
   setShowUploadVideo,
   setShowCreatePostModal,
   setCloseModal,
+  setCloseSearchModal,
   setSearchActive,
 } = modalsSlice.actions;
 export default modalsSlice;

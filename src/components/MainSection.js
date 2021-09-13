@@ -85,6 +85,7 @@ const MainSection = () => {
             onClick={() => {
               setUploadType("images");
               dispatch(setShowUploadImage());
+              console.log("siiiuuuu");
             }}
           >
             <MdPhoto className="postType-photoIcon" />
@@ -93,7 +94,7 @@ const MainSection = () => {
           <span
             className="mainSection__postType"
             onClick={() => {
-              setUploadType("videos");
+              setUploadType("video");
               dispatch(setShowUploadVideo());
             }}
           >

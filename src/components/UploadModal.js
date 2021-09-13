@@ -11,13 +11,28 @@ import { AiOutlineClose } from "react-icons/ai";
 
 const UploadModal = ({ type }) => {
   const [images, setImages] = useState([]);
+  const [error, setError] = useState(null);
+  const [filesPresent, setFilesPresent] = useState(false);
+
   const dispatch = useDispatch();
   const { showUploadImage } = useSelector((state) => state.modals);
   let im = [];
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.map((file) => {
-      im = [...images, file];
-      setImages((prevImages) => [...prevImages, file]);
+      if (type === "video" && images.length > 0) {
+        setError("Only one video can be uploaded per post");
+        return console.log(error);
+      } else if (type === "images") {
+        im = [...images, file]; //JUST HERE FOR CONSOLE.LOG PURPOSES
+
+        setImages((prevImages) => [...prevImages, file]);
+        setFilesPresent(true);
+      } else if (type === "video" && images.length === 0) {
+        im = [file]; //JUST HERE FOR CONSOLE.LOG PURPOSES
+        setImages([file]);
+        setFilesPresent(true);
+        console.log(images);
+      }
     });
     console.log(im);
     console.log(images);
@@ -28,7 +43,8 @@ const UploadModal = ({ type }) => {
     console.log("Show Upload Image");
     console.log(showUploadImage);
   }, []);
-  const files = images.map((image) => (
+
+  const imageFiles = images.map((image) => (
     <div
       key={image.name}
       style={{ height: "70px", width: "70px", objectFit: "cover" }}
@@ -40,6 +56,7 @@ const UploadModal = ({ type }) => {
     </div>
   ));
 
+  const videoFile = images.map((vid) => <p>{vid.name} </p>);
   return (
     <div className="uploadImageModal">
       <div className="uploadImageModal-form">
@@ -69,16 +86,22 @@ const UploadModal = ({ type }) => {
           }
           {...getRootProps()}
         >
-          <input {...getInputProps()} className="uploadImageModal-input" />
+          <input
+            {...getInputProps()}
+            accept={type === "video" ? "video/*" : "images/*"}
+            className="uploadImageModal-input"
+          />
           <p className="uploadImageModal-choose">
             Select or drag {type} to upload
           </p>
-          {images.length === 0 && (
-            <div className="uploadImageModal__imagesPreview">
-              {images && <div>{files}</div>}
-            </div>
-          )}
         </div>
+        {images.length > 0 && (
+          <div className="uploadImageModal__imagesPreview">
+            {images && type === "images" && <div>{imageFiles}</div>}
+            {images && type === "video" && <div>{videoFile}</div>}
+          </div>
+        )}
+
         <footer className="uploadImageModal-footer">
           <button type="submit" className="uploadImageModal__footer-cancel">
             Cancel
