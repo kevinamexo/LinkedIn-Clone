@@ -5,9 +5,15 @@ import { MdPhoto } from "react-icons/md";
 import { RiArticleLine, RiVideoFill } from "react-icons/ri";
 import CreatePostModal from "./CreatePostModal";
 import "./MainSection.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setShowCreatePostModal,
+  setCloseCreatePostModal,
+} from "../redux/features/modalsSlice";
 import FeedPost from "./FeedPost";
+import UploadImageModal from "./UploadImageModal";
 import { db } from "../firebase/firebaseConfig";
+
 import {
   where,
   limit,
@@ -16,15 +22,19 @@ import {
   query,
   getDocs,
 } from "firebase/firestore";
-
+import { setShowUploadImage } from "../redux/features/modalsSlice";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const MainSection = () => {
-  const [showCreatePostModal, setShowCreatePostModal] = useState(false);
   const [postInput, setPostInput] = useState("");
   const [loadingPost, setLoadingPosts] = useState(null);
+  const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
+  const { showUploadImage, showCreatePostModal } = useSelector(
+    (state) => state.modals
+  );
   const [feedPosts, setFeedPosts] = useState([]);
+
   //GET USER FEED, LIMIT TO 5 POSTS
 
   let latestPosts = [];
@@ -66,7 +76,10 @@ const MainSection = () => {
           </div>
         </div>
         <div className="mainSection__postTypes">
-          <span className="mainSection__postType">
+          <span
+            className="mainSection__postType"
+            onClick={() => dispatch(setShowUploadImage())}
+          >
             <MdPhoto className="postType-photoIcon" />
             <p className="postType-label">Photo</p>
           </span>
@@ -90,6 +103,7 @@ const MainSection = () => {
       {showCreatePostModal && (
         <CreatePostModal setShowCreatePostModal={setShowCreatePostModal} />
       )}
+      {showUploadImage && <UploadImageModal />}
     </div>
   );
 };

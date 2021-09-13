@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setCloseModal } from "../redux/features/modalsSlice";
 import { FaUserCircle } from "react-icons/fa";
 import { AiOutlineClose, AiFillCaretDown } from "react-icons/ai";
 import { IoMdGlobe } from "react-icons/io";
@@ -22,10 +23,11 @@ import {
 } from "firebase/firestore";
 
 import * as frb from "firebase/firestore";
-const CreatePostModal = ({ setShowCreatePostModal }) => {
+const CreatePostModal = () => {
   const [postInput, setPostInput] = useState("");
   const [error, setError] = useState("null");
   const [postType, setPostType] = useState("generic");
+  const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
   const authorId = "kamexo97";
   const { firstName, lastName, title, organization, username } = userObj;
@@ -88,7 +90,7 @@ const CreatePostModal = ({ setShowCreatePostModal }) => {
           <p>Create a Post</p>
           <AiOutlineClose
             className="createPost__header-close"
-            onClick={() => setShowCreatePostModal(false)}
+            onClick={() => dispatch(setCloseModal)}
             tMod
           />
         </div>

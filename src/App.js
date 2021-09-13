@@ -36,6 +36,7 @@ import { onAuthStateChange } from "firebase/auth";
 function App() {
   const dispatch = useDispatch();
   const { user, userObj, isAuth, loading } = useSelector((state) => state.user);
+  const { modalActive } = useSelector((state) => state.modals);
   const [authenticated, setAuthenticated] = useState(null);
 
   const fetchUserDetails = async (db, userEmail) => {
@@ -64,8 +65,15 @@ function App() {
   }, []);
 
   return (
-    <div className="app">
-      {/* {loading === true ? (
+    <div
+      className="app"
+      style={
+        modalActive === true
+          ? { height: "100vh", overflow: "hidden" }
+          : { height: "100%" }
+      }
+    >
+      {loading === true ? (
         <LoadingModal loading={true} />
       ) : (
         <Switch>
@@ -83,8 +91,7 @@ function App() {
           />
           <PrivateRoute authState={authenticated} path="/" component={Main} />
         </Switch>
-      )} */}
-      <UploadImageModal />
+      )}
     </div>
   );
 }

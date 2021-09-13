@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setShowUploadImage,
-  setCloseUploadImage,
+  setCloseModal,
 } from "../redux/features/modalsSlice";
 import { useDropzone } from "react-dropzone";
 import "./UploadImageModal.css";
@@ -39,60 +39,56 @@ const UploadImageModal = () => {
       />
     </div>
   ));
-  if (showUploadImage) {
-    return (
-      <div className="uploadImageModal">
-        <div className="uploadImageModal-form">
-          <header>
-            <p>Upload your image</p>
-            {/* {images !== [] && (
+
+  return (
+    <div className="uploadImageModal">
+      <div className="uploadImageModal-form">
+        <header>
+          <p>Upload your image</p>
+          {/* {images !== [] && (
             <BsCloudUpload
               {...getRootProps()}
               className="uploadImageModal-form__headerUpload"
             />
           )} */}
-            <AiOutlineClose
-              className="uploadImageModal__header-close"
-              onClick={() => dispatch(setCloseUploadImage())}
-            />
-          </header>
-          <div
-            className="uploadImageModal-formInputs"
-            style={
-              images.length > 0
-                ? {
-                    alignItems: "flex-start",
-                    justifyContent: "space-evenly",
-                    height: "100%",
-                  }
-                : {}
-            }
-            {...getRootProps()}
-          >
-            <input {...getInputProps()} className="uploadImageModal-input" />
-            <p className="uploadImageModal-choose">
-              Select or drag images to upload
-            </p>
-            {images.length === 0 && (
-              <div className="uploadImageModal__imagesPreview">
-                {images && <div>{files}</div>}
-              </div>
-            )}
-          </div>
-          <footer className="uploadImageModal-footer">
-            <button type="submit" className="uploadImageModal__footer-cancel">
-              Cancel
-            </button>
-            <button type="submit" className="uploadImageModal__footer-submit">
-              Done
-            </button>
-          </footer>
+          <AiOutlineClose
+            className="uploadImageModal__header-close"
+            onClick={() => dispatch(setCloseModal())}
+          />
+        </header>
+        <div
+          className="uploadImageModal-formInputs"
+          style={
+            images.length > 0
+              ? {
+                  alignItems: "flex-start",
+                  justifyContent: "space-evenly",
+                  height: "100%",
+                }
+              : {}
+          }
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} className="uploadImageModal-input" />
+          <p className="uploadImageModal-choose">
+            Select or drag images to upload
+          </p>
+          {images.length === 0 && (
+            <div className="uploadImageModal__imagesPreview">
+              {images && <div>{files}</div>}
+            </div>
+          )}
         </div>
+        <footer className="uploadImageModal-footer">
+          <button type="submit" className="uploadImageModal__footer-cancel">
+            Cancel
+          </button>
+          <button type="submit" className="uploadImageModal__footer-submit">
+            Done
+          </button>
+        </footer>
       </div>
-    );
-  } else {
-    return <h2 onClick={() => dispatch(setShowUploadImage())}>NO MODAL </h2>;
-  }
+    </div>
+  );
 };
-
 export default UploadImageModal;
