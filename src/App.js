@@ -9,7 +9,7 @@ import CreatePostModal from "./components/CreatePostModal";
 import LoginPage from "./pages/login/LoginPage";
 import SignupPage from "./pages/signup/SignupPage";
 import ProfilePage from "./pages/profilepage/ProfilePage";
-import UploadImageModal from "./components/UploadImageModal";
+
 import LoadingModal from "./components/LoadingModal";
 import "./App.css";
 import PrivateRoute from "./components/routeTypes/PrivateRoute";

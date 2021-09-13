@@ -11,9 +11,8 @@ import {
   setCloseCreatePostModal,
 } from "../redux/features/modalsSlice";
 import FeedPost from "./FeedPost";
-import UploadImageModal from "./UploadImageModal";
+import UploadModal from "./UploadModal";
 import { db } from "../firebase/firebaseConfig";
-
 import {
   where,
   limit,
@@ -22,7 +21,11 @@ import {
   query,
   getDocs,
 } from "firebase/firestore";
-import { setShowUploadImage } from "../redux/features/modalsSlice";
+import {
+  setShowUploadImage,
+  setShowUploadVideo,
+} from "../redux/features/modalsSlice";
+
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const MainSection = () => {
@@ -30,10 +33,11 @@ const MainSection = () => {
   const [loadingPost, setLoadingPosts] = useState(null);
   const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
-  const { showUploadImage, showCreatePostModal } = useSelector(
+  const { showUploadImage, showUploadVideo, showCreatePostModal } = useSelector(
     (state) => state.modals
   );
   const [feedPosts, setFeedPosts] = useState([]);
+  const [uploadType, setUploadType] = useState(null);
 
   //GET USER FEED, LIMIT TO 5 POSTS
 
@@ -78,12 +82,21 @@ const MainSection = () => {
         <div className="mainSection__postTypes">
           <span
             className="mainSection__postType"
-            onClick={() => dispatch(setShowUploadImage())}
+            onClick={() => {
+              setUploadType("images");
+              dispatch(setShowUploadImage());
+            }}
           >
             <MdPhoto className="postType-photoIcon" />
             <p className="postType-label">Photo</p>
           </span>
-          <span className="mainSection__postType">
+          <span
+            className="mainSection__postType"
+            onClick={() => {
+              setUploadType("videos");
+              dispatch(setShowUploadVideo());
+            }}
+          >
             <RiVideoFill className="postType-vidIcon" />
             <p className="postType-label">Video</p>
           </span>
@@ -103,7 +116,8 @@ const MainSection = () => {
       {showCreatePostModal && (
         <CreatePostModal setShowCreatePostModal={setShowCreatePostModal} />
       )}
-      {showUploadImage && <UploadImageModal />}
+      {showUploadImage && <UploadModal type={uploadType} />}
+      {showUploadVideo && <UploadModal type={uploadType} />}
     </div>
   );
 };

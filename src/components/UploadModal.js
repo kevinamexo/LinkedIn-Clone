@@ -9,7 +9,7 @@ import "./UploadImageModal.css";
 import { BsCloudUpload } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 
-const UploadImageModal = () => {
+const UploadModal = ({ type }) => {
   const [images, setImages] = useState([]);
   const dispatch = useDispatch();
   const { showUploadImage } = useSelector((state) => state.modals);
@@ -44,7 +44,7 @@ const UploadImageModal = () => {
     <div className="uploadImageModal">
       <div className="uploadImageModal-form">
         <header>
-          <p>Upload your image</p>
+          <p>Upload your {type}</p>
           {/* {images !== [] && (
             <BsCloudUpload
               {...getRootProps()}
@@ -71,7 +71,7 @@ const UploadImageModal = () => {
         >
           <input {...getInputProps()} className="uploadImageModal-input" />
           <p className="uploadImageModal-choose">
-            Select or drag images to upload
+            Select or drag {type} to upload
           </p>
           {images.length === 0 && (
             <div className="uploadImageModal__imagesPreview">
@@ -91,4 +91,4 @@ const UploadImageModal = () => {
     </div>
   );
 };
-export default UploadImageModal;
+export default UploadModal;

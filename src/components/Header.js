@@ -24,18 +24,17 @@ import {
 import { auth, db } from "../firebase/firebaseConfig";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setActiveUser,
-  setUserLogoutState,
-  setSearchActive,
-} from "../redux/features/userSlice";
+import { setActiveUser, setUserLogoutState } from "../redux/features/userSlice";
 
+import { setSearchActive, setCloseModal } from "../redux/features/modalsSlice";
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
   const dispatch = useDispatch();
   const navbarSearchRef = useRef();
-  const { user, searchActive, loading } = useSelector((state) => state.user);
+  const { user, userObj, loading } = useSelector((state) => state.user);
+
+  const { searchActive } = useSelector((state) => state.modals);
   //Event handlers
   const history = useHistory();
 
@@ -59,9 +58,12 @@ const Header = () => {
   };
 
   const handleSearchActive = (e) => {
-    if (navbarSearchRef.current.contains(e.target)) return;
-    console.log("changed active");
-    dispatch(setSearchActive(false));
+    if (navbarSearchRef.current.contains(e.target)) {
+      console.log("Contains Ref");
+    } else {
+      dispatch(setCloseModal());
+      console.log("Does not contain ref");
+    }
   };
 
   useEffect(() => {
@@ -71,6 +73,10 @@ const Header = () => {
       document.removeEventListener("click", handleSearchActive);
     };
   }, []);
+
+  useEffect(() => {
+    console.log(searchActive);
+  }, [searchActive]);
 
   return (
     <>
@@ -87,7 +93,7 @@ const Header = () => {
           <div
             ref={navbarSearchRef}
             className={searchActive ? "header__search full" : "header__search"}
-            onClick={() => dispatch(setSearchActive(true))}
+            onClick={() => dispatch(setSearchActive())}
           >
             <AiOutlineSearch className="header__searchIcon" />
             <input
@@ -104,11 +110,24 @@ const Header = () => {
         </div>
         {searchActive !== true && (
           <div className="header__right">
-            <HeaderOption title="Home" Icon={AiFillHome} />
+            <HeaderOption
+              title="Home"
+              Icon={AiFillHome}
+              onClick={() => {
+                history.push("/");
+              }}
+            />
             <HeaderOption title="My Network" Icon={FaUserFriends} />
             <HeaderOption title="Jobs" Icon={FaBriefcase} />
             <HeaderOption title="Notifications" Icon={FaBell} />
-            <HeaderOption title="Me" Icon={FaUserCircle} color="lightgray" />
+            <HeaderOption
+              title="Me"
+              Icon={FaUserCircle}
+              color="lightgray"
+              onClick={() => {
+                history.push(`/in/${userObj.username}`);
+              }}
+            />
             <span className="header-signout" onClick={handleUserSignOut}>
               <p style={{ margin: "0" }}>Sign out</p>
               <BiLogOut />
@@ -116,7 +135,7 @@ const Header = () => {
           </div>
         )}
       </div>
-      {searchActive === true && <SearchResultsModal />}
+      {searchActive === true ? <SearchResultsModal /> : null}
     </>
   );
 };

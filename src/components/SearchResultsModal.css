@@ -1,6 +1,6 @@
 .searchResultsModal {
   position: absolute;
-
+  height: calc(100vh - 54px);
   left: 0;
   right: 0;
   top: 54px;

@@ -5,6 +5,8 @@ const initialState = {
   modalActive: false,
   showUploadImage: false,
   showCreatePostModal: false,
+  showUploadVideo: false,
+  searchActive: false,
 };
 
 const modalsSlice = createSlice({
@@ -17,16 +19,31 @@ const modalsSlice = createSlice({
     },
     setCloseModal: (state) => {
       state.showUploadImage = false;
+      state.showUploadVideo = false;
       state.modalActive = false;
       state.showCreatePostModal = false;
+      state.searchActive = false;
     },
     setShowCreatePostModal: (state) => {
       state.showCreatePostModal = true;
       state.modalActive = true;
     },
+    setShowUploadVideo: (state) => {
+      state.showUploadVideo = true;
+      state.modalActive = true;
+    },
+    setSearchActive: (state) => {
+      state.searchActive = true;
+      state.modalActive = true;
+    },
   },
 });
 
-export const { setShowUploadImage, setShowCreatePostModal, setCloseModal } =
-  modalsSlice.actions;
+export const {
+  setShowUploadImage,
+  setShowUploadVideo,
+  setShowCreatePostModal,
+  setCloseModal,
+  setSearchActive,
+} = modalsSlice.actions;
 export default modalsSlice;

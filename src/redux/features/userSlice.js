@@ -38,7 +38,6 @@ const initialState = {
   userObj: null,
   msg: null,
   loading: null,
-  searchActive: null,
   selectedUser: null,
 };
 const userSlice = createSlice({
@@ -63,9 +62,7 @@ const userSlice = createSlice({
       state.loading = false;
       state.isAuth = true;
     },
-    setSearchActive: (state, action) => {
-      state.searchActive = action.payload;
-    },
+
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload;
     },
@@ -77,7 +74,6 @@ export const {
   setActiveUserObj,
   setUserLogoutState,
   setLoading,
-  setSearchActive,
   setSelectedUser,
 } = userSlice.actions;
 export default userSlice;
