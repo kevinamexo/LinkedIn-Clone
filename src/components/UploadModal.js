@@ -13,49 +13,34 @@ const UploadModal = ({ type }) => {
   const [images, setImages] = useState([]);
   const [error, setError] = useState(null);
   const [filesPresent, setFilesPresent] = useState(false);
-
+  let fileCount = 0;
   const dispatch = useDispatch();
   const { showUploadImage } = useSelector((state) => state.modals);
   let im = [];
   const onDrop = useCallback((acceptedFiles) => {
-    acceptedFiles.map((file) => {
-      if (type === "video" && images.length > 0) {
-        setError("Only one video can be uploaded per post");
-        return console.log(error);
-      } else if (type === "images") {
-        im = [...images, file]; //JUST HERE FOR CONSOLE.LOG PURPOSES
+    if (type === "video" && fileCount > 0) {
+      setError("Only one video upload per post");
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    } else if ((type === "video" && images.length === 0) || type === "images") {
+      acceptedFiles.map((file) => {
+        im = [...im, file];
 
-        setImages((prevImages) => [...prevImages, file]);
-        setFilesPresent(true);
-      } else if (type === "video" && images.length === 0) {
-        im = [file]; //JUST HERE FOR CONSOLE.LOG PURPOSES
-        setImages([file]);
-        setFilesPresent(true);
-        console.log(images);
-      }
-    });
-    console.log(im);
-    console.log(images);
-  }, []);
-  const { getInputProps, getRootProps } = useDropzone({ onDrop });
-
-  useEffect(() => {
-    console.log("Show Upload Image");
-    console.log(showUploadImage);
+        setImages(im);
+      });
+      fileCount += 1;
+      // console.log(images);
+    }
   }, []);
 
-  const imageFiles = images.map((image) => (
-    <div
-      key={image.name}
-      style={{ height: "70px", width: "70px", objectFit: "cover" }}
-    >
-      <img
-        src={URL.createObjectURL(image)}
-        style={{ height: "100%", width: "100%" }}
-      />
-    </div>
-  ));
+  let fileType = type === "video" ? "video/*" : "image/*";
+  const { getInputProps, getRootProps } = useDropzone({
+    onDrop,
+    accept: fileType,
+  });
 
+  const imageFiles = images.map((image, idx) => <p key={idx}>{image.name} </p>);
   const videoFile = images.map((vid) => <p>{vid.name} </p>);
   return (
     <div className="uploadImageModal">
@@ -95,10 +80,40 @@ const UploadModal = ({ type }) => {
             Select or drag {type} to upload
           </p>
         </div>
+        {error && (
+          <p style={{ margin: "0", backgroundColor: "red", color: "white" }}>
+            {error}
+          </p>
+        )}
         {images.length > 0 && (
           <div className="uploadImageModal__imagesPreview">
-            {images && type === "images" && <div>{imageFiles}</div>}
-            {images && type === "video" && <div>{videoFile}</div>}
+            {type === "images" &&
+              images &&
+              images.map((img, idx) => (
+                <div className="previewFile">
+                  <p className="previewFile-Name">{img.name}</p>
+                  <AiOutlineClose
+                    className="previewFile-removeFile"
+                    onClick={() => {
+                      let i = [...images];
+                      i.splice(idx, 1);
+                      console.log(i);
+                      setImages([...i]);
+
+                      // console.log("after splice");
+                      // console.log([images.splice(idx, 1)]);
+                    }}
+                  />
+                </div>
+              ))}
+            {type === "video" &&
+              images &&
+              images.map((img) => (
+                <div className="previewFile">
+                  <p className="previewFile-Name">{img.name}</p>
+                  <AiOutlineClose className="previewFile-removeFile" />
+                </div>
+              ))}
           </div>
         )}
 
