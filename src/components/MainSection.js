@@ -117,8 +117,12 @@ const MainSection = () => {
       {showCreatePostModal && (
         <CreatePostModal setShowCreatePostModal={setShowCreatePostModal} />
       )}
-      {showUploadImage && <UploadModal type={uploadType} />}
-      {showUploadVideo && <UploadModal type={uploadType} />}
+      {showUploadImage && uploadType === "images" && (
+        <UploadModal type="images" />
+      )}
+      {showUploadVideo && uploadType === "video" && (
+        <UploadModal type="video" />
+      )}
     </div>
   );
 };

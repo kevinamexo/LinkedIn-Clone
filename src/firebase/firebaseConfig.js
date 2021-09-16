@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getStorage, ref } from "firebase/storage";
 
 const firebaseApp = initializeApp({
   apiKey: "AIzaSyAa9vhPqb_OuN0OFyZpUYsEtFXlUvbdsoM",
@@ -14,6 +15,7 @@ const firebaseApp = initializeApp({
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
 
+export const storage = getStorage();
 export async function getUser(db) {
   const citiesCol = collection(db, "user");
   const citySnapshot = await getDocs(citiesCol);
