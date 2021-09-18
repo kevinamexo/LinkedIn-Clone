@@ -124,14 +124,26 @@ const Header = () => {
             <HeaderOption title="My Network" Icon={FaUserFriends} />
             <HeaderOption title="Jobs" Icon={FaBriefcase} />
             <HeaderOption title="Notifications" Icon={FaBell} />
-            <HeaderOption
-              title="Me"
-              Icon={FaUserCircle}
-              color="lightgray"
-              onClick={() => {
-                history.push(`/in/${userObj.username}`);
-              }}
-            />
+            {userObj.profilePhotoURL ? (
+              <span
+                className="header__profilePhoto"
+                onClick={() => {
+                  history.push(`/in/${userObj.username}`);
+                }}
+              >
+                <img src={userObj.profilePhotoURL} alt={userObj.username} />
+                <p style={{ margin: "0" }}>Me</p>
+              </span>
+            ) : (
+              <HeaderOption
+                title="Me"
+                Icon={FaUserCircle}
+                color="lightgray"
+                onClick={() => {
+                  history.push(`/in/${userObj.username}`);
+                }}
+              />
+            )}
             <span className="header-signout" onClick={handleUserSignOut}>
               <p style={{ margin: "0" }}>Sign out</p>
               <BiLogOut />

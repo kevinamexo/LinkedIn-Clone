@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase/firebaseConfig";
 import useGetUser from "../firebase/hooks/useGetUser";
-
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { collection, query, where, getDoc, getDocs } from "firebase/firestore";
 import { VscChevronDown } from "react-icons/vsc";
@@ -40,9 +40,11 @@ const LSidebar = () => {
           />
         </div>
         <div className="LSidebar__greeting">
-          <p className="LSidebar__welcome">
-            {userObj && `${userObj.name.firstName} ${userObj.name.lastName}`}
-          </p>
+          <Link to={`/in/${userObj.username}`}>
+            <p className="LSidebar__welcome">
+              {userObj && `${userObj.name.firstName} ${userObj.name.lastName}`}
+            </p>
+          </Link>
           <p className="LSidebar__addPhoto">Add a photo </p>
         </div>
         <div className="LSidebar__profileViews">

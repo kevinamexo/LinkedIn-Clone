@@ -74,7 +74,7 @@ const MainSection = () => {
           <FaUserCircle className="mainSection__profilePic" />
           <div
             className="mainSection__startPost"
-            onClick={() => setShowCreatePostModal(true)}
+            onClick={() => dispatch(setShowCreatePostModal())}
           >
             Start a post
           </div>

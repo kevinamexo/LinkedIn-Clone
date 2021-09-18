@@ -8,6 +8,7 @@ import { IoMdGlobe } from "react-icons/io";
 import "./CreatePostModal.css";
 import TextareaAutosize from "react-textarea-autosize";
 // import { serverTimestamp } from "firebase/database";
+import BeatLoader from "react-spinners/BeatLoader";
 import { db } from "../firebase/firebaseConfig";
 import {
   query,
@@ -27,6 +28,7 @@ const CreatePostModal = () => {
   const [postInput, setPostInput] = useState("");
   const [error, setError] = useState("null");
   const [postType, setPostType] = useState("generic");
+  const [posting, setPosting] = useState(null);
   const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
   const authorId = "kamexo97";
@@ -41,12 +43,13 @@ const CreatePostModal = () => {
 
     try {
       //POST AND GET THE ID OF THE POST
+      setPosting(true);
       let date = new Date();
       console.log(date);
       let timestamp = Timestamp.fromDate(date);
       const postRef = await addDoc(collection(db, "posts"), {
         postText: postInput,
-        authorId: "kamexo97",
+        authorId: userObj.username,
         postType: "text",
         published: timestamp,
       }).then((docRef) => {
@@ -55,27 +58,33 @@ const CreatePostModal = () => {
       //FIND DOCUMENT IN FOLLOWS FOR THE USER THAT IS POSTING
       const followQ = query(
         collection(db, "follows"),
-        where("username", "==", "kamexo97")
+        where("username", "==", userObj.username)
       );
       const followIdSnap = await getDocs(followQ);
+      let y;
 
       followIdSnap.forEach((doc) => {
+        y = doc.id;
         console.log("Doc id of users follow document" + doc.id);
         setFollowDocRefId(doc.id);
       });
 
       console.log(timestamp);
-      const followRef = doc(db, "follows", followDocRefId);
+      const followRef = doc(db, "follows", y);
       console.log("Adding second");
       const querySnapshot2 = await updateDoc(followRef, {
         recentPosts: arrayUnion({
           postText: postInput,
-          authorId: "kamexo97",
+          authorId: userObj.username,
           postType: "text",
           published: timestamp,
         }),
         lastPost: timestamp,
       });
+      setTimeout(() => {
+        setPosting(false);
+        dispatch(setCloseModal());
+      }, 1000);
     } catch (e) {
       console.log(e);
       console.log("error adding posts");
@@ -90,12 +99,19 @@ const CreatePostModal = () => {
           <p>Create a Post</p>
           <AiOutlineClose
             className="createPost__header-close"
-            onClick={() => dispatch(setCloseModal)}
+            onClick={() => dispatch(setCloseModal())}
             tMod
           />
         </div>
         <div className="createPost__authorSection">
-          <FaUserCircle className="createPost__authorPic" />
+          {userObj.profilePhotoURL ? (
+            <img
+              className="createPost__authorPic"
+              src={userObj.profilePhotoURL}
+            />
+          ) : (
+            <FaUserCircle className="createPost__authorPic" />
+          )}
           <span className="createPost__authorSection-span">
             <p>Kevin Amexo</p>
             <button className="createPost__visibleTo">
@@ -131,6 +147,12 @@ const CreatePostModal = () => {
           </button>
           {/* <button></button> */}
         </div>
+        {posting && (
+          <div className="createPost__loading-post">
+            <h2>Posting</h2>
+            <BeatLoader size={15} loading={true} color="#0a66c2" />
+          </div>
+        )}
       </form>
     </div>
   );

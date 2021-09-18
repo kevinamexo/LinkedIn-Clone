@@ -27,7 +27,7 @@ import { css } from "@emotion/react";
 // import "./ButtonLoader.css";
 import { ImSpinner2 } from "react-icons/im";
 import ClipLoader from "react-spinners/ClipLoader";
-
+import FeedPost from "../../components/FeedPost";
 const override = css``;
 
 const ProfilePage = () => {
@@ -43,6 +43,7 @@ const ProfilePage = () => {
   const [educationData, setEducationData] = useState({});
   const [organizationName, setOrganizationName] = useState("");
   const [organizationLogo, setOrganizationLogo] = useState("");
+  const [profilePosts, setProfilePosts] = useState([]);
   const [following, setFollowing] = useState(null);
   const [loadingFollow, setLoadingFollow] = useState(null);
 
@@ -65,7 +66,6 @@ const ProfilePage = () => {
     querySnapshot.forEach((doc) => {
       let o = doc.id;
       setProfId(o);
-
       profObj = { ...doc.data() };
       setProfileObj(doc.data());
       dispatch(setSelectedUser(doc.data()));
@@ -171,19 +171,37 @@ const ProfilePage = () => {
     }
     setLoadingFollow(false);
   };
-
+  const fetchPosts = async () => {
+    let latestPosts = [];
+    try {
+      const followedUsers = query(
+        collection(db, "follows"),
+        where("username", "==", profileObj.username),
+        orderBy("lastPost", "desc"),
+        limit(10)
+      );
+      const posts = await getDocs(followedUsers);
+      posts.forEach((doc) => {
+        console.log(doc.data());
+        latestPosts = [...latestPosts, ...doc.data().recentPosts];
+      });
+      setProfilePosts(latestPosts);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
     fetchProfileData();
-
-    return () => {
-      setLoading(true);
-    };
   }, []);
 
   useEffect(() => {
-    console.log("following");
-    console.log(following);
-  }, [following]);
+    fetchPosts();
+  }, [!loading]);
+
+  useEffect(() => {
+    console.log("profilePosts");
+    console.log(profilePosts);
+  }, [profilePosts]);
 
   if (loading === false) {
     return (
@@ -277,7 +295,7 @@ const ProfilePage = () => {
             <div className="profilePage__header-profilePic">
               <img
                 src={
-                  profileObj.profilePic ||
+                  profileObj.profilePhotoURL ||
                   "https://w7.pngwing.com/pngs/841/727/png-transparent-computer-icons-user-profile-synonyms-and-antonyms-android-android-computer-wallpaper-monochrome-sphere.png"
                 }
                 alt="profile-picture"
@@ -300,7 +318,18 @@ const ProfilePage = () => {
             </p>
           </div>
           <div className="profilePage__featured">
-            <p>Posts</p>
+            <div className="profilePage__featured-title">{`${profileObj.name.firstName}'s Latest Posts`}</div>
+
+            {profilePosts.length === 0 ? (
+              <p>No posts from {profileObj.name.firstName}</p>
+            ) : (
+              <div className="profilePosts">
+                {profilePosts.length >= 1 &&
+                  profilePosts.map((post) => (
+                    <FeedPost post={post} organizationData={organizationData} />
+                  ))}
+              </div>
+            )}
           </div>
         </div>
         <RSidebar className="profilePage__RSidebar" />
