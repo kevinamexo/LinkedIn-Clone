@@ -8,7 +8,7 @@ import { useDropzone } from "react-dropzone";
 import "./UploadImageModal.css";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaCheckCircle } from "react-icons/fa";
-
+import moment from "moment";
 import {
   getStorage,
   uploadBytes,
@@ -16,9 +16,22 @@ import {
   ref,
   getDownloadURL,
 } from "firebase/storage";
+import { db } from "../firebase/firebaseConfig";
+import {
+  collection,
+  where,
+  getDocs,
+  doc,
+  arrayUnion,
+  updateDoc,
+  addDoc,
+  query,
+  Timestamp,
+} from "firebase/firestore";
 import { IoCheckmarkDoneCircleSharp } from "react-icons/io";
 import BeatLoader from "react-spinners/BeatLoader";
 const UploadModal = ({ type }) => {
+  const { userObj } = useSelector((state) => state.user);
   const [images, setImages] = useState([]);
   const [error, setError] = useState(null);
   const [filesPresent, setFilesPresent] = useState(false);
@@ -27,8 +40,85 @@ const UploadModal = ({ type }) => {
   const [uploading, setUploading] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(null);
+  const [followDocRefId, setFollowDocRefId] = useState("");
+  const [postAction, setPostAction] = useState(null);
   const storage = getStorage();
 
+  const createPostFromImages = async (fileURLS) => {
+    const format1 = "YYYY-MM-DD HH:mm:ss";
+    const time = moment().format(format1);
+    console.log("hello");
+
+    try {
+      //POST AND GET THE ID OF THE POST
+      let date = new Date();
+      console.log(date);
+      let timestamp = Timestamp.fromDate(date);
+      const postRef = await addDoc(collection(db, "posts"), {
+        postText: null,
+        authorId: userObj.username,
+        postType: "images",
+        images: fileURLS,
+        published: timestamp,
+      }).then((docRef) => {
+        console.log("new Post Id" + docRef.id);
+      });
+      //FIND DOCUMEN`T IN FOLLOWS FOR THE USER THAT IS POSTING
+      const followQ = query(
+        collection(db, "follows"),
+        where("username", "==", userObj.username)
+      );
+      const followIdSnap = await getDocs(followQ);
+      let y;
+      followIdSnap.forEach((doc) => {
+        y = doc.id;
+        console.log("Doc id of users follow document" + doc.id);
+        setFollowDocRefId(doc.id);
+      });
+
+      console.log(timestamp);
+      const followRef = doc(db, "follows", y);
+      console.log("Adding second");
+      const querySnapshot2 = await updateDoc(followRef, {
+        recentPosts: arrayUnion({
+          postText: null,
+          authorId: userObj.username,
+          postType: "images",
+          images: fileURLS,
+          published: timestamp,
+        }),
+        lastPost: timestamp,
+      });
+      setUploading(false);
+      setUploadSuccess(true);
+      setUploadMessage("Uploaded");
+      setUploadSuccess(true);
+      setUploadMessage(
+        `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded`
+      );
+
+      setTimeout(() => {
+        dispatch(setCloseModal());
+      }, 3000);
+    } catch (e) {
+      console.log(e);
+      console.log("error adding posts");
+      setUploadSuccess(true);
+      setUploadMessage("error adding posts");
+    }
+  };
+
+  useEffect(() => {
+    if (downloadUrls.length > 0 && postAction === true) {
+      console.log("newURLS");
+      console.log(downloadUrls);
+      createPostFromImages(downloadUrls);
+    } else {
+      return;
+    }
+  }, [downloadUrls, postAction]);
+
+  let filesArray = [];
   let fileCount = 0;
   const dispatch = useDispatch();
   const { showUploadImage } = useSelector((state) => state.modals);
@@ -60,7 +150,6 @@ const UploadModal = ({ type }) => {
 
   const handleFirebaseUpload = () => {
     const promises = [];
-    let filesArray = [];
     setUploading(true);
     images.map((file, idx) => {
       const fileRefPath = `${type === "video" ? "videos" : "images"}/${
@@ -103,25 +192,15 @@ const UploadModal = ({ type }) => {
           await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log("File available at", downloadURL);
             filesArray[idx] = downloadURL;
+            setDownloadUrls(filesArray);
           });
         }
       );
     });
-
     Promise.all(promises)
       .then(() => {
-        setDownloadUrls(filesArray);
-        console.log(filesArray);
-        console.log(images);
-        setUploading(false);
-        setUploadSuccess(true);
-        setUploadMessage(
-          `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded`
-        );
-
-        // setTimeout(() => {
-        //   dispatch(setCloseModal());
-        // }, 2000);
+        console.log("PROMISES RESOLVED");
+        console.log("filesArray");
       })
       .catch((err) => {
         console.log("Error");
@@ -130,10 +209,6 @@ const UploadModal = ({ type }) => {
         setUploadMessage("Error Uploading file");
       });
   };
-
-  useEffect(() => {
-    console.log(progress);
-  }, [progress]);
 
   const handleRemoveFile = (idx) => {
     let i = [...images];
@@ -248,7 +323,10 @@ const UploadModal = ({ type }) => {
               </button>
               <button
                 className="uploadImageModal__footer-submit"
-                onClick={() => handleFirebaseUpload()}
+                onClick={() => {
+                  handleFirebaseUpload();
+                  setPostAction(true);
+                }}
               >
                 Done
               </button>
