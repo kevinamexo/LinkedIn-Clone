@@ -58,7 +58,6 @@ const ProfilePage = () => {
 
   //FETCH PROFILE DETAILS ON LOAD AND CHECK IF CURRENT USER FOLLOWS THIS USER
   const fetchProfileDetails = async () => {
-    setFollowing(true);
     setLoading(true);
     const q = query(collection(db, "user"), where("username", "==", username));
     const querySnapshot = await getDocs(q);
@@ -70,7 +69,8 @@ const ProfilePage = () => {
       setProfileObj(doc.data());
       dispatch(setSelectedUser(doc.data()));
     });
-    if (profObj.followers.includes(currentUser.username)) {
+    if (profObj.followers && profObj.followers.includes(currentUser.username)) {
+      setFollowing(true);
     } else {
       setFollowing(false);
     }
@@ -115,6 +115,7 @@ const ProfilePage = () => {
   const followUser2 = async () => {
     setLoadingFollow(true);
     try {
+      setFollowing(true);
       console.log(profId);
       const followsDocRef = query(
         collection(db, "follows"),
@@ -135,8 +136,6 @@ const ProfilePage = () => {
       await updateDoc(userDoc, {
         followers: arrayUnion(userObj.username),
       });
-
-      setFollowing(true);
     } catch (e) {
       console.log(e);
     }
@@ -221,7 +220,7 @@ const ProfilePage = () => {
                 <p className="profilePosition">
                   {" "}
                   {profileObj.title}{" "}
-                  {organizationData && `at ${organizationData.name}`}
+                  {organizationData.name && `at ${organizationData.name}`}
                 </p>
                 <div className="profileLocation-contactInfo">
                   {profileObj.location && (
@@ -234,12 +233,14 @@ const ProfilePage = () => {
               </div>
               <div className="profilePage__details2">
                 <span className="profilePage__details2-organization">
-                  <div>
-                    <img
-                      src={organizationData.organizationLogo}
-                      alt={organizationData.name}
-                    />
-                  </div>
+                  {organizationData.organizationLogo && (
+                    <div>
+                      <img
+                        src={organizationData.organizationLogo}
+                        alt={organizationData.name}
+                      />
+                    </div>
+                  )}
                   <p>{organizationData.name}</p>
                 </span>
                 {educationData.name && (

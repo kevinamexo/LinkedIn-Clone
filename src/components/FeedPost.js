@@ -23,6 +23,8 @@ const FeedPost = ({ post, profileObj, organizationData }) => {
   useEffect(() => {
     let postDate = post.published ? moment(post.published.seconds) : null;
     let dateNow = moment();
+    let username =
+      profileObj && profileObj.username ? profileObj.username : post.authorId;
     console.log(postDate);
     // console.log(dateNow);
     // console.log(dateNow.diff(postDate, "years"));
@@ -31,7 +33,7 @@ const FeedPost = ({ post, profileObj, organizationData }) => {
         setLoading(true);
         const userQ = query(
           collection(db, "user"),
-          where("username", "==", profileObj.username || post.authorId)
+          where("username", "==", username)
         );
 
         const userSnap = await getDocs(userQ);
