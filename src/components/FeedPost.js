@@ -32,13 +32,19 @@ const FeedPost = ({
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(true);
   const [postUserObj, setPostUserObj] = useState({});
-  const [likes, setLikes] = useState(23);
+  const [likes, setLikes] = useState(null);
   const [liked, setLiked] = useState(null);
   const [postId, setPostId] = useState("");
   const [showPostHeaderOptions, setShowPostHeaderOptions] = useState(false);
   const { userObj } = useSelector((state) => state.user);
+  let postRefId;
 
   useEffect(() => {
+    postRefId = post.postRefId;
+    console.log("postRefId");
+    console.log(postRefId);
+    setLikes(post.likes);
+
     let postDate = post.published ? moment(post.published.seconds) : null;
     let dateNow = moment();
     let username =
@@ -91,20 +97,23 @@ const FeedPost = ({
       );
       const postsDoc = await getDocs(followsPosts);
       postsDoc.forEach((doc) => {
+        console.log(doc.data());
         pdi = doc.id;
-        pcdi = doc.data().postRefId;
+        console.log(pdi);
       });
-      console.log("deleted from follows");
+
+      console.log("this is pdi");
+      console.log(pdi);
 
       const postDocRef = doc(db, "follows", pdi);
       const querySnapshot2 = await updateDoc(postDocRef, {
         recentPosts: arrayRemove(post),
       });
+      console.log("deleted from follows");
+      console.log(post.postRefId);
 
-      const postsColRef = doc(db, "posts", pdi);
-      await deleteDoc(postsColRef).then(() => {
-        deleteByIndex(idx);
-      });
+      const postDel = await deleteDoc(doc(db, "posts", post.postRefId));
+      deleteByIndex(idx);
     } catch (e) {
       console.log(e);
     }
@@ -160,7 +169,7 @@ const FeedPost = ({
                 </p>
               )}
               <p className="feedPost__userDetails-postTime">
-                {}
+                {/* {post.likes || 0} */}
                 <IoMdGlobe
                   style={{
                     marginLeft: "5px",
@@ -201,7 +210,7 @@ const FeedPost = ({
           </div>
           <div className="feedPost__engagements">
             <AiTwotoneLike className="feedPost__likes" />
-            <p>{likes}</p>
+            <p>{post.likes}</p>
           </div>
           <div className="feedPost__actions">
             <button

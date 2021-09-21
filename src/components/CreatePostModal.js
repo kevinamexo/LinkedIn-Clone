@@ -76,6 +76,8 @@ const CreatePostModal = () => {
       console.log(timestamp);
       const followRef = doc(db, "follows", y);
       console.log("Adding second");
+      console.log("postDocId");
+      console.log(postDocId);
       const querySnapshot2 = await updateDoc(followRef, {
         recentPosts: arrayUnion({
           postText: postInput,
@@ -83,6 +85,7 @@ const CreatePostModal = () => {
           postType: "text",
           published: timestamp,
           postRefId: postDocId,
+          likes: 0,
         }),
         lastPost: timestamp,
       });
