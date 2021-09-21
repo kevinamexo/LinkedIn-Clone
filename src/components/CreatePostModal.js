@@ -43,6 +43,7 @@ const CreatePostModal = () => {
 
     try {
       //POST AND GET THE ID OF THE POST
+      let postDocId;
       setPosting(true);
       let date = new Date();
       console.log(date);
@@ -54,6 +55,9 @@ const CreatePostModal = () => {
         published: timestamp,
       }).then((docRef) => {
         console.log("new Post Id" + docRef.id);
+        postDocId = docRef.id;
+        console.log("post doc post collection document id: ");
+        console.log(postDocId);
       });
       //FIND DOCUMENT IN FOLLOWS FOR THE USER THAT IS POSTING
       const followQ = query(
@@ -78,10 +82,13 @@ const CreatePostModal = () => {
           authorId: userObj.username,
           postType: "text",
           published: timestamp,
+          postRefId: postDocId,
         }),
         lastPost: timestamp,
       });
       setTimeout(() => {
+        console.log("confirming post document id:");
+        console.log(postDocId);
         setPosting(false);
         dispatch(setCloseModal());
       }, 1000);

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./FeedPost.css";
+import { useSelector } from "react-redux";
 import { IoMdGlobe } from "react-icons/io";
+import { FaTrashAlt } from "react-icons/fa";
 import { AiOutlineLike, AiOutlineComment, AiTwotoneLike } from "react-icons/ai";
 import { CgComment } from "react-icons/cg";
 import { db } from "../firebase/firebaseConfig";
@@ -9,16 +11,32 @@ import {
   query,
   where,
   doc,
+  updateDoc,
+  deleteDoc,
+  arrayRemove,
   getDocs,
   Timestamp,
   toDate,
 } from "firebase/firestore";
+import { BsThreeDots } from "react-icons/bs";
 import Skeleton from "react-loading-skeleton";
 import moment from "moment";
-const FeedPost = ({ post, profileObj, organizationData }) => {
+const FeedPost = ({
+  post,
+  idx,
+  profileObj,
+  organizationData,
+  feedPosts,
+  setFeedPosts,
+}) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(true);
   const [postUserObj, setPostUserObj] = useState({});
+  const [likes, setLikes] = useState(23);
+  const [liked, setLiked] = useState(null);
+  const [postId, setPostId] = useState("");
+  const [showPostHeaderOptions, setShowPostHeaderOptions] = useState(false);
+  const { userObj } = useSelector((state) => state.user);
 
   useEffect(() => {
     let postDate = post.published ? moment(post.published.seconds) : null;
@@ -41,6 +59,7 @@ const FeedPost = ({ post, profileObj, organizationData }) => {
         userSnap.forEach((doc) => {
           console.log("Doc id of users follow document" + doc.id);
           setPostUserObj(doc.data());
+          setPostId(doc.id);
         });
         setLoading(false);
       }
@@ -48,11 +67,76 @@ const FeedPost = ({ post, profileObj, organizationData }) => {
     fetchProfileDetails();
   }, []);
 
+  const likePost = async () => {
+    try {
+      if (liked === false || liked === null) {
+        setLikes((prevLikes) => prevLikes + 1);
+        setLiked(true);
+        // const postRef=
+      } else if (liked === true) {
+        setLikes((prevLikes) => prevLikes - 1);
+        setLiked(false);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handleDeletePost = async () => {
+    try {
+      let pdi;
+      let pcdi;
+      const followsPosts = query(
+        collection(db, "follows"),
+        where("username", "==", userObj.username)
+      );
+      const postsDoc = await getDocs(followsPosts);
+      postsDoc.forEach((doc) => {
+        pdi = doc.id;
+        pcdi = doc.data().postRefId;
+      });
+      console.log("deleted from follows");
+
+      const postDocRef = doc(db, "follows", pdi);
+      const querySnapshot2 = await updateDoc(postDocRef, {
+        recentPosts: arrayRemove(post),
+      });
+
+      const postsColRef = doc(db, "posts", pdi);
+      await deleteDoc(postsColRef).then(() => {
+        deleteByIndex(idx);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deleteByIndex = (index) => {
+    const newFeedPosts = [...feedPosts];
+    newFeedPosts.splice(index, 1);
+    setFeedPosts((state) => newFeedPosts);
+    console.log(feedPosts);
+  };
+
   return (
     <>
       {loading === false ? (
         <div className="feedPost">
           <div className="feedPost__header">
+            {userObj.username === post.authorId && (
+              <BsThreeDots
+                className="headerOptions-button"
+                onClick={() => setShowPostHeaderOptions(!showPostHeaderOptions)}
+              />
+            )}
+            {showPostHeaderOptions === true &&
+              userObj.username === post.authorId && (
+                <ul className="feedPost__headerOptions">
+                  <li onClick={handleDeletePost}>
+                    <FaTrashAlt className="feedPost__headerOptions-delete" />
+                    <p> Delete post</p>
+                  </li>
+                </ul>
+              )}
             <img
               src={
                 postUserObj.profilePhotoURL
@@ -117,11 +201,17 @@ const FeedPost = ({ post, profileObj, organizationData }) => {
           </div>
           <div className="feedPost__engagements">
             <AiTwotoneLike className="feedPost__likes" />
+            <p>{likes}</p>
           </div>
           <div className="feedPost__actions">
-            <button className="feedPost__action">
-              <AiOutlineLike className="feedPost__action-icon" />
-              <p>Like</p>
+            <button
+              className={liked ? "feedPost__action-liked" : "feedPost__action"}
+              onClick={likePost}
+            >
+              <AiOutlineLike
+                className={liked ? "feedPost__liked" : "feedPost__action-icon"}
+              />
+              <p>{liked ? "Liked" : "Like"}</p>
             </button>
             <button className="feedPost__action">
               <AiOutlineComment className="feedPost__action-icon" />

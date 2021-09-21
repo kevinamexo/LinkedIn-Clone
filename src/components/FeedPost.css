@@ -9,6 +9,9 @@
   margin-top: 10px;
 }
 
+.feedPost__header {
+  position: relative;
+}
 .feedPost__headerLoading,
 .feedPost__header {
   height: 50px;
@@ -119,6 +122,7 @@
   align-items: center;
 }
 
+.feedPost__action-liked,
 .feedPost__action {
   /* justify-content: space-evenly; */
   height: 90%;
@@ -143,6 +147,25 @@
   margin-right: 5px;
 }
 
+.feedPost__action-liked {
+  display: flex;
+  align-items: center;
+}
+.feedPost__action-liked,
+.feedPost__liked {
+  color: rgb(52, 52, 197);
+}
+
+.feedPost__liked {
+  font-size: 2em;
+}
+.feedPost__action-liked {
+  background-color: rgb(212, 212, 245);
+}
+.feedPost__action-liked p {
+  font-weight: bold;
+}
+
 .feedPost__body-media {
   display: flex;
   align-items: center;
@@ -163,4 +186,61 @@
 .LSidebar__greeting a {
   text-decoration: none;
   color: black;
+}
+
+.feedPost__engagements p {
+  margin: 0;
+  font-size: 12px;
+  margin-left: 3px;
+  color: #0a66c2;
+  font-weight: bold;
+}
+
+.headerOptions-button,
+.feedPost__headerOptions {
+  position: absolute;
+  cursor: pointer;
+}
+
+.headerOptions-button {
+  top: 0px;
+  right: 0px;
+  font-size: 1.5em;
+  color: rgb(77, 77, 77);
+  padding: 3px;
+  cursor: pointer;
+}
+
+.feedPost__headerOptions {
+  background-color: #fff;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  list-style-type: none;
+  width: 210px;
+  right: 0;
+  top: 5px;
+  text-align: center;
+  padding: 5px 0;
+}
+
+.feedPost__headerOptions li {
+  /* width: 100%; */
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 4px 15px;
+  font-weight: 600;
+  color: rgb(77, 77, 77);
+}
+.feedPost__headerOptions li:hover {
+  background-color: lightgray;
+}
+
+.feedPost__headerOptions li p {
+  margin-left: 10px;
+}
+.headerOptions-button:active,
+.headerOptions-button:hover {
+  background: lightgray;
+  border-radius: 50%;
 }

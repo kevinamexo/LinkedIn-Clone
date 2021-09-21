@@ -46,7 +46,7 @@ const ProfilePage = () => {
   const [profilePosts, setProfilePosts] = useState([]);
   const [following, setFollowing] = useState(null);
   const [loadingFollow, setLoadingFollow] = useState(null);
-
+  const [loadingPosts, setLoadingPosts] = useState(null);
   const dispatch = useDispatch();
   const pageSize = 3;
   const { selectedUser, userObj } = useSelector((state) => state.user);
@@ -173,6 +173,7 @@ const ProfilePage = () => {
   const fetchPosts = async () => {
     let latestPosts = [];
     try {
+      setLoadingPosts(true);
       const followedUsers = query(
         collection(db, "follows"),
         where("username", "==", profileObj.username),
@@ -185,6 +186,7 @@ const ProfilePage = () => {
         latestPosts = [...latestPosts, ...doc.data().recentPosts];
       });
       setProfilePosts(latestPosts);
+      setLoadingPosts(false);
     } catch (e) {
       console.log(e);
     }
@@ -321,7 +323,7 @@ const ProfilePage = () => {
           <div className="profilePage__featured">
             <div className="profilePage__featured-title">{`${profileObj.name.firstName}'s Latest Posts`}</div>
 
-            {profilePosts.length === 0 ? (
+            {loadingPosts === false && profilePosts.length === 0 ? (
               <p>No posts from {profileObj.name.firstName}</p>
             ) : (
               <div className="profilePosts">

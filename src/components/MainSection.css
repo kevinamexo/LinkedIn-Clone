@@ -127,6 +127,12 @@
   background-color: lightgray;
 }
 
+.mainSection__feed .no-posts {
+  color: grey;
+  text-align: center;
+  font-weight: 600;
+  font-size: 18px;
+}
 @media screen and (max-width: 990px) {
   .mainSection__post,
   .mainSection__feed,

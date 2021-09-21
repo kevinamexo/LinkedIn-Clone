@@ -112,7 +112,18 @@ const MainSection = () => {
         </div>
       </div>
       <div className="mainSection__feed">
-        {feedPosts && feedPosts.map((post) => <FeedPost post={post} />)}
+        {feedPosts &&
+          feedPosts.map((post, idx) => (
+            <FeedPost
+              post={post}
+              feedPosts={feedPosts}
+              setFeedPosts={setFeedPosts}
+              idx={idx}
+            />
+          ))}
+        {feedPosts.length === 0 && (
+          <p className="no-posts">No posts in your feed</p>
+        )}
       </div>
       {showCreatePostModal && (
         <CreatePostModal setShowCreatePostModal={setShowCreatePostModal} />
