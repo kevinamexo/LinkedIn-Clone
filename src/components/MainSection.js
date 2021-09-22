@@ -30,7 +30,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 const MainSection = () => {
   const [postInput, setPostInput] = useState("");
-  const [loadingPost, setLoadingPosts] = useState(null);
+  const [loadingPosts, setLoadingPosts] = useState(null);
   const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
   const { showUploadImage, showUploadVideo, showCreatePostModal } = useSelector(
@@ -121,7 +121,7 @@ const MainSection = () => {
               idx={idx}
             />
           ))}
-        {feedPosts.length === 0 && (
+        {feedPosts.length === 0 && loadingPosts === false && (
           <p className="no-posts">No posts in your feed</p>
         )}
       </div>

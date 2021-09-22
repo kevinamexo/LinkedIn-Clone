@@ -8,7 +8,12 @@
   align-items: center;
   background-color: rgb(244, 244, 244);
   /* overflow-y: hidden; */
-
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 a {

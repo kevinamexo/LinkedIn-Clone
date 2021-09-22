@@ -39,7 +39,7 @@
 .feedPost__userDetails-name {
   font-size: 13px;
   font-weight: 600;
-  color: rgb(77, 77, 77);
+  color: black;
 }
 
 .feedPost__userDetails-userSummary,
@@ -257,4 +257,9 @@
   margin-bottom:-10px;
   color: #0a66c2;
   
+}
+
+
+.feedPost__userDetails a{
+  text-decoration: none;
 }

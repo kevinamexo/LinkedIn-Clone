@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./FeedPost.css";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { IoMdGlobe } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
 import { AiOutlineLike, AiOutlineComment, AiTwotoneLike } from "react-icons/ai";
@@ -216,9 +217,11 @@ const FeedPost = ({
             />
 
             <span className="feedPost__userDetails">
-              <p className="feedPost__userDetails-name ">
-                {`${postUserObj.name.firstName} ${postUserObj.name.lastName}`}
-              </p>
+              <Link to={`/in/${postUserObj.username}`}>
+                <p className="feedPost__userDetails-name ">
+                  {`${postUserObj.name.firstName} ${postUserObj.name.lastName}`}
+                </p>
+              </Link>
               {postUserObj.title && (
                 <p className="feedPost__userDetails-userSummary">
                   {postUserObj.title}
