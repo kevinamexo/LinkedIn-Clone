@@ -121,7 +121,7 @@ const MainSection = () => {
               idx={idx}
             />
           ))}
-        {feedPosts.length === 0 && loadingPosts === false && (
+        {feedPosts.length === 0 && (
           <p className="no-posts">No posts in your feed</p>
         )}
       </div>

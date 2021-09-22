@@ -168,6 +168,7 @@ const FeedPost = ({
       console.log(post.postRefId);
 
       const postDel = await deleteDoc(doc(db, "posts", post.postRefId));
+      const likesDel = await deleteDoc(doc(db, "likes", post.postRefId));
       deleteByIndex(idx);
     } catch (e) {
       console.log(e);
@@ -272,19 +273,11 @@ const FeedPost = ({
                   </p>
                 )}
                 <div className="feedPost__body-media">
-                  {post.images.length > 1 ? (
-                    <Carousel>
-                      {post.images.map((image) => (
-                        <img src={image} alt="Post Media" />
-                      ))}
-                    </Carousel>
-                  ) : (
-                    <>
-                      {post.images.map((image) => (
-                        <img src={image} alt="Post Media" />
-                      ))}
-                    </>
-                  )}
+                  <Carousel>
+                    {post.images.map((image) => (
+                      <img src={image} alt="Post Media" />
+                    ))}
+                  </Carousel>
                 </div>
               </>
             )}
