@@ -7,6 +7,7 @@
   flex-direction: column;
   align-items: center;
   background-color: rgb(244, 244, 244);
+  /* overflow-y: hidden; */
 
 }
 
@@ -21,3 +22,23 @@ button {
 button:disabled {
   cursor: not-allowed;
 }
+
+.carousel-status{
+  background-color:#0a66c2;
+  z-index: 5;
+  font-weight:bold;
+}
+
+.carousel .control-arrow{
+  background-color:black !important;
+}
+.carousel .thumbs{
+  margin:0;
+}
+.carousel .thumb{
+  height:50px;
+  width:50px;
+}
+
+
+

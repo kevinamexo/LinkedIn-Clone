@@ -22,6 +22,8 @@ import {
 import { BsThreeDots } from "react-icons/bs";
 import Skeleton from "react-loading-skeleton";
 import moment from "moment";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from "react-responsive-carousel";
 const FeedPost = ({
   post,
   idx,
@@ -259,11 +261,19 @@ const FeedPost = ({
               </div>
             )}
             {post.images && (
-              <div className="feedPost__body-media">
-                {post.images.map((image) => (
-                  <img src={image} alt="Post Media" />
-                ))}
-              </div>
+              <>
+                <p className="feedPost__media-summary">
+                  {post.images.length} {post.images && "images"}
+                  {post.type} in this post
+                </p>
+                <div className="feedPost__body-media">
+                  <Carousel>
+                    {post.images.map((image) => (
+                      <img src={image} alt="Post Media" />
+                    ))}
+                  </Carousel>
+                </div>
+              </>
             )}
           </div>
           <div className="feedPost__engagements">
