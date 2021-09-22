@@ -87,7 +87,7 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
           postRefId: postDocId,
           likes: 0,
         }),
-        likes: arrayUnion(userObj.username),
+
         lastPost: timestamp,
       });
 

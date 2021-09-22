@@ -265,16 +265,26 @@ const FeedPost = ({
             )}
             {post.images && (
               <>
-                <p className="feedPost__media-summary">
-                  {post.images.length} {post.images && "images"}
-                  {post.type} in this post
-                </p>
+                {post.images.length > 1 && (
+                  <p className="feedPost__media-summary">
+                    {post.images.length} {post.images && "images"}
+                    {post.type} in this post
+                  </p>
+                )}
                 <div className="feedPost__body-media">
-                  <Carousel>
-                    {post.images.map((image) => (
-                      <img src={image} alt="Post Media" />
-                    ))}
-                  </Carousel>
+                  {post.images.length > 1 ? (
+                    <Carousel>
+                      {post.images.map((image) => (
+                        <img src={image} alt="Post Media" />
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <>
+                      {post.images.map((image) => (
+                        <img src={image} alt="Post Media" />
+                      ))}
+                    </>
+                  )}
                 </div>
               </>
             )}

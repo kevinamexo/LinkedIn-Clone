@@ -50,6 +50,7 @@ const UploadModal = ({ type }) => {
     console.log("hello");
 
     try {
+      let postDocId;
       //POST AND GET THE ID OF THE POST
       let date = new Date();
       console.log(date);
@@ -62,6 +63,7 @@ const UploadModal = ({ type }) => {
         published: timestamp,
       }).then((docRef) => {
         console.log("new Post Id" + docRef.id);
+        postDocId = docRef.id;
       });
       //FIND DOCUMEN`T IN FOLLOWS FOR THE USER THAT IS POSTING
       const followQ = query(
@@ -86,9 +88,17 @@ const UploadModal = ({ type }) => {
           postType: "images",
           images: fileURLS,
           published: timestamp,
+          postRefId: postDocId,
         }),
         lastPost: timestamp,
       });
+
+      const likesRef = await addDoc(collection(db, "likes"), {
+        postId: postDocId,
+        likes: 0,
+        users: [],
+      }).then(() => console.log("added interactions collections"));
+
       setUploading(false);
       setUploadSuccess(true);
       setUploadMessage("Uploaded");
