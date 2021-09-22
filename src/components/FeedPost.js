@@ -14,6 +14,7 @@ import {
   updateDoc,
   deleteDoc,
   arrayRemove,
+  arrayUnion,
   getDocs,
   Timestamp,
   toDate,
@@ -33,6 +34,7 @@ const FeedPost = ({
   const [loading, setLoading] = useState(true);
   const [postUserObj, setPostUserObj] = useState({});
   const [likes, setLikes] = useState(null);
+  const [likesUsers, setLikesUsers] = useState([]);
   const [liked, setLiked] = useState(null);
   const [postId, setPostId] = useState("");
   const [showPostHeaderOptions, setShowPostHeaderOptions] = useState(false);
@@ -44,7 +46,6 @@ const FeedPost = ({
     console.log("postRefId");
     console.log(postRefId);
     setLikes(post.likes);
-
     let postDate = post.published ? moment(post.published.seconds) : null;
     let dateNow = moment();
     let username =
@@ -67,7 +68,24 @@ const FeedPost = ({
           setPostUserObj(doc.data());
           setPostId(doc.id);
         });
+        await fetchLikes();
         setLoading(false);
+      }
+    };
+
+    const fetchLikes = async () => {
+      try {
+        const likes = query(
+          collection(db, "likes"),
+          where("postId", "==", post.postRefId)
+        );
+        const likesSnap = await getDocs(likes);
+        likesSnap.forEach((doc) => {
+          setLikes(doc.data().users.length);
+          setLikesUsers(doc.data().users);
+        });
+      } catch (e) {
+        console.log(e);
       }
     };
     fetchProfileDetails();
@@ -75,18 +93,39 @@ const FeedPost = ({
 
   const likePost = async () => {
     try {
-      if (liked === false || liked === null) {
-        setLikes((prevLikes) => prevLikes + 1);
-        setLiked(true);
-        // const postRef=
-      } else if (liked === true) {
-        setLikes((prevLikes) => prevLikes - 1);
-        setLiked(false);
+      let likeAmount = liked === true ? -1 : 1;
+      setLiked(liked ? false : true);
+      setLikes((prevLikes) => prevLikes + likeAmount);
+      let postLikeColID;
+      console.log(post.postRefId);
+      const likesQuery = query(
+        collection(db, "likes"),
+        where("postId", "==", post.postRefId)
+      );
+
+      const likesQuerySnap = await getDocs(likesQuery);
+      likesQuerySnap.forEach((doc) => {
+        postLikeColID = doc.id;
+      });
+      const checkForUserLike = likesUsers.some((v) => v === userObj.username);
+      console.log(checkForUserLike);
+      if (liked) {
+        console.log("ABout to remove like");
+        const unlikeAction = await updateDoc(doc(db, "likes", postLikeColID), {
+          users: arrayRemove(userObj.username),
+        }).then(() => {
+          console.log("Unliked post with ID" + post.postRefId);
+        });
+      } else {
+        const likeAction = await updateDoc(doc(db, "likes", postLikeColID), {
+          users: arrayUnion(userObj.username),
+        });
       }
     } catch (e) {
       console.log(e);
     }
   };
+
   const handleDeletePost = async () => {
     try {
       let pdi;
@@ -101,6 +140,19 @@ const FeedPost = ({
         pdi = doc.id;
         console.log(pdi);
       });
+      try {
+        if (liked === false || liked === null) {
+          setLikes((prevLikes) => prevLikes + 1);
+          setLiked(true);
+
+          // const postRe
+        } else if (liked === true) {
+          setLikes((prevLikes) => prevLikes - 1);
+          setLiked(false);
+        }
+      } catch (e) {
+        console.log(e);
+      }
 
       console.log("this is pdi");
       console.log(pdi);
@@ -125,6 +177,12 @@ const FeedPost = ({
     setFeedPosts((state) => newFeedPosts);
     console.log(feedPosts);
   };
+  useEffect(() => {
+    console.log("checking if liked");
+    console.log(likesUsers);
+    console.log(likesUsers.some((v) => v === userObj.username));
+    setLiked(likesUsers.some((v) => v === userObj.username));
+  }, [likesUsers]);
 
   return (
     <>
@@ -210,12 +268,12 @@ const FeedPost = ({
           </div>
           <div className="feedPost__engagements">
             <AiTwotoneLike className="feedPost__likes" />
-            <p>{post.likes}</p>
+            <p>{likes && likes}</p>
           </div>
           <div className="feedPost__actions">
             <button
               className={liked ? "feedPost__action-liked" : "feedPost__action"}
-              onClick={likePost}
+              onClick={async () => await likePost()}
             >
               <AiOutlineLike
                 className={liked ? "feedPost__liked" : "feedPost__action-icon"}

@@ -87,7 +87,7 @@ const LoginPage = () => {
         </span>
 
         <span className="loggedOut__header-btns">
-          <Link to="/signup">
+          <Link to="/register">
             <button className="loggedOut__page-join">Join now</button>
           </Link>
           <Link to="/login">

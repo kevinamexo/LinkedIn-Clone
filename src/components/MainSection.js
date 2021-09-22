@@ -126,10 +126,18 @@ const MainSection = () => {
         )}
       </div>
       {showCreatePostModal && (
-        <CreatePostModal setShowCreatePostModal={setShowCreatePostModal} />
+        <CreatePostModal
+          setShowCreatePostModal={setShowCreatePostModal}
+          setFeedPosts={setFeedPosts}
+          feedPosts={feedPosts}
+        />
       )}
       {showUploadImage && uploadType === "images" && (
-        <UploadModal type="images" />
+        <UploadModal
+          type="images"
+          setFeedPosts={setFeedPosts}
+          feedPosts={feedPosts}
+        />
       )}
       {showUploadVideo && uploadType === "video" && (
         <UploadModal type="video" />

@@ -1,6 +1,7 @@
 .loggedOut__page {
   /* background-color: rgb(176, 176, 176); */
   margin: 0;
+  background-color:#fff;
 }
 .loggedOut-header {
   display: flex;
@@ -41,12 +42,21 @@
   border: 1px solid #0a66c2;
   border-radius: 15px;
   color: #0a66c2;
+  font-weight:500;
+}
+
+.loggedOut__page-signIn:hover{
+  color: #fff;
+  background-color: #0a66c2;
 }
 
 .loggedOut__page-join {
   border: none;
   margin-right: 10px;
   color: grey;
+  font-weight: bold;
+  background-color: #fff;
+  border-radius: 15px;
 }
 
 .loggedOut__page-join:hover {

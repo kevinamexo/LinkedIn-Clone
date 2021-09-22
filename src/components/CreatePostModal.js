@@ -24,7 +24,7 @@ import {
 } from "firebase/firestore";
 
 import * as frb from "firebase/firestore";
-const CreatePostModal = () => {
+const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
   const [postInput, setPostInput] = useState("");
   const [error, setError] = useState("null");
   const [postType, setPostType] = useState("generic");
@@ -87,12 +87,31 @@ const CreatePostModal = () => {
           postRefId: postDocId,
           likes: 0,
         }),
+        likes: arrayUnion(userObj.username),
         lastPost: timestamp,
       });
+
+      const likesRef = await addDoc(collection(db, "likes"), {
+        postId: postDocId,
+        likes: 0,
+        users: [],
+      }).then(() => console.log("added interactions collections"));
+
       setTimeout(() => {
         console.log("confirming post document id:");
         console.log(postDocId);
         setPosting(false);
+        setFeedPosts((prevFeed) => [
+          {
+            postText: postInput,
+            authorId: userObj.username,
+            postType: "text",
+            published: timestamp,
+            postRefId: postDocId,
+            likes: 0,
+          },
+          ...prevFeed,
+        ]);
         dispatch(setCloseModal());
       }, 1000);
     } catch (e) {

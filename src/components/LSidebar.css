@@ -4,7 +4,7 @@
   align-items: flex-end;
   margin-left: 0;
   /* padding-right: 10px; */
-  min-width: 227px;
+ 
 }
 
 .LSidebar-widget1 {
@@ -12,9 +12,10 @@
   position: sticky;
   right: 0;
   top: 90px;
-  min-width: 227px;
-  background-color: #fff;
-
+  width: 250px;
+  /* max-width: 250px !important; */
+  background-color:   #fff;
+ 
   border-radius: 7px;
   border: 0.5px solid lightgray;
   margin-right: 0;
@@ -174,7 +175,7 @@
     /* padding-right: 10px; */
   }
   .LSidebar-widget1 {
-    width: 90%;
+    width: 90% !important;
     /* height: 165px; */
   }
   .LSidebar__profileViews,

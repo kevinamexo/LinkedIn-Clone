@@ -1,22 +1,24 @@
 .main-page {
   display: grid;
-  grid-template-columns: 300px 45% auto;
-  padding-top: 45px;
-  width: 100%;
+  grid-template-columns: auto 45% auto;
+  padding: 45px 0;
+  width: 90%;
   min-height: calc(100vh - 55px);
   background-color: rgb(244, 244, 244);
   /* min-height: 100vh; */
+  /* overflow-y:hidden;  */
 }
 
 @media screen and (max-width: 990px) {
   .main-page {
     display: grid;
     grid-template-columns: 300px auto;
+    width:100%;
   }
-
   .main-page .RSidebar {
     display: none;
   }
+
 }
 @media screen and (max-width: 765px) {
   .main-page {
@@ -24,4 +26,8 @@
     flex-direction: column;
     /* align-items: center; */
   }
+
+ 
+
+
 }
