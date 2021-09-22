@@ -168,7 +168,14 @@ const FeedPost = ({
       console.log(post.postRefId);
 
       const postDel = await deleteDoc(doc(db, "posts", post.postRefId));
-      const likesDel = await deleteDoc(doc(db, "likes", post.postRefId));
+      const likesDoc = query(
+        collection(db, "likes"),
+        where("postId", "==", post.postRefId)
+      );
+      const likesDocSnap = await getDocs(likesDoc);
+      likesDocSnap.forEach(async (doc) => {
+        await deleteDoc(doc, "likes", doc.id);
+      });
       deleteByIndex(idx);
     } catch (e) {
       console.log(e);
