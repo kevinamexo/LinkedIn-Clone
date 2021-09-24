@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./FeedPost.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setPosts, setRemoveFromPosts } from "../redux/features/postsSlice";
 import { Link } from "react-router-dom";
 import { IoMdGlobe } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
@@ -25,24 +26,19 @@ import Skeleton from "react-loading-skeleton";
 import moment from "moment";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
-const FeedPost = ({
-  post,
-  idx,
-  profileObj,
-  organizationData,
-  feedPosts,
-  setFeedPosts,
-}) => {
+const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(true);
   const [postUserObj, setPostUserObj] = useState({});
-  const [likes, setLikes] = useState(null);
+  const [likes, setLikes] = useState(post.likes);
   const [likesUsers, setLikesUsers] = useState([]);
   const [liked, setLiked] = useState(null);
   const [postId, setPostId] = useState("");
   const [showPostHeaderOptions, setShowPostHeaderOptions] = useState(false);
   const [imgsLoaded, setImgsLoaded] = useState(false);
   const { userObj } = useSelector((state) => state.user);
+  const { posts } = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
 
   let postRefId;
 
@@ -50,7 +46,6 @@ const FeedPost = ({
     postRefId = post.postRefId;
     console.log("postRefId");
     console.log(postRefId);
-    setLikes(post.likes);
     let postDate = post.published ? moment(post.published.seconds) : null;
     let dateNow = moment();
     let username =
@@ -205,18 +200,12 @@ const FeedPost = ({
           await deleteDoc(doc, "likes", doc.id);
         });
       };
-      deleteByIndex(idx);
+      dispatch(setRemoveFromPosts(idx));
     } catch (e) {
       console.log(e);
     }
   };
 
-  const deleteByIndex = (index) => {
-    const newFeedPosts = [...feedPosts];
-    newFeedPosts.splice(index, 1);
-    setFeedPosts((state) => newFeedPosts);
-    console.log(feedPosts);
-  };
   useEffect(() => {
     console.log("checking if liked");
     console.log(likesUsers);
@@ -316,7 +305,7 @@ const FeedPost = ({
                       ))}
                     </Carousel>
                   ) : (
-                    <Skeleton width={300} height={150} />
+                    <Skeleton width={400} height={150} />
                   )}
                 </div>
               </>
@@ -324,7 +313,7 @@ const FeedPost = ({
           </div>
           <div className="feedPost__engagements">
             <AiTwotoneLike className="feedPost__likes" />
-            <p>{likes && likes}</p>
+            <p>{likes}</p>
           </div>
           <div className="feedPost__actions">
             <button

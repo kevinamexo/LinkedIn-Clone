@@ -4,12 +4,15 @@ import { BsCalendar } from "react-icons/bs";
 import { MdPhoto } from "react-icons/md";
 import { RiArticleLine, RiVideoFill } from "react-icons/ri";
 import CreatePostModal from "./CreatePostModal";
+import ContactInfoModal from "./ContactInfoModal";
 import "./MainSection.css";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setShowCreatePostModal,
   setCloseCreatePostModal,
+  setShowContactCardModal,
 } from "../redux/features/modalsSlice";
+import { setPosts, setAddToPosts } from "../redux/features/postsSlice";
 import FeedPost from "./FeedPost";
 import UploadModal from "./UploadModal";
 import { db } from "../firebase/firebaseConfig";
@@ -27,15 +30,21 @@ import {
 } from "../redux/features/modalsSlice";
 
 import InfiniteScroll from "react-infinite-scroll-component";
+import { set } from "react-hook-form";
 
 const MainSection = () => {
   const [postInput, setPostInput] = useState("");
   const [loadingPosts, setLoadingPosts] = useState(null);
+
   const dispatch = useDispatch();
+  const { posts } = useSelector((state) => state.posts);
   const { userObj } = useSelector((state) => state.user);
-  const { showUploadImage, showUploadVideo, showCreatePostModal } = useSelector(
-    (state) => state.modals
-  );
+  const {
+    showUploadImage,
+    showContactCardModal,
+    showUploadVideo,
+    showCreatePostModal,
+  } = useSelector((state) => state.modals);
   const [feedPosts, setFeedPosts] = useState([]);
   const [uploadType, setUploadType] = useState(null);
 
@@ -44,6 +53,7 @@ const MainSection = () => {
   let latestPosts = [];
   const getFeed = async () => {
     try {
+      setLoadingPosts(true);
       const followedUsers = query(
         collection(db, "follows"),
         where("users", "array-contains", "kamexo97"),
@@ -56,9 +66,12 @@ const MainSection = () => {
       });
       console.log("LATEST POSTS");
       console.log(latestPosts);
+      dispatch(setPosts(latestPosts));
       setFeedPosts(latestPosts);
+      setLoadingPosts(false);
     } catch (e) {
       console.log(e);
+      setLoadingPosts(false);
     }
   };
 
@@ -112,16 +125,8 @@ const MainSection = () => {
         </div>
       </div>
       <div className="mainSection__feed">
-        {feedPosts &&
-          feedPosts.map((post, idx) => (
-            <FeedPost
-              post={post}
-              feedPosts={feedPosts}
-              setFeedPosts={setFeedPosts}
-              idx={idx}
-            />
-          ))}
-        {feedPosts.length === 0 && (
+        {posts && posts.map((post, idx) => <FeedPost post={post} idx={idx} />)}
+        {posts.length === [] && loadingPosts === false && (
           <p className="no-posts">No posts in your feed</p>
         )}
       </div>
@@ -129,19 +134,20 @@ const MainSection = () => {
         <CreatePostModal
           setShowCreatePostModal={setShowCreatePostModal}
           setFeedPosts={setFeedPosts}
-          feedPosts={feedPosts}
+          feedPosts={posts}
         />
       )}
       {showUploadImage && uploadType === "images" && (
         <UploadModal
           type="images"
           setFeedPosts={setFeedPosts}
-          feedPosts={feedPosts}
+          feedPosts={posts}
         />
       )}
       {showUploadVideo && uploadType === "video" && (
         <UploadModal type="video" />
       )}
+      {showContactCardModal && <ContactInfoModal />}
     </div>
   );
 };

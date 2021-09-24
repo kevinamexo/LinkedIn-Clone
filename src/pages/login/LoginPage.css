@@ -1,5 +1,7 @@
 .loggedOut__page {
   /* background-color: rgb(176, 176, 176); */
+  height:100%;
+  width:100%;
   margin: 0;
   background-color:#fff;
 }

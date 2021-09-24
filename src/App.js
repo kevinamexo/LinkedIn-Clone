@@ -9,7 +9,7 @@ import CreatePostModal from "./components/CreatePostModal";
 import LoginPage from "./pages/login/LoginPage";
 import SignupPage from "./pages/signup/SignupPage";
 import ProfilePage from "./pages/profilepage/ProfilePage";
-
+import ContactInfoModal from "./components/ContactInfoModal";
 import LoadingModal from "./components/LoadingModal";
 import "./App.css";
 import PrivateRoute from "./components/routeTypes/PrivateRoute";
@@ -30,13 +30,16 @@ import userSlice, {
   setLoading,
   setSearchActive,
 } from "./redux/features/userSlice";
+import { setShowContactCardModal } from "./redux/features/modalsSlice";
 
 import { onAuthStateChange } from "firebase/auth";
 
 function App() {
   const dispatch = useDispatch();
   const { user, userObj, isAuth, loading } = useSelector((state) => state.user);
-  const { modalActive } = useSelector((state) => state.modals);
+  const { modalActive, showContactCardModal } = useSelector(
+    (state) => state.modals
+  );
   const [authenticated, setAuthenticated] = useState(null);
 
   const fetchUserDetails = async (db, userEmail) => {

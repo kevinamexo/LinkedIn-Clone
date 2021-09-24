@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 
 import "./Header.css";
-
+import { Link } from "react-router-dom";
 import HeaderOption from "./HeaderOption";
 import SearchResultsModal from "./SearchResultsModal";
 import { signOut } from "firebase/auth";
@@ -93,7 +93,9 @@ const Header = () => {
             searchActive ? "header__left-activeSearch" : "header__left"
           }
         >
-          <AiFillLinkedin className="linkedin-icon" />
+          <Link to="/">
+            <AiFillLinkedin className="linkedin-icon" />
+          </Link>
           <div
             ref={navbarSearchRef}
             className={searchActive ? "header__search full" : "header__search"}

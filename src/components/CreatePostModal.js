@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
 import { setCloseModal } from "../redux/features/modalsSlice";
+import { setAddToPosts } from "../redux/features/postsSlice";
 import { FaUserCircle } from "react-icons/fa";
 import { AiOutlineClose, AiFillCaretDown } from "react-icons/ai";
 import { IoMdGlobe } from "react-icons/io";
@@ -101,17 +102,16 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
         console.log("confirming post document id:");
         console.log(postDocId);
         setPosting(false);
-        setFeedPosts((prevFeed) => [
-          {
+        dispatch(
+          setAddToPosts({
             postText: postInput,
             authorId: userObj.username,
             postType: "text",
             published: timestamp,
             postRefId: postDocId,
             likes: 0,
-          },
-          ...prevFeed,
-        ]);
+          })
+        );
         dispatch(setCloseModal());
       }, 1000);
     } catch (e) {

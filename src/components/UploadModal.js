@@ -28,6 +28,11 @@ import {
   query,
   Timestamp,
 } from "firebase/firestore";
+import {
+  setPosts,
+  setRemoveFromPosts,
+  setAddToPosts,
+} from "../redux/features/postsSlice";
 import { IoCheckmarkDoneCircleSharp } from "react-icons/io";
 import BeatLoader from "react-spinners/BeatLoader";
 const UploadModal = ({ type }) => {
@@ -105,6 +110,16 @@ const UploadModal = ({ type }) => {
       setUploadSuccess(true);
       setUploadMessage(
         `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded`
+      );
+      dispatch(
+        setAddToPosts({
+          postText: null,
+          authorId: userObj.username,
+          postType: "images",
+          images: fileURLS,
+          published: timestamp,
+          postRefId: postDocId,
+        })
       );
 
       setTimeout(() => {

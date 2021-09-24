@@ -7,6 +7,7 @@ const initialState = {
   showCreatePostModal: false,
   showUploadVideo: false,
   searchActive: false,
+  showContactCardModal: false,
 };
 
 const modalsSlice = createSlice({
@@ -23,6 +24,7 @@ const modalsSlice = createSlice({
       state.modalActive = false;
       state.showCreatePostModal = false;
       state.searchActive = false;
+      state.showContactCardModal = false;
     },
     setShowCreatePostModal: (state) => {
       state.showCreatePostModal = true;
@@ -39,6 +41,9 @@ const modalsSlice = createSlice({
     setCloseSearchModal: (state) => {
       state.searchActive = false;
     },
+    setShowContactCardModal: (state, action) => {
+      state.showContactCardModal = true;
+    },
   },
 });
 
@@ -49,5 +54,6 @@ export const {
   setCloseModal,
   setCloseSearchModal,
   setSearchActive,
+  setShowContactCardModal,
 } = modalsSlice.actions;
 export default modalsSlice;

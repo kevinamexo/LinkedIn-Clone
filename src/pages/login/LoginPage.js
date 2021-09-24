@@ -64,7 +64,7 @@ const LoginPage = () => {
       case "auth/user-not-found":
         return "Couldn’t find an account associated with this email. Please try again.";
       default:
-        return "Error logging in";
+        return "Wrong email or password";
     }
   };
 

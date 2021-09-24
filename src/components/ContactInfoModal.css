@@ -1,0 +1,82 @@
+.contactInfoModal{
+    position:absolute;
+    top:0;
+    /* bottom:0; */
+    height:100%;
+    left:0;
+    right:0;
+    background-color:rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display:flex;
+    justify-content:center;
+}
+
+
+.contactCard{
+    position:absolute;
+    top:10px;
+    width:500px;
+    border-radius:10px;
+     /* max-height:600px; */
+     height:auto !important;
+    margin-top:70px;
+    background-color:#fff;
+}
+
+.contactInfo-header{
+    height:50px;
+    border-bottom:1px solid lightgray;
+    font-size: 20px;
+    display: flex;
+    align-items:center;
+    padding: 0 20px;
+    justify-content:space-between;
+
+}
+
+.closeContactModal{
+    cursor:pointer;
+    padding:3px;
+    border-radius: 3px;
+}
+
+.closeContactModal:hover{
+    background-color: lightgray;
+    font-weight: bold;
+}
+.contactCard-main{
+    list-style-type: none;
+    display:flex;flex-direction: column;
+    padding: 5px 20px;
+}
+
+.contactCard-main li{
+    display: grid;
+    grid-template-columns: 40px auto;
+    padding-bottom:15px;
+}
+.contactIcon{
+    font-size:30px;
+    color:rgb(128, 128, 128);
+}
+
+
+.contactItem-details {
+    text-align:left;
+    margin: 0;
+}
+.contactItem-details p {
+    margin:0;
+}
+
+.contactItem-details .title{
+    font-weight:600;
+    font-size:16px;
+    padding-bottom:10px;
+}
+.contactItem-details .detail{
+    color:#0a66c2;
+    font-size:14px;
+    font-weight: 600;
+    padding-bottom: 6px;
+}

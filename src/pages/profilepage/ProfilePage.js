@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import "./ProfilePage.css";
 
 import { setSelectedUser } from "../../redux/features/userSlice";
+import { setShowContactCardModal } from "../../redux/features/modalsSlice";
 import { useDispatch, useSelector } from "react-redux";
+
 import LoadingModal from "../../components/LoadingModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { db } from "../../firebase/firebaseConfig";
@@ -28,6 +30,7 @@ import { css } from "@emotion/react";
 import { ImSpinner2 } from "react-icons/im";
 import ClipLoader from "react-spinners/ClipLoader";
 import FeedPost from "../../components/FeedPost";
+import ContactInfoModal from "../../components/ContactInfoModal";
 const override = css``;
 
 const ProfilePage = () => {
@@ -50,6 +53,7 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const pageSize = 3;
   const { selectedUser, userObj } = useSelector((state) => state.user);
+  const { showContactCardModal } = useSelector((state) => state.modals);
   const { username } = useParams();
 
   let profObj = {};
@@ -206,137 +210,148 @@ const ProfilePage = () => {
 
   if (loading === false) {
     return (
-      <div className="profilePage">
-        <div className="profilePage__main">
-          <div className="profilePage__header">
-            <div className="profilePage__coverPhoto">
-              {profileObj.coverPhotoURL && (
-                <img src={profileObj.coverPhotoURL || ""} alt="" />
-              )}
-            </div>
-            <div className="profilePage__details">
-              <div className="profilePage__details1">
-                <p className="profileName">
-                  {profileObj.name.firstName} {profileObj.name.lastName}
-                </p>
-                <p className="profilePosition">
-                  {" "}
-                  {profileObj.title}{" "}
-                  {organizationData.name && `at ${organizationData.name}`}
-                </p>
-                <div className="profileLocation-contactInfo">
-                  {profileObj.location && (
-                    <p className="profileLocation">{profileObj.location}</p>
-                  )}
-                  <p className="profileLocation-contactInfo-contact">
-                    Contact Info
-                  </p>
-                </div>
-              </div>
-              <div className="profilePage__details2">
-                <span className="profilePage__details2-organization">
-                  {organizationData.organizationLogo && (
-                    <div>
-                      <img
-                        src={organizationData.organizationLogo}
-                        alt={organizationData.name}
-                      />
-                    </div>
-                  )}
-                  <p>{organizationData.name}</p>
-                </span>
-                {educationData.name && (
-                  <span className="profilePage__details2-organization">
-                    <div>
-                      <img
-                        src={educationData.organizationLogo}
-                        alt={educationData.name}
-                      />
-                    </div>
-                    <p>{educationData.name}</p>
-                  </span>
+      <>
+        <div className="profilePage">
+          <div className="profilePage__main">
+            <div className="profilePage__header">
+              <div className="profilePage__coverPhoto">
+                {profileObj.coverPhotoURL && (
+                  <img src={profileObj.coverPhotoURL || ""} alt="" />
                 )}
               </div>
-            </div>
-            {/* <span>
+              <div className="profilePage__details">
+                <div className="profilePage__details1">
+                  <p className="profileName">
+                    {profileObj.name.firstName} {profileObj.name.lastName}
+                  </p>
+                  <p className="profilePosition">
+                    {" "}
+                    {profileObj.title}{" "}
+                    {organizationData.name && `at ${organizationData.name}`}
+                  </p>
+                  <div className="profileLocation-contactInfo">
+                    {profileObj.location && (
+                      <p className="profileLocation">{profileObj.location}</p>
+                    )}
+                    <p
+                      className="profileLocation-contactInfo-contact"
+                      onClick={() => dispatch(setShowContactCardModal())}
+                    >
+                      Contact Info
+                    </p>
+                  </div>
+                </div>
+                <div className="profilePage__details2">
+                  <span className="profilePage__details2-organization">
+                    {organizationData.organizationLogo && (
+                      <div>
+                        <img
+                          src={organizationData.organizationLogo}
+                          alt={organizationData.name}
+                        />
+                      </div>
+                    )}
+                    <p>{organizationData.name}</p>
+                  </span>
+                  {educationData.name && (
+                    <span className="profilePage__details2-organization">
+                      <div>
+                        <img
+                          src={educationData.organizationLogo}
+                          alt={educationData.name}
+                        />
+                      </div>
+                      <p>{educationData.name}</p>
+                    </span>
+                  )}
+                </div>
+              </div>
+              {/* <span>
             <p className="profileSummary">{profileObj.summary}</p>
             <p className="profileFollowers">229</p>
             profileUsername,profileId, currUserName
             <p className="profileConnections">234</p>
           </span> */}
-            <section className="profilePage__details3">
-              <p className="profilePage__details3-Connections">
-                {profileObj.connections} connections
-              </p>
-              <span className="profilePage__details3-buttons">
-                {!following && (
-                  <button className="follow" onClick={() => followUser2()}>
-                    {loadingFollow ? (
-                      <ImSpinner2 className="loadingSpinner" />
-                    ) : (
-                      "Follow"
-                    )}
-                  </button>
-                )}
-                {following && (
-                  <button className="follow" onClick={() => unFollowUser()}>
-                    {loadingFollow ? (
-                      <ImSpinner2 className="loadingSpinner" />
-                    ) : (
-                      "Following"
-                    )}
-                  </button>
-                )}
+              <section className="profilePage__details3">
+                <p className="profilePage__details3-Connections">
+                  {profileObj.connections} connections
+                </p>
+                <span className="profilePage__details3-buttons">
+                  {!following && (
+                    <button className="follow" onClick={() => followUser2()}>
+                      {loadingFollow ? (
+                        <ImSpinner2 className="loadingSpinner" />
+                      ) : (
+                        "Follow"
+                      )}
+                    </button>
+                  )}
+                  {following && (
+                    <button className="follow" onClick={() => unFollowUser()}>
+                      {loadingFollow ? (
+                        <ImSpinner2 className="loadingSpinner" />
+                      ) : (
+                        "Following"
+                      )}
+                    </button>
+                  )}
 
-                {following ? (
-                  <button className="message">More</button>
-                ) : (
-                  <button className="message">Message</button>
-                )}
-              </span>
-            </section>
-            <div className="profilePage__header-profilePic">
-              <img
-                src={
-                  profileObj.profilePhotoURL ||
-                  "https://w7.pngwing.com/pngs/841/727/png-transparent-computer-icons-user-profile-synonyms-and-antonyms-android-android-computer-wallpaper-monochrome-sphere.png"
-                }
-                alt="profile-picture"
-              />
+                  {following ? (
+                    <button className="message">More</button>
+                  ) : (
+                    <button className="message">Message</button>
+                  )}
+                </span>
+              </section>
+              <div className="profilePage__header-profilePic">
+                <img
+                  src={
+                    profileObj.profilePhotoURL ||
+                    "https://w7.pngwing.com/pngs/841/727/png-transparent-computer-icons-user-profile-synonyms-and-antonyms-android-android-computer-wallpaper-monochrome-sphere.png"
+                  }
+                  alt="profile-picture"
+                />
+              </div>
+            </div>
+            <div className="profilePage__About">
+              <p className="title">About</p>
+              <p
+                className={!showFullSummary ? "about" : "about-full"}
+                onClick={() => setShowFullSummary(!showFullSummary)}
+              >
+                {profileObj.summary}
+              </p>
+              <p
+                className="seeMore"
+                onClick={() => setShowFullSummary(!showFullSummary)}
+              >
+                {showFullSummary ? "show less.." : "see more..."}
+              </p>
+            </div>
+            <div className="profilePage__featured">
+              <div className="profilePage__featured-title">{`${profileObj.name.firstName}'s Latest Posts`}</div>
+
+              {loadingPosts === false && profilePosts.length === 0 ? (
+                <p>No posts from {profileObj.name.firstName}</p>
+              ) : (
+                <div className="profilePosts">
+                  {profilePosts.length >= 1 &&
+                    profilePosts.map((post) => (
+                      <FeedPost
+                        post={post}
+                        organizationData={organizationData}
+                      />
+                    ))}
+                </div>
+              )}
             </div>
           </div>
-          <div className="profilePage__About">
-            <p className="title">About</p>
-            <p
-              className={!showFullSummary ? "about" : "about-full"}
-              onClick={() => setShowFullSummary(!showFullSummary)}
-            >
-              {profileObj.summary}
-            </p>
-            <p
-              className="seeMore"
-              onClick={() => setShowFullSummary(!showFullSummary)}
-            >
-              {showFullSummary ? "show less.." : "see more..."}
-            </p>
-          </div>
-          <div className="profilePage__featured">
-            <div className="profilePage__featured-title">{`${profileObj.name.firstName}'s Latest Posts`}</div>
-
-            {loadingPosts === false && profilePosts.length === 0 ? (
-              <p>No posts from {profileObj.name.firstName}</p>
-            ) : (
-              <div className="profilePosts">
-                {profilePosts.length >= 1 &&
-                  profilePosts.map((post) => (
-                    <FeedPost post={post} organizationData={organizationData} />
-                  ))}
-              </div>
-            )}
-          </div>
+          <RSidebar className="profilePage__RSidebar" />
         </div>
-        <RSidebar className="profilePage__RSidebar" />
-      </div>
+        {showContactCardModal && (
+          <ContactInfoModal profileInfo={profileObj} following={following} />
+        )}
+      </>
     );
   } else {
     return (
