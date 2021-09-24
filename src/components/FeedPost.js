@@ -41,7 +41,9 @@ const FeedPost = ({
   const [liked, setLiked] = useState(null);
   const [postId, setPostId] = useState("");
   const [showPostHeaderOptions, setShowPostHeaderOptions] = useState(false);
+  const [imgsLoaded, setImgsLoaded] = useState(false);
   const { userObj } = useSelector((state) => state.user);
+
   let postRefId;
 
   useEffect(() => {
@@ -92,6 +94,30 @@ const FeedPost = ({
       }
     };
     fetchProfileDetails();
+  }, []);
+
+  useEffect(() => {
+    const loadImage = (image) => {
+      return new Promise((resolve, reject) => {
+        const loadImg = new Image();
+        loadImg.src = image;
+        // wait 2 seconds to simulate loading time
+        loadImg.onload = () =>
+          setTimeout(() => {
+            resolve(image);
+          }, 1000);
+
+        loadImg.onerror = (err) => reject(err);
+      });
+    };
+
+    Promise.all(
+      post.images && post.images.map((image, idx) => loadImage(image))
+    )
+      .then(() => {
+        if (imgsLoaded === false) setImgsLoaded(true);
+      })
+      .catch((err) => console.log("Failed to load images", err));
   }, []);
 
   const likePost = async () => {
@@ -173,9 +199,12 @@ const FeedPost = ({
         where("postId", "==", post.postRefId)
       );
       const likesDocSnap = await getDocs(likesDoc);
-      likesDocSnap.forEach(async (doc) => {
-        await deleteDoc(doc, "likes", doc.id);
-      });
+
+      const deleteFromLikes = async () => {
+        likesDocSnap.forEach(async (doc) => {
+          await deleteDoc(doc, "likes", doc.id);
+        });
+      };
       deleteByIndex(idx);
     } catch (e) {
       console.log(e);
@@ -280,11 +309,15 @@ const FeedPost = ({
                   </p>
                 )}
                 <div className="feedPost__body-media">
-                  <Carousel>
-                    {post.images.map((image) => (
-                      <img src={image} alt="Post Media" />
-                    ))}
-                  </Carousel>
+                  {imgsLoaded ? (
+                    <Carousel>
+                      {post.images.map((image, key) => (
+                        <img src={image} alt="Post Media" key={key} />
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <Skeleton width={300} height={150} />
+                  )}
                 </div>
               </>
             )}
