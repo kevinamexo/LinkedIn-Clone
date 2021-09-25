@@ -69,7 +69,7 @@ function App() {
 
   return (
     <div
-      className="app"
+      className={modalActive ? "appModal" : "app"}
       style={
         modalActive === true
           ? { height: "100vh", overflow: "hidden" }

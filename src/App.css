@@ -3,11 +3,11 @@
   margin: 0;
   padding: 0;
   position: relative;
-  display:flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   background-color: rgb(244, 244, 244);
-  height:100% !important;
+  height: 100% !important;
   /* overflow-y: hidden; */
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -17,6 +17,24 @@
   user-select: none;
 }
 
+.appModal {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgb(244, 244, 244);
+  height: 100vh !important;
+  /* overflow-y: hidden; */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 a {
   cursor: pointer;
 }
@@ -29,22 +47,19 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.carousel-status{
-  background-color:#0a66c2;
+.carousel-status {
+  background-color: #0a66c2;
   z-index: 5;
-  font-weight:bold;
+  font-weight: bold;
 }
 
-.carousel .control-arrow{
-  background-color:black !important;
+.carousel .control-arrow {
+  background-color: black !important;
 }
-.carousel .thumbs{
-  margin:0;
+.carousel .thumbs {
+  margin: 0;
 }
-.carousel .thumb{
-  height:50px;
-  width:50px;
+.carousel .thumb {
+  height: 50px;
+  width: 50px;
 }
-
-
-

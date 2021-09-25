@@ -43,6 +43,7 @@ const modalsSlice = createSlice({
     },
     setShowContactCardModal: (state, action) => {
       state.showContactCardModal = true;
+      state.searchActive = true;
     },
   },
 });

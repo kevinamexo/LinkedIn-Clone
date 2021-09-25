@@ -30,7 +30,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(true);
   const [postUserObj, setPostUserObj] = useState({});
-  const [likes, setLikes] = useState(post.likes);
+  const [likes, setLikes] = useState(0);
   const [likesUsers, setLikesUsers] = useState([]);
   const [liked, setLiked] = useState(null);
   const [postId, setPostId] = useState("");
@@ -43,6 +43,8 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   let postRefId;
 
   useEffect(() => {
+    console.log("CONSOLE.LOG POST`");
+    console.log(post);
     postRefId = post.postRefId;
     console.log("postRefId");
     console.log(postRefId);
