@@ -66,7 +66,8 @@ const MainSection = () => {
       });
       console.log("LATEST POSTS");
       console.log(latestPosts);
-      dispatch(setPosts(latestPosts));
+      const sortedPosts = latestPosts.sort((a, b) => a.published * -1);
+      dispatch(setPosts(sortedPosts));
       setFeedPosts(latestPosts);
       setLoadingPosts(false);
     } catch (e) {
