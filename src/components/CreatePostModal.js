@@ -86,7 +86,6 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
           postType: "text",
           published: timestamp,
           postRefId: postDocId,
-          likes: 0,
         }),
 
         lastPost: timestamp,

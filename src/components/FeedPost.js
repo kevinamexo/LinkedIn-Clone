@@ -83,14 +83,21 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
         );
         const likesSnap = await getDocs(likes);
         likesSnap.forEach((doc) => {
-          setLikes(doc.data().users.length);
           setLikesUsers(doc.data().users);
+          setLikes(doc.data().users.length);
         });
       } catch (e) {
         console.log(e);
       }
     };
+
     fetchProfileDetails();
+    return () => {
+      setLikes(0);
+      setLiked(false);
+      setLikesUsers([]);
+      let postRefId = "";
+    };
   }, []);
 
   useEffect(() => {
@@ -108,17 +115,32 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       });
     };
 
-    Promise.all(
-      post.images && post.images.map((image, idx) => loadImage(image))
-    )
-      .then(() => {
-        if (imgsLoaded === false) setImgsLoaded(true);
-      })
-      .catch((err) => console.log("Failed to load images", err));
+    if (post.images) {
+      Promise.all(
+        post.images && post.images.map((image, idx) => loadImage(image))
+      )
+        .then(() => {
+          if (imgsLoaded === false) setImgsLoaded(true);
+        })
+        .catch((err) => console.log("Failed to load images", err));
+    }
+
+    return () => {
+      setLikes(0);
+      setLiked(null);
+      setLikesUsers([]);
+    };
   }, []);
 
+  useEffect(() => {
+    if (post.likes === 0) {
+      setLikes(0);
+      setLiked(0);
+    }
+  }, [posts]);
   const likePost = async () => {
     try {
+      console.log("liking post");
       let likeAmount = liked === true ? -1 : 1;
       setLiked(liked ? false : true);
       setLikes((prevLikes) => prevLikes + likeAmount);
@@ -146,8 +168,10 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
         const likeAction = await updateDoc(doc(db, "likes", postLikeColID), {
           users: arrayUnion(userObj.username),
         });
+        console.log("likedPost");
       }
     } catch (e) {
+      console.log("error liking post");
       console.log(e);
     }
   };
@@ -166,19 +190,6 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
         pdi = doc.id;
         console.log(pdi);
       });
-      try {
-        if (liked === false || liked === null) {
-          setLikes((prevLikes) => prevLikes + 1);
-          setLiked(true);
-
-          // const postRe
-        } else if (liked === true) {
-          setLikes((prevLikes) => prevLikes - 1);
-          setLiked(false);
-        }
-      } catch (e) {
-        console.log(e);
-      }
 
       console.log("this is pdi");
       console.log(pdi);
@@ -209,10 +220,14 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   };
 
   useEffect(() => {
-    console.log("checking if liked");
     console.log(likesUsers);
-    console.log(likesUsers.some((v) => v === userObj.username));
-    setLiked(likesUsers.some((v) => v === userObj.username));
+    const checkingLike = likesUsers.some((v) => v === userObj.username);
+
+    if (post.likes !== 0 && checkingLike === true) {
+      setLiked(true);
+    } else {
+      setLiked(false);
+    }
   }, [likesUsers]);
 
   return (
