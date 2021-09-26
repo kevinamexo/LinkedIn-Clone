@@ -130,7 +130,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       setLiked(null);
       setLikesUsers([]);
     };
-  }, []);
+  }, [posts]);
 
   useEffect(() => {
     if (post.likes === 0) {

@@ -56,6 +56,8 @@ const UploadModal = ({ type }) => {
 
     try {
       let postDocId;
+      console.log("filesURLS");
+      console.log(fileURLS);
       //POST AND GET THE ID OF THE POST
       let date = new Date();
       console.log(date);
@@ -234,6 +236,9 @@ const UploadModal = ({ type }) => {
         setUploadMessage("Error Uploading file");
       });
   };
+  useEffect(() => {
+    console.log(images);
+  }, [images]);
 
   const handleRemoveFile = (idx) => {
     let i = [...images];
