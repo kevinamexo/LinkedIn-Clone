@@ -56,17 +56,18 @@ const MainSection = () => {
       setLoadingPosts(true);
       const followedUsers = query(
         collection(db, "follows"),
-        where("users", "array-contains", "kamexo97"),
+        where("users", "array-contains", userObj.username),
         orderBy("lastPost", "desc"),
         limit(10)
       );
       const posts = await getDocs(followedUsers);
       posts.forEach((doc) => {
+        console.log(doc.data());
         latestPosts = [...latestPosts, ...doc.data().recentPosts];
       });
       console.log("LATEST POSTS");
       console.log(latestPosts);
-      const sortedPosts = latestPosts.sort((a, b) => a.published * -1);
+      const sortedPosts = latestPosts.sort((a, b) => a.published);
       dispatch(setPosts(sortedPosts));
       setFeedPosts(latestPosts);
       setLoadingPosts(false);
@@ -79,6 +80,10 @@ const MainSection = () => {
   useEffect(() => {
     console.log("hello");
     getFeed();
+
+    return () => {
+      dispatch(setPosts([]));
+    };
   }, []);
 
   return (
@@ -139,11 +144,7 @@ const MainSection = () => {
         />
       )}
       {showUploadImage && uploadType === "images" && (
-        <UploadModal
-          type="images"
-          setFeedPosts={setFeedPosts}
-          feedPosts={posts}
-        />
+        <UploadModal setFeedPosts={setFeedPosts} feedPosts={posts} />
       )}
       {showUploadVideo && uploadType === "video" && (
         <UploadModal type="video" />

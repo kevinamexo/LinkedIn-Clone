@@ -16,7 +16,7 @@ const postsSlice = createSlice({
       state.posts = [action.payload, ...state.posts];
     },
     setRemoveFromPosts: (state, action) => {
-      state.posts.slice(action.payload, 1);
+      console.log("removed" + state.posts.slice(action.payload, 1));
     },
   },
 });

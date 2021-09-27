@@ -8,6 +8,7 @@ const initialState = {
   showUploadVideo: false,
   searchActive: false,
   showContactCardModal: false,
+  showEditSummaryModal: false,
 };
 
 const modalsSlice = createSlice({
@@ -18,14 +19,7 @@ const modalsSlice = createSlice({
       state.showUploadImage = true;
       state.modalActive = true;
     },
-    setCloseModal: (state) => {
-      state.showUploadImage = false;
-      state.showUploadVideo = false;
-      state.modalActive = false;
-      state.showCreatePostModal = false;
-      state.searchActive = false;
-      state.showContactCardModal = false;
-    },
+    setCloseModal: (state) => initialState,
     setShowCreatePostModal: (state) => {
       state.showCreatePostModal = true;
       state.modalActive = true;
@@ -43,7 +37,11 @@ const modalsSlice = createSlice({
     },
     setShowContactCardModal: (state, action) => {
       state.showContactCardModal = true;
-      state.searchActive = true;
+      state.modalActive = true;
+    },
+    setShowEditSummaryModal: (state, action) => {
+      state.showEditSummaryModal = true;
+      state.modalActive = true;
     },
   },
 });
@@ -56,5 +54,6 @@ export const {
   setCloseSearchModal,
   setSearchActive,
   setShowContactCardModal,
+  setShowEditSummaryModal,
 } = modalsSlice.actions;
 export default modalsSlice;

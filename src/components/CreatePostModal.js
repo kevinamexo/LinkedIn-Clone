@@ -32,7 +32,7 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
   const [posting, setPosting] = useState(null);
   const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
-  const authorId = "kamexo97";
+  // const authorId = "kamexo97";
   const { firstName, lastName, title, organization, username } = userObj;
   const [followDocRefId, setFollowDocRefId] = useState("");
 
@@ -79,6 +79,7 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
       console.log("Adding second");
       console.log("postDocId");
       console.log(postDocId);
+      console.log("NEW POST USERNAME " + userObj.username);
       const querySnapshot2 = await updateDoc(followRef, {
         recentPosts: arrayUnion({
           postText: postInput,
@@ -120,6 +121,15 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
   };
 
   const createPostBodyRef = useRef();
+  const name = userObj.name
+    ? `${
+        userObj.name.firstName.charAt(0).toUpperCase() +
+        userObj.name.firstName.slice(1)
+      } ${
+        userObj.name.lastName.charAt(0).toUpperCase() +
+        userObj.name.lastName.slice(1)
+      }`
+    : null;
   return (
     <div className="createPostModal">
       <form className="createPostForm" onSubmit={publishPost}>
@@ -141,7 +151,7 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
             <FaUserCircle className="createPost__authorPic" />
           )}
           <span className="createPost__authorSection-span">
-            <p>Kevin Amexo</p>
+            <p>{name}</p>
             <button className="createPost__visibleTo">
               <IoMdGlobe />
               Everyone

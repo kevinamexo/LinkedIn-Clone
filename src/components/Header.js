@@ -124,7 +124,11 @@ const Header = () => {
               }}
             />
             <HeaderOption title="My Network" Icon={FaUserFriends} />
-            <HeaderOption title="Jobs" Icon={FaBriefcase} />
+            <HeaderOption
+              title="Jobs"
+              Icon={FaBriefcase}
+              onClick={() => window.open("https://www.linkedin.com/jobs/")}
+            />
             <HeaderOption title="Notifications" Icon={FaBell} />
             {userObj.profilePhotoURL ? (
               <span

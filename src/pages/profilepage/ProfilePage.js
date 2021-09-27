@@ -3,7 +3,10 @@ import { useParams } from "react-router-dom";
 import "./ProfilePage.css";
 
 import { setSelectedUser } from "../../redux/features/userSlice";
-import { setShowContactCardModal } from "../../redux/features/modalsSlice";
+import {
+  setShowContactCardModal,
+  setShowEditSummaryModal,
+} from "../../redux/features/modalsSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 import LoadingModal from "../../components/LoadingModal";
@@ -28,16 +31,21 @@ import RSidebar from "../../components/RSidebar";
 import { css } from "@emotion/react";
 // import "./ButtonLoader.css";
 import { ImSpinner2 } from "react-icons/im";
+import { BiEditAlt } from "react-icons/bi";
+import { RiPencilLine } from "react-icons/ri";
 import ClipLoader from "react-spinners/ClipLoader";
 import FeedPost from "../../components/FeedPost";
 import ContactInfoModal from "../../components/ContactInfoModal";
+import EditSummaryModal from "../../components/EditSummaryModal";
 const override = css``;
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
+  const [myProfile, setMyProfile] = useState(null);
   const [profileObj, setProfileObj] = useState({});
   const [profileId, setProfileId] = useState("");
   const [pO, setPO] = useState(false); // flag for makikng sure profileObj is set
+  const [summary, setSummary] = useState(null);
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [organizationId, setOrganizationId] = useState("");
   const [profId, setProfId] = useState("");
@@ -51,9 +59,12 @@ const ProfilePage = () => {
   const [loadingFollow, setLoadingFollow] = useState(null);
   const [loadingPosts, setLoadingPosts] = useState(null);
   const dispatch = useDispatch();
+
   const pageSize = 3;
   const { selectedUser, userObj } = useSelector((state) => state.user);
-  const { showContactCardModal } = useSelector((state) => state.modals);
+  const { showContactCardModal, showEditSummaryModal } = useSelector(
+    (state) => state.modals
+  );
   const { username } = useParams();
 
   let profObj = {};
@@ -109,8 +120,12 @@ const ProfilePage = () => {
 
   const fetchProfileData = async () => {
     await fetchProfileDetails().then(() => {
-      getOrganization();
-      getEducation();
+      if (profObj.organizationId) {
+        getOrganization();
+      }
+      if (profObj.eduInstitutes) {
+        getEducation();
+      }
       setLoading(false);
     });
   };
@@ -197,6 +212,12 @@ const ProfilePage = () => {
   };
   useEffect(() => {
     fetchProfileData();
+    return () => {
+      setOrganizationData({});
+      setFollowing(null);
+      setProfileObj({});
+      dispatch(setSelectedUser(null));
+    };
   }, []);
 
   useEffect(() => {
@@ -208,7 +229,30 @@ const ProfilePage = () => {
     console.log(profilePosts);
   }, [profilePosts]);
 
-  if (loading === false) {
+  useEffect(() => {
+    if (!profileObj) return;
+    // console.log(userObj);
+    console.log("selectedUser");
+    console.log(selectedUser);
+    console.log("userObj");
+    console.log(userObj);
+    if (profileObj.username === userObj.username) {
+      setMyProfile(true);
+    } else {
+      console.log("not my profile");
+      setMyProfile(false);
+    }
+
+    return () => {
+      setMyProfile(null);
+    };
+  }, [profileObj]);
+
+  useEffect(() => {
+    setSummary(userObj.summary);
+  }, [userObj.summary]);
+
+  if (loading === false && myProfile !== null) {
     return (
       <>
         <div className="profilePage">
@@ -272,7 +316,7 @@ const ProfilePage = () => {
             profileUsername,profileId, currUserName
             <p className="profileConnections">234</p>
           </span> */}
-              <section className="profilePage__details3">
+              <section className="  = profilePage__details3">
                 <p className="profilePage__details3-Connections">
                   {profileObj.connections} connections
                 </p>
@@ -309,7 +353,7 @@ const ProfilePage = () => {
                     profileObj.profilePhotoURL ||
                     "https://w7.pngwing.com/pngs/841/727/png-transparent-computer-icons-user-profile-synonyms-and-antonyms-android-android-computer-wallpaper-monochrome-sphere.png"
                   }
-                  alt="profile-picture"
+                  alt={profileObj.username}
                 />
               </div>
             </div>
@@ -319,14 +363,32 @@ const ProfilePage = () => {
                 className={!showFullSummary ? "about" : "about-full"}
                 onClick={() => setShowFullSummary(!showFullSummary)}
               >
-                {profileObj.summary}
+                {summary}
+                {!profileObj.summary &&
+                  `*${
+                    myProfile ? "Your profile " : profileObj.name.firstName
+                  } has no profile summary*`}
               </p>
+              {!profileObj.summary && (
+                <p
+                  className="profilePage__About-addSummary"
+                  onClick={() => dispatch(setShowEditSummaryModal())}
+                >
+                  Add a summary
+                </p>
+              )}
               <p
                 className="seeMore"
                 onClick={() => setShowFullSummary(!showFullSummary)}
               >
                 {showFullSummary ? "show less.." : "see more..."}
               </p>
+              {myProfile && (
+                <BiEditAlt
+                  className="profilePage__editSummary"
+                  onClick={() => dispatch(setShowEditSummaryModal())}
+                />
+              )}
             </div>
             <div className="profilePage__featured">
               <div className="profilePage__featured-title">{`${profileObj.name.firstName}'s Latest Posts`}</div>
@@ -351,6 +413,7 @@ const ProfilePage = () => {
         {showContactCardModal && (
           <ContactInfoModal profileInfo={profileObj} following={following} />
         )}
+        {showEditSummaryModal && <EditSummaryModal profileInfo={profileObj} />}
       </>
     );
   } else {

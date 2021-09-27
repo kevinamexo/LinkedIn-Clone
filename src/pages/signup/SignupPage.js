@@ -89,8 +89,7 @@ const SignupPage = ({ isAuth }) => {
         addDoc(collection(db, "user"), {
           email: data.email,
           joined: moment().format("DD/MM/YYYY"),
-          firstName: data.firstName,
-          lastName: data.lastName,
+          name: { firstName: data.firstName, lastName: data.lastName },
           joined: moment().format("DD/MM/YYYY"),
           connections: 0,
           coverPhotoUrl: null,

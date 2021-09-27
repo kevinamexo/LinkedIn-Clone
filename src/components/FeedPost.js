@@ -26,6 +26,7 @@ import Skeleton from "react-loading-skeleton";
 import moment from "moment";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
+import { set } from "react-hook-form";
 const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -43,6 +44,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   let postRefId;
 
   useEffect(() => {
+    setLoading(true);
     console.log("CONSOLE.LOG POST`");
     console.log(post);
     postRefId = post.postRefId;
@@ -50,8 +52,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     console.log(postRefId);
     let postDate = post.published ? moment(post.published.seconds) : null;
     let dateNow = moment();
-    let username =
-      profileObj && profileObj.username ? profileObj.username : post.authorId;
+    let username = post.authorId;
     console.log(postDate);
     // console.log(dateNow);
     // console.log(dateNow.diff(postDate, "years"));
@@ -96,6 +97,8 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       setLikes(0);
       setLiked(false);
       setLikesUsers([]);
+      setPostUserObj({});
+      username = "";
       let postRefId = "";
     };
   }, []);
@@ -232,7 +235,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
   return (
     <>
-      {loading === false ? (
+      {loading === false && postUserObj ? (
         <div className="feedPost">
           <div className="feedPost__header">
             {userObj.username === post.authorId && (
@@ -254,7 +257,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
               src={
                 postUserObj.profilePhotoURL
                   ? postUserObj.profilePhotoURL
-                  : "https://media-exp1.licdn.com/dms/image/C5603AQGEdRXt-tOAbw/profile-displayphoto-shrink_100_100/0/1588621541709?e=1634774400&v=beta&t=IJni8xOR-N9zfH5on7sn0jQ7ClkGZorjJXnxyUYBAdU"
+                  : "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
               }
               alt={postUserObj.username}
             />

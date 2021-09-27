@@ -66,6 +66,9 @@ const userSlice = createSlice({
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload;
     },
+    setUpdatedSummary: (state, action) => {
+      state.userObj.summary = action.payload;
+    },
   },
 });
 
@@ -75,5 +78,6 @@ export const {
   setUserLogoutState,
   setLoading,
   setSelectedUser,
+  setUpdatedSummary,
 } = userSlice.actions;
 export default userSlice;
