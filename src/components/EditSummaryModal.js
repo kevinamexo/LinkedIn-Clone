@@ -24,7 +24,7 @@ const EditSummaryModal = () => {
   const [updateSuccess, setUpdateSuccess] = useState(null);
   // const { setCloseModal } = useSelector((state) => state.modals);
   const { userObj } = useSelector((state) => state.user);
-  const [summary, setSummmary] = useState(userObj.summary);
+  const [summary, setSummary] = useState(userObj.summary);
 
   // useEffect(() =>())
 
@@ -58,7 +58,11 @@ const EditSummaryModal = () => {
     } catch (e) {}
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    return () => {
+      setSummary(null);
+    };
+  }, []);
 
   return (
     <div className="editSummaryModal">
@@ -81,7 +85,7 @@ const EditSummaryModal = () => {
                 style={{ resize: "none", width: "90%" }}
                 placeholder={summary === "" && "Add your profile summary"}
                 value={summary}
-                onChange={(e) => setSummmary(e.target.value)}
+                onChange={(e) => setSummary(e.target.value)}
               />
             )}
             {posting === false && updateSuccess == true && (

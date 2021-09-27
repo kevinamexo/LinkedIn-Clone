@@ -24,16 +24,20 @@ const LSidebar = () => {
         <div className="LSidebar-coverImage-container">
           <img
             className="LSidebar-coverImage"
-            src={userObj && userObj.coverPhotoURL}
+            src={
+              userObj && userObj.coverPhotoURL
+                ? userObj.coverPhotoURL
+                : "https://wallpaperaccess.com/full/1285952.jpg"
+            }
             alt="cover-photo"
           />
         </div>
         <div className="LSidebar-profile-photo">
           <img
             src={
-              userObj && userObj.profilePhotoURL !== ""
+              userObj && userObj.profilePhotoURL
                 ? userObj.profilePhotoURL
-                : "https://w7.pngwing.com/pngs/841/727/png-transparent-computer-icons-user-profile-synonyms-and-antonyms-android-android-computer-wallpaper-monochrome-sphere.png"
+                : "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
             }
 
             // alt="profile-photo"

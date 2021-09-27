@@ -249,8 +249,12 @@ const ProfilePage = () => {
   }, [profileObj]);
 
   useEffect(() => {
-    setSummary(userObj.summary);
-  }, [userObj.summary]);
+    if (myProfile === true) {
+      setSummary(userObj.summary);
+    } else {
+      setSummary(profileObj.summary);
+    }
+  }, [profileObj]);
 
   if (loading === false && myProfile !== null) {
     return (
