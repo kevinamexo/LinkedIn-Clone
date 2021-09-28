@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { db, auth } from "../firebase/firebaseConfig";
-import useGetUser from "../firebase/hooks/useGetUser";
+import React, { useState } from "react";
+import { db } from "../../firebase/firebaseConfig";
+
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { collection, query, where, getDoc, getDocs } from "firebase/firestore";
+import { collection } from "firebase/firestore";
 import { VscChevronDown } from "react-icons/vsc";
 import "./LSidebar.css";
 

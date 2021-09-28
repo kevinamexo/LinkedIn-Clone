@@ -3,19 +3,15 @@ import { FaUserCircle } from "react-icons/fa";
 import { BsCalendar } from "react-icons/bs";
 import { MdPhoto } from "react-icons/md";
 import { RiArticleLine, RiVideoFill } from "react-icons/ri";
-import CreatePostModal from "./CreatePostModal";
-import ContactInfoModal from "./ContactInfoModal";
+import CreatePostModal from "../modals/CreatePostModal";
+import ContactInfoModal from "../modals/ContactInfoModal";
 import "./MainSection.css";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setShowCreatePostModal,
-  setCloseCreatePostModal,
-  setShowContactCardModal,
-} from "../redux/features/modalsSlice";
-import { setPosts, setAddToPosts } from "../redux/features/postsSlice";
-import FeedPost from "./FeedPost";
-import UploadModal from "./UploadModal";
-import { db } from "../firebase/firebaseConfig";
+
+import { setPosts, setAddToPosts } from "../../redux/features/postsSlice";
+import FeedPost from "../FeedPost";
+import UploadModal from "../modals/UploadModal";
+import { db } from "../../firebase/firebaseConfig";
 import {
   where,
   limit,
@@ -25,9 +21,12 @@ import {
   getDocs,
 } from "firebase/firestore";
 import {
+  setShowCreatePostModal,
+  setCloseCreatePostModal,
+  setShowContactCardModal,
   setShowUploadImage,
   setShowUploadVideo,
-} from "../redux/features/modalsSlice";
+} from "../../redux/features/modalsSlice";
 
 import InfiniteScroll from "react-infinite-scroll-component";
 import { set } from "react-hook-form";

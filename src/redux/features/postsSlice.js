@@ -5,6 +5,13 @@ const initialState = {
   posts: [],
 };
 
+const removeItem = (arr, index) => {
+  let newArray = [...arr];
+  if (index !== -1) {
+    newArray.splice(index, 1);
+    return newArray;
+  }
+};
 const postsSlice = createSlice({
   name: "posts",
   initialState,
@@ -16,7 +23,10 @@ const postsSlice = createSlice({
       state.posts = [action.payload, ...state.posts];
     },
     setRemoveFromPosts: (state, action) => {
-      console.log("removed" + state.posts.slice(action.payload, 1));
+      console.log(
+        "removed" + JSON.stringify(state.posts.slice(action.payload, 1))
+      );
+      state.posts = removeItem(state.posts, action.payload);
     },
   },
 });

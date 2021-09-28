@@ -3,14 +3,14 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Switch, Route } from "react-router-dom";
 
-import Header from "./components/Header";
+import Header from "./components/layout/Header";
 import Main from "./pages/main/Main";
-import CreatePostModal from "./components/CreatePostModal";
+import CreatePostModal from "./components/modals/CreatePostModal";
 import LoginPage from "./pages/login/LoginPage";
 import SignupPage from "./pages/signup/SignupPage";
 import ProfilePage from "./pages/profilepage/ProfilePage";
-import ContactInfoModal from "./components/ContactInfoModal";
-import LoadingModal from "./components/LoadingModal";
+import ContactInfoModal from "./components/modals/ContactInfoModal";
+import LoadingModal from "./components/modals/LoadingModal";
 import "./App.css";
 import PrivateRoute from "./components/routeTypes/PrivateRoute";
 import AuthRoute from "./components/routeTypes/AuthRoutes";

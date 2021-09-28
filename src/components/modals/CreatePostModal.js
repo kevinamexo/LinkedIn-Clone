@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
-import { setCloseModal } from "../redux/features/modalsSlice";
-import { setAddToPosts } from "../redux/features/postsSlice";
+import { setCloseModal } from "../../redux/features/modalsSlice";
+import { setAddToPosts } from "../../redux/features/postsSlice";
 import { FaUserCircle } from "react-icons/fa";
 import { AiOutlineClose, AiFillCaretDown } from "react-icons/ai";
 import { IoMdGlobe } from "react-icons/io";
@@ -10,7 +10,7 @@ import "./CreatePostModal.css";
 import TextareaAutosize from "react-textarea-autosize";
 // import { serverTimestamp } from "firebase/database";
 import BeatLoader from "react-spinners/BeatLoader";
-import { db } from "../firebase/firebaseConfig";
+import { db } from "../../firebase/firebaseConfig";
 import {
   query,
   collection,

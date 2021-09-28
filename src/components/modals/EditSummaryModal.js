@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setCloseModal } from "../redux/features/modalsSlice";
-import { setUpdatedSummary } from "../redux/features/userSlice";
+import { setCloseModal } from "../../redux/features/modalsSlice";
+import { setUpdatedSummary } from "../../redux/features/userSlice";
 import { AiOutlineClose } from "react-icons/ai";
 import TextareaAutosize from "react-textarea-autosize";
 import "./EditSummary.css";
 import { BeatLoader } from "react-spinners";
 import { FaCheckCircle } from "react-icons/fa";
-import { db } from "../firebase/firebaseConfig";
+import { db } from "../../firebase/firebaseConfig";
 import {
   query,
   where,

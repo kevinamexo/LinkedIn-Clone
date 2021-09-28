@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCloseModal } from "../redux/features/modalsSlice";
+import { setCloseModal } from "../../redux/features/modalsSlice";
 import { AiFillLinkedin, AiOutlineMail, AiOutlineClose } from "react-icons/ai";
 import { FaUser, FaUserFriends } from "react-icons/fa";
 import "./ContactInfoModal.css";

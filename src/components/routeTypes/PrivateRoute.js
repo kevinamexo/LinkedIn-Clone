@@ -2,7 +2,7 @@ import { Route, Redirect, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { auth } from "../../firebase/firebaseConfig";
-import LoadingModal from "../LoadingModal";
+import LoadingModal from "../modals/LoadingModal";
 const PrivateRoute = ({ component: Component, authState, ...rest }) => {
   const location = useLocation();
   const { user, userObj, isAuth, loading } = useSelector((state) => state.user);

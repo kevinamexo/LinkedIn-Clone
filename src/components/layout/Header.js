@@ -12,7 +12,7 @@ import {
 import "./Header.css";
 import { Link } from "react-router-dom";
 import HeaderOption from "./HeaderOption";
-import SearchResultsModal from "./SearchResultsModal";
+import SearchResultsModal from "../modals/SearchResultsModal";
 import { signOut } from "firebase/auth";
 import {
   colleciton,
@@ -21,16 +21,19 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { auth, db } from "../firebase/firebaseConfig";
+import { auth, db } from "../../firebase/firebaseConfig";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveUser, setUserLogoutState } from "../redux/features/userSlice";
+import {
+  setActiveUser,
+  setUserLogoutState,
+} from "../../redux/features/userSlice";
 
 import {
   setSearchActive,
   setCloseModal,
   setCloseSearchModal,
-} from "../redux/features/modalsSlice";
+} from "../../redux/features/modalsSlice";
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);

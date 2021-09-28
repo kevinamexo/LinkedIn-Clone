@@ -9,10 +9,10 @@ import {
 } from "../../redux/features/modalsSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-import LoadingModal from "../../components/LoadingModal";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import LoadingModal from "../../components/modals/LoadingModal";
+import LoadingSpinner from "../../components/loaders/LoadingSpinner";
 import { db } from "../../firebase/firebaseConfig";
-import ButtonLoader from "../../components/ButtonLoader";
+import ButtonLoader from "../../components/loaders/ButtonLoader";
 import {
   query,
   collection,
@@ -27,7 +27,7 @@ import {
   limit,
 } from "firebase/firestore";
 
-import RSidebar from "../../components/RSidebar";
+import RSidebar from "../../components/layout/RSidebar";
 import { css } from "@emotion/react";
 // import "./ButtonLoader.css";
 import { ImSpinner2 } from "react-icons/im";
@@ -35,8 +35,8 @@ import { BiEditAlt } from "react-icons/bi";
 import { RiPencilLine } from "react-icons/ri";
 import ClipLoader from "react-spinners/ClipLoader";
 import FeedPost from "../../components/FeedPost";
-import ContactInfoModal from "../../components/ContactInfoModal";
-import EditSummaryModal from "../../components/EditSummaryModal";
+import ContactInfoModal from "../../components/modals/ContactInfoModal";
+import EditSummaryModal from "../../components/modals/EditSummaryModal";
 const override = css``;
 
 const ProfilePage = () => {

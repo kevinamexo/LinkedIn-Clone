@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   setShowUploadImage,
   setCloseModal,
-} from "../redux/features/modalsSlice";
+} from "../../redux/features/modalsSlice";
 import { useDropzone } from "react-dropzone";
 import "./UploadImageModal.css";
 import { AiOutlineClose } from "react-icons/ai";
@@ -16,7 +16,7 @@ import {
   ref,
   getDownloadURL,
 } from "firebase/storage";
-import { db } from "../firebase/firebaseConfig";
+import { db } from "../../firebase/firebaseConfig";
 import {
   collection,
   where,
@@ -32,7 +32,7 @@ import {
   setPosts,
   setRemoveFromPosts,
   setAddToPosts,
-} from "../redux/features/postsSlice";
+} from "../../redux/features/postsSlice";
 import { IoCheckmarkDoneCircleSharp } from "react-icons/io";
 import BeatLoader from "react-spinners/BeatLoader";
 const UploadModal = ({ type }) => {

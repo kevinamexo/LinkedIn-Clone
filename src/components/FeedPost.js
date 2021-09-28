@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./FeedPost.css";
 import { useSelector, useDispatch } from "react-redux";
-import { setPosts, setRemoveFromPosts } from "../redux/features/postsSlice";
+import { setRemoveFromPosts } from "../redux/features/postsSlice";
 import { Link } from "react-router-dom";
 import { IoMdGlobe } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
 import { AiOutlineLike, AiOutlineComment, AiTwotoneLike } from "react-icons/ai";
-import { CgComment } from "react-icons/cg";
+
 import { db } from "../firebase/firebaseConfig";
 import {
   collection,
@@ -18,8 +18,6 @@ import {
   arrayRemove,
   arrayUnion,
   getDocs,
-  Timestamp,
-  toDate,
 } from "firebase/firestore";
 import { BsThreeDots } from "react-icons/bs";
 import Skeleton from "react-loading-skeleton";
@@ -51,11 +49,10 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     console.log("postRefId");
     console.log(postRefId);
     let postDate = post.published ? moment(post.published.seconds) : null;
-    let dateNow = moment();
+
     let username = post.authorId;
     console.log(postDate);
-    // console.log(dateNow);
-    // console.log(dateNow.diff(postDate, "years"));
+
     const fetchProfileDetails = async () => {
       if (profileObj || post.authorId) {
         setLoading(true);
@@ -65,7 +62,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
         );
 
         const userSnap = await getDocs(userQ);
-        let y;
+
         userSnap.forEach((doc) => {
           console.log("Doc id of users follow document" + doc.id);
           setPostUserObj(doc.data());
@@ -95,11 +92,11 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     fetchProfileDetails();
     return () => {
       setLikes(0);
-      setLiked(false);
+      // setLiked(false);
       setLikesUsers([]);
       setPostUserObj({});
       username = "";
-      let postRefId = "";
+      let postRefId;
     };
   }, []);
 
@@ -181,6 +178,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
   const handleDeletePost = async () => {
     try {
+      setShowPostHeaderOptions(false);
       let pdi;
       let pcdi;
       const followsPosts = query(
@@ -226,7 +224,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     console.log(likesUsers);
     const checkingLike = likesUsers.some((v) => v === userObj.username);
 
-    if (post.likes !== 0 && checkingLike === true) {
+    if (checkingLike === true) {
       setLiked(true);
     } else {
       setLiked(false);

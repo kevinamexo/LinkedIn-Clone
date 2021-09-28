@@ -1,10 +1,10 @@
 import React from "react";
 
 import "./Main.css";
-import Header from "../../components/Header";
-import MainSection from "../../components/MainSection";
-import RSidebar from "../../components/RSidebar";
-import LSidebar from "../../components/LSidebar";
+import Header from "../../components/layout/Header";
+import MainSection from "../../components/layout/MainSection";
+import RSidebar from "../../components/layout/RSidebar";
+import LSidebar from "../../components/layout/LSidebar";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import ProfilePage from "../profilepage/ProfilePage";
 const Main = () => {
