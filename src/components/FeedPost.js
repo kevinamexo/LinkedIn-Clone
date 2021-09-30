@@ -43,8 +43,10 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
   useEffect(() => {
     setLoading(true);
-    console.log("CONSOLE.LOG POST`");
     console.log(post);
+    console.log("CONSOLE.LOG POST DATE`");
+    console.log(post.published.toDate());
+    console.log(post.published);
     postRefId = post.postRefId;
     console.log("postRefId");
     console.log(postRefId);

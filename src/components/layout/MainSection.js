@@ -18,7 +18,7 @@ import {
   orderBy,
   collection,
   query,
-  getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 import {
   setShowCreatePostModal,
@@ -59,16 +59,17 @@ const MainSection = () => {
         orderBy("lastPost", "desc"),
         limit(10)
       );
-      const posts = await getDocs(followedUsers);
-      posts.forEach((doc) => {
-        console.log(doc.data());
-        latestPosts = [...latestPosts, ...doc.data().recentPosts];
+      const posts = onSnapshot(followedUsers, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data().recentPosts);
+          latestPosts = [...latestPosts, ...doc.data().recentPosts];
+          const sortedPosts = latestPosts.sort((a, b) => b.published.toDate());
+          dispatch(setPosts(sortedPosts));
+          console.log("Sorted posts");
+          latestPosts.sort((a, b) => b.published.toDate());
+          setFeedPosts(latestPosts);
+        });
       });
-      console.log("LATEST POSTS");
-      console.log(latestPosts);
-      const sortedPosts = latestPosts.sort((a, b) => a.published);
-      dispatch(setPosts(sortedPosts));
-      setFeedPosts(latestPosts);
       setLoadingPosts(false);
     } catch (e) {
       console.log(e);

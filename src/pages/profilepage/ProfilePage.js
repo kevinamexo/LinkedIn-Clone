@@ -367,7 +367,8 @@ const ProfilePage = () => {
                 className={!showFullSummary ? "about" : "about-full"}
                 onClick={() => setShowFullSummary(!showFullSummary)}
               >
-                {summary}
+                {myProfile && userObj.summary}
+                {!myProfile && summary}
                 {!profileObj.summary &&
                   `*${
                     myProfile ? "Your profile " : profileObj.name.firstName

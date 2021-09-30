@@ -17,8 +17,7 @@ import AuthRoute from "./components/routeTypes/AuthRoutes";
 import { db, auth } from "./firebase/firebaseConfig";
 import {
   collection,
-  doc,
-  setDoc,
+  onSnapShot,
   where,
   query,
   getDocs,
