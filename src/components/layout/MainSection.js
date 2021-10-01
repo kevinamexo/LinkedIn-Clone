@@ -36,7 +36,7 @@ const MainSection = () => {
   const [loadingPosts, setLoadingPosts] = useState(null);
 
   const dispatch = useDispatch();
-  const { posts } = useSelector((state) => state.posts);
+  const { posts, lastPost } = useSelector((state) => state.posts);
   const { userObj } = useSelector((state) => state.user);
   const {
     showUploadImage,
@@ -48,27 +48,85 @@ const MainSection = () => {
   const [uploadType, setUploadType] = useState(null);
 
   //GET USER FEED, LIMIT TO 5 POSTS
+  let lastPublished = null;
 
-  let latestPosts = [];
   const getFeed = async () => {
+    let latestPosts = [];
+    let followedUsers;
     try {
       setLoadingPosts(true);
-      const followedUsers = query(
-        collection(db, "follows"),
-        where("users", "array-contains", userObj.username),
-        orderBy("lastPost", "desc"),
-        limit(10)
-      );
-      const posts = onSnapshot(followedUsers, (querySnapshot) => {
+      const postQuery =
+        lastPublished !== null
+          ? query(
+              collection(db, "follows"),
+              where("users", "array-contains", userObj.username),
+              where("lastPost", ">=", lastPublished),
+              orderBy("lastPost", "desc"),
+              limit(10)
+            )
+          : query(
+              collection(db, "follows"),
+              where("users", "array-contains", userObj.username),
+              orderBy("lastPost", "desc"),
+              limit(10)
+            );
+
+      // const fetchedPosts = onSnapshot(followedUsers, (querySnapshot) => {
+      //   let postsWithDate = [];
+      //   console.log("NEW SNAPSHOT");
+      //   querySnapshot.forEach((doc) => {
+      //     console.log("RAW RECENT POSTS");
+      //     console.log(doc.data().recentPosts);
+      //     let postTimes = [];
+      //     latestPosts = [...latestPosts, ...doc.data().recentPosts];
+      //     console.log("woo");
+      //     console.log(latestPosts);
+      //     latestPosts.forEach((p) => {
+      //       postsWithDate = [
+      //         ...postsWithDate,
+      //         { ...p, published: p.published.toDate() },
+      //       ];
+      //     });
+      //     // const sortedPosts = latestPosts.sort((a, b) => b.published);
+      //     dispatch(setPosts(postsWithDate));
+      //   });
+      // });
+      const fetchedPosts = onSnapshot(postQuery, (querySnapshot) => {
+        let unsortedPosts = [];
+        let postsWithDate = [];
+        console.log("NEW SNAPSHOT");
         querySnapshot.forEach((doc) => {
           console.log(doc.data().recentPosts);
-          latestPosts = [...latestPosts, ...doc.data().recentPosts];
-          const sortedPosts = latestPosts.sort((a, b) => b.published.toDate());
-          dispatch(setPosts(sortedPosts));
-          console.log("Sorted posts");
-          latestPosts.sort((a, b) => b.published.toDate());
-          setFeedPosts(latestPosts);
+          unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
+          // setFeedPosts((prev) => [...prev, ...doc.data().recentPosts]);
         });
+
+        unsortedPosts.forEach((p) => {
+          postsWithDate = [
+            ...postsWithDate,
+            { ...p, published: p.published.toDate() },
+          ];
+        });
+        const sortedPosts = postsWithDate.sort((a, b) => {
+          let c = new Date(a.published);
+          let d = new Date(b.published);
+          return d - c;
+        });
+
+        let g = sortedPosts.filter((p) => p.published > lastPublished);
+
+        console.log("SORTED FETCHED");
+
+        lastPublished
+          ? setFeedPosts((prev) => [...g, ...prev])
+          : setFeedPosts(sortedPosts);
+
+        lastPublished = sortedPosts[0].published;
+        console.log(sortedPosts[0].published);
+
+        // console.log("CONCAT SNAPSHOTS");s
+        // console.log(postsSample);
+        // dispatch(setPosts(postsSample));
       });
       setLoadingPosts(false);
     } catch (e) {
@@ -78,14 +136,26 @@ const MainSection = () => {
   };
 
   useEffect(() => {
-    console.log("hello");
-    getFeed();
+    console.log(lastPublished);
+  }, [lastPublished]);
 
+  useEffect(() => {
+    console.log("feedPosts");
+    console.log(feedPosts);
+  }, [feedPosts]);
+
+  useEffect(() => {
+    getFeed();
     return () => {
-      dispatch(setPosts([]));
+      setLoadingPosts(null);
+      let followedUsers;
+      // dispatch(setPosts([]));
+      // let postsSample = [];
     };
   }, []);
-
+  useEffect(() => {
+    console.log(posts);
+  }, [posts]);
   return (
     <div className="mainSection">
       <div className="mainSection__post">
@@ -104,7 +174,6 @@ const MainSection = () => {
             onClick={() => {
               setUploadType("images");
               dispatch(setShowUploadImage());
-              console.log("siiiuuuu");
             }}
           >
             <MdPhoto className="postType-photoIcon" />
@@ -131,8 +200,9 @@ const MainSection = () => {
         </div>
       </div>
       <div className="mainSection__feed">
-        {posts && posts.map((post, idx) => <FeedPost post={post} idx={idx} />)}
-        {posts.length === [] && loadingPosts === false && (
+        {feedPosts &&
+          feedPosts.map((post, idx) => <FeedPost post={post} idx={idx} />)}
+        {feedPosts.length === 0 && loadingPosts === false && (
           <p className="no-posts">No posts in your feed</p>
         )}
       </div>
@@ -144,7 +214,11 @@ const MainSection = () => {
         />
       )}
       {showUploadImage && uploadType === "images" && (
-        <UploadModal setFeedPosts={setFeedPosts} feedPosts={posts} />
+        <UploadModal
+          type="images"
+          setFeedPosts={setFeedPosts}
+          feedPosts={posts}
+        />
       )}
       {showUploadVideo && uploadType === "video" && (
         <UploadModal type="video" />

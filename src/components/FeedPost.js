@@ -27,7 +27,7 @@ import { Carousel } from "react-responsive-carousel";
 import { set } from "react-hook-form";
 const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const [showFullText, setShowFullText] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(null);
   const [postUserObj, setPostUserObj] = useState({});
   const [likes, setLikes] = useState(0);
   const [likesUsers, setLikesUsers] = useState([]);
@@ -43,17 +43,10 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
   useEffect(() => {
     setLoading(true);
-    console.log(post);
-    console.log("CONSOLE.LOG POST DATE`");
-    console.log(post.published.toDate());
-    console.log(post.published);
-    postRefId = post.postRefId;
-    console.log("postRefId");
-    console.log(postRefId);
-    let postDate = post.published ? moment(post.published.seconds) : null;
 
+    postRefId = post.postRefId;
+    let postDate = post.published ? moment(post.published.seconds) : null;
     let username = post.authorId;
-    console.log(postDate);
 
     const fetchProfileDetails = async () => {
       if (profileObj || post.authorId) {
@@ -66,7 +59,6 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
         const userSnap = await getDocs(userQ);
 
         userSnap.forEach((doc) => {
-          console.log("Doc id of users follow document" + doc.id);
           setPostUserObj(doc.data());
           setPostId(doc.id);
         });
@@ -88,17 +80,22 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
         });
       } catch (e) {
         console.log(e);
+        console.log("error post item");
+        console.log(post);
       }
     };
 
     fetchProfileDetails();
     return () => {
       setLikes(0);
-      // setLiked(false);
       setLikesUsers([]);
+      setLiked(false);
       setPostUserObj({});
+      setPostId(null);
       username = "";
-      let postRefId;
+      postRefId = "";
+      setLoading(false);
+      post = {};
     };
   }, []);
 
@@ -223,7 +220,6 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   };
 
   useEffect(() => {
-    console.log(likesUsers);
     const checkingLike = likesUsers.some((v) => v === userObj.username);
 
     if (checkingLike === true) {

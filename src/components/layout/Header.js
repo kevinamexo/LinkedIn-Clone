@@ -56,7 +56,7 @@ const Header = () => {
     signOut(auth)
       .then(() => {
         dispatch(setUserLogoutState());
-        console.log(user);
+
         history.push("/login");
       })
       .catch((error) => {
@@ -66,10 +66,8 @@ const Header = () => {
 
   const handleSearchActive = (e) => {
     if (navbarSearchRef.current && navbarSearchRef.current.contains(e.target)) {
-      console.log("Contains Ref");
     } else {
       dispatch(setCloseSearchModal());
-      console.log("Does not contain ref");
     }
   };
 

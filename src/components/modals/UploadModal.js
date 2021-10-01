@@ -113,16 +113,16 @@ const UploadModal = ({ type }) => {
       setUploadMessage(
         `${type.charAt(0).toUpperCase() + type.slice(1)} uploaded`
       );
-      dispatch(
-        setAddToPosts({
-          postText: null,
-          authorId: userObj.username,
-          postType: "images",
-          images: fileURLS,
-          published: timestamp,
-          postRefId: postDocId,
-        })
-      );
+      // dispatch(
+      //   setAddToPosts({
+      //     postText: null,
+      //     authorId: userObj.username,
+      //     postType: "images",
+      //     images: fileURLS,
+      //     published: timestamp,
+      //     postRefId: postDocId,
+      //   })
+      // );
 
       setTimeout(() => {
         dispatch(setCloseModal());
@@ -236,9 +236,6 @@ const UploadModal = ({ type }) => {
         setUploadMessage("Error Uploading file");
       });
   };
-  useEffect(() => {
-    console.log(images);
-  }, [images]);
 
   const handleRemoveFile = (idx) => {
     let i = [...images];
