@@ -38,22 +38,19 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const { userObj } = useSelector((state) => state.user);
   const { posts } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
-
-  let postRefId;
+  const postProps = { ...post };
 
   useEffect(() => {
+    console.log(postProps);
+    console.log("POST AUTHOR" + postProps.authorId);
     setLoading(true);
-
-    postRefId = post.postRefId;
-    let postDate = post.published ? moment(post.published.seconds) : null;
-    let username = post.authorId;
 
     const fetchProfileDetails = async () => {
       if (profileObj || post.authorId) {
         setLoading(true);
         const userQ = query(
           collection(db, "user"),
-          where("username", "==", username)
+          where("username", "==", post.authorId)
         );
 
         const userSnap = await getDocs(userQ);
@@ -92,13 +89,17 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       setLiked(false);
       setPostUserObj({});
       setPostId(null);
-      username = "";
-      postRefId = "";
-      setLoading(false);
-      post = {};
+      let username = "";
+      setLoading(null);
+      let post = null;
+      let postProps = null;
     };
   }, []);
 
+  useEffect(() => {
+    console.log("NEW POSTSS");
+    console.log(post);
+  }, [post]);
   useEffect(() => {
     const loadImage = (image) => {
       return new Promise((resolve, reject) => {

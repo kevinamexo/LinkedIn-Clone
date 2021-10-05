@@ -8,7 +8,12 @@ import ContactInfoModal from "../modals/ContactInfoModal";
 import "./MainSection.css";
 import { useSelector, useDispatch } from "react-redux";
 
-import { setPosts, setAddToPosts } from "../../redux/features/postsSlice";
+import {
+  setPosts,
+  setAddToPosts,
+  setRemoveFromPosts,
+  setPostsChanges,
+} from "../../redux/features/postsSlice";
 import FeedPost from "../FeedPost";
 import UploadModal from "../modals/UploadModal";
 import { db } from "../../firebase/firebaseConfig";
@@ -22,15 +27,13 @@ import {
 } from "firebase/firestore";
 import {
   setShowCreatePostModal,
-  setCloseCreatePostModal,
-  setShowContactCardModal,
   setShowUploadImage,
   setShowUploadVideo,
 } from "../../redux/features/modalsSlice";
 
 import InfiniteScroll from "react-infinite-scroll-component";
 import { set } from "react-hook-form";
-
+import _ from "lodash";
 const MainSection = () => {
   const [postInput, setPostInput] = useState("");
   const [loadingPosts, setLoadingPosts] = useState(null);
@@ -49,6 +52,10 @@ const MainSection = () => {
 
   //GET USER FEED, LIMIT TO 5 POSTS
   let lastPublished = null;
+  let localPosts;
+  useEffect(() => {
+    console.log(posts.length);
+  }, [posts]);
 
   const getFeed = async () => {
     let latestPosts = [];
@@ -70,63 +77,125 @@ const MainSection = () => {
               orderBy("lastPost", "desc"),
               limit(10)
             );
-
-      // const fetchedPosts = onSnapshot(followedUsers, (querySnapshot) => {
-      //   let postsWithDate = [];
-      //   console.log("NEW SNAPSHOT");
-      //   querySnapshot.forEach((doc) => {
-      //     console.log("RAW RECENT POSTS");
-      //     console.log(doc.data().recentPosts);
-      //     let postTimes = [];
-      //     latestPosts = [...latestPosts, ...doc.data().recentPosts];
-      //     console.log("woo");
-      //     console.log(latestPosts);
-      //     latestPosts.forEach((p) => {
-      //       postsWithDate = [
-      //         ...postsWithDate,
-      //         { ...p, published: p.published.toDate() },
-      //       ];
-      //     });
-      //     // const sortedPosts = latestPosts.sort((a, b) => b.published);
-      //     dispatch(setPosts(postsWithDate));
-      //   });
-      // });
+      let postsWithDate = [];
       const fetchedPosts = onSnapshot(postQuery, (querySnapshot) => {
         let unsortedPosts = [];
-        let postsWithDate = [];
         console.log("NEW SNAPSHOT");
-        querySnapshot.forEach((doc) => {
-          console.log(doc.data().recentPosts);
-          unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
-          // setFeedPosts((prev) => [...prev, ...doc.data().recentPosts]);
-        });
+        if (lastPublished === null) {
+          querySnapshot.forEach((doc) => {
+            unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
+          });
+          //CONVERT TIMESTAMPS TO DATES
+          unsortedPosts.forEach((p) => {
+            postsWithDate = [
+              ...postsWithDate,
+              { ...p, published: p.published.toDate() },
+            ];
+          });
+          console.log("INITIAL SET POSTS");
+          console.log(postsWithDate);
+          dispatch(setPosts(postsWithDate));
+          lastPublished = postsWithDate[0].published;
+        } else if (lastPublished !== null) {
+          const changesSnapshot = [];
+          const fullSnap = [];
+          querySnapshot.docChanges().forEach((change) => {
+            console.log("NEW CHANGE");
+            changesSnapshot.push(...change.doc.data().recentPosts);
+          });
+          querySnapshot.forEach((doc) => {
+            fullSnap.push(...doc.data().recentPosts);
+          });
 
-        unsortedPosts.forEach((p) => {
-          postsWithDate = [
-            ...postsWithDate,
-            { ...p, published: p.published.toDate() },
-          ];
-        });
-        const sortedPosts = postsWithDate.sort((a, b) => {
-          let c = new Date(a.published);
-          let d = new Date(b.published);
-          return d - c;
-        });
+          let changesWithDate = [];
+          let fullSnapWithDate = [];
 
-        let g = sortedPosts.filter((p) => p.published > lastPublished);
+          // dispatch(setPostsChanges(changesWithDate));setAddNewPosts
+          changesSnapshot.forEach((p) => {
+            changesWithDate = [
+              ...changesWithDate,
+              { ...p, published: p.published.toDate() },
+            ];
+          });
 
-        console.log("SORTED FETCHED");
+          console.log("CHANGES WITH DATE");
+          console.log(changesWithDate);
+          fullSnap.forEach((p) => {
+            fullSnapWithDate = [
+              ...fullSnapWithDate,
+              { ...p, published: p.published.toDate() },
+            ];
+          });
 
-        lastPublished
-          ? setFeedPosts((prev) => [...g, ...prev])
-          : setFeedPosts(sortedPosts);
+          function comparer(otherArray) {
+            return function (current) {
+              return (
+                otherArray.filter(function (other) {
+                  return (
+                    other.postRefId === current.postRefId &&
+                    other.published === current.published
+                  );
+                }).length == 0
+              );
+            };
+          }
 
-        lastPublished = sortedPosts[0].published;
-        console.log(sortedPosts[0].published);
+          let newItems = changesWithDate.filter(
+            ({ postRefId: id1 }) =>
+              !postsWithDate.some(({ postRefId: id2 }) => id2 === id1)
+          );
+          newItems = newItems.sort(function (a, b) {
+            return new Date(b.date) - new Date(a.date);
+          });
 
-        // console.log("CONCAT SNAPSHOTS");s
-        // console.log(postsSample);
-        // dispatch(setPosts(postsSample));
+          let deleted = postsWithDate.filter(
+            ({ postRefId: id1 }) =>
+              !fullSnapWithDate.some(({ postRefId: id2 }) => id2 === id1)
+          );
+
+          console.log("DELETED ITEMS");
+          console.log(deleted);
+          newItems = newItems.sort(function (a, b) {
+            return new Date(b.date) - new Date(a.date);
+          });
+
+          ///ADD NEW ITEMS TO POSTS
+          if (newItems.length >= 1) {
+            dispatch(setPostsChanges({ type: "NEW_ITEMS", items: newItems }));
+
+            console.log("newItems" + JSON.stringify(newItems));
+            newItems.forEach((y) => {
+              postsWithDate = [y, ...postsWithDate];
+            });
+          }
+
+          function returnIndex(obj) {
+            let s = postsWithDate.findIndex(
+              (p) => p.postRefId === obj.postRefId
+            );
+
+            return s;
+          }
+          let indexes = [];
+          if (deleted.length >= 1) {
+            console.log(deleted[0]);
+            deleted.forEach((f) => indexes.push(returnIndex(f)));
+            indexes.filter((x) => x !== -1);
+            console.log("index of deleted");
+            console.log(indexes);
+            console.log(postsWithDate[indexes]);
+            let n = [...postsWithDate];
+            dispatch(setRemoveFromPosts(Number(indexes)));
+            const deleteItem = n.splice(Number(indexes[0]), 1);
+            console.log("removed");
+            console.log(n);
+            postsWithDate = n;
+            console.log(postsWithDate);
+            indexes = [];
+          }
+
+          lastPublished = changesWithDate[0].published;
+        }
       });
       setLoadingPosts(false);
     } catch (e) {
@@ -134,15 +203,6 @@ const MainSection = () => {
       setLoadingPosts(false);
     }
   };
-
-  useEffect(() => {
-    console.log(lastPublished);
-  }, [lastPublished]);
-
-  useEffect(() => {
-    console.log("feedPosts");
-    console.log(feedPosts);
-  }, [feedPosts]);
 
   useEffect(() => {
     getFeed();
@@ -153,9 +213,7 @@ const MainSection = () => {
       // let postsSample = [];
     };
   }, []);
-  useEffect(() => {
-    console.log(posts);
-  }, [posts]);
+
   return (
     <div className="mainSection">
       <div className="mainSection__post">
@@ -200,9 +258,11 @@ const MainSection = () => {
         </div>
       </div>
       <div className="mainSection__feed">
-        {feedPosts &&
-          feedPosts.map((post, idx) => <FeedPost post={post} idx={idx} />)}
-        {feedPosts.length === 0 && loadingPosts === false && (
+        {posts &&
+          posts.map((post, idx) => (
+            <FeedPost post={post} key={idx} idx={idx} />
+          ))}
+        {posts.length === 0 && loadingPosts === false && (
           <p className="no-posts">No posts in your feed</p>
         )}
       </div>
