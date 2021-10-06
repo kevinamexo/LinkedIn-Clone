@@ -24,6 +24,22 @@
   font-size: 12px;
 }
 
+.headerOptions-icons {
+  position: relative;
+}
+.headerOptionNotifications {
+  color: #fff;
+  background-color: rgb(221, 7, 7);
+  position: absolute;
+  top: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 15px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+}
 @media screen and (max-width: 850px) {
   .headerOption__title {
     display: none;

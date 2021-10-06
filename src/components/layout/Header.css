@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   /* padding: 0px 24px; */
-  height: 53px;
+  height: 53px !important;
   justify-content: space-between;
   border-bottom: 0.1px solid lightgray;
   width: 100%;
@@ -124,6 +124,22 @@
   display: block;
 }
 
+.header__right .notificationsSection {
+  position: relative;
+}
+
+.notificationsMenu {
+  position: absolute;
+  top: 28px;
+  left: -50px;
+  /* height: 60px; */
+  width: 300px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  border: 1px solid rgb(195, 195, 195);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
 @media screen and (max-width: 1030px) {
   .header__right {
     display: flex;
@@ -171,9 +187,9 @@
     height: 25px;
     width: 25px;
   }
-  
+
   .header-signout p {
-    display:none;
+    display: none;
   }
 }
 

@@ -49,6 +49,16 @@ const UploadModal = ({ type }) => {
   const [postAction, setPostAction] = useState(null);
   const storage = getStorage();
 
+  const name =
+    userObj.name &&
+    `${
+      userObj.name.firstName.charAt(0).toUpperCase() +
+      userObj.name.firstName.slice(1)
+    } ${
+      userObj.name.lastName.charAt(0).toUpperCase() +
+      userObj.name.lastName.slice(1)
+    }`;
+
   const createPostFromImages = async (fileURLS) => {
     const format1 = "YYYY-MM-DD HH:mm:ss";
     const time = moment().format(format1);
@@ -92,12 +102,22 @@ const UploadModal = ({ type }) => {
         recentPosts: arrayUnion({
           postText: null,
           authorId: userObj.username,
-          postType: "images",
+          postType: type,
           images: fileURLS,
           published: timestamp,
           postRefId: postDocId,
         }),
         lastPost: timestamp,
+      });
+      const updateFollows = await updateDoc(followRef, {
+        notifications: arrayUnion({
+          authorId: userObj.username,
+          name: name,
+          postType: "images",
+          published: timestamp,
+          postRefId: postDocId,
+          postText: "text",
+        }),
       });
 
       const likesRef = await addDoc(collection(db, "likes"), {

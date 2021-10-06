@@ -15,11 +15,13 @@ import HeaderOption from "./HeaderOption";
 import SearchResultsModal from "../modals/SearchResultsModal";
 import { signOut } from "firebase/auth";
 import {
-  colleciton,
+  Timestamp,
   query,
   collection,
   where,
   getDocs,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { useHistory } from "react-router-dom";
@@ -37,11 +39,13 @@ import {
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
+  const [notificationsActive, setNotificationsActive] = useState(false);
   const dispatch = useDispatch();
   const navbarSearchRef = useRef();
   const { user, userObj, loading } = useSelector((state) => state.user);
-
+  const { notifications } = useSelector((state) => state.notifications);
   const { searchActive } = useSelector((state) => state.modals);
+
   //Event handlers
   const history = useHistory();
 
@@ -82,6 +86,28 @@ const Header = () => {
   useEffect(() => {
     console.log(searchActive);
   }, [searchActive]);
+
+  const handleNotificationsClick = async () => {
+    setNotificationsActive(!notificationsActive);
+    const q = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    let followsRefId;
+    const qSnap = await getDocs(q);
+    qSnap.forEach((doc) => {
+      followsRefId = doc.id;
+    });
+    let date = new Date();
+    console.log(date);
+    let timestamp = Timestamp.fromDate(date);
+    const followsRef = doc(db, "follows", followsRefId);
+    await updateDoc(followsRef, {
+      lastNotification: timestamp,
+    });
+
+    console.log(`Updated last notification time to ${timestamp.toDate()}`);
+  };
 
   return (
     <>
@@ -130,7 +156,30 @@ const Header = () => {
               Icon={FaBriefcase}
               onClick={() => window.open("https://www.linkedin.com/jobs/")}
             />
-            <HeaderOption title="Notifications" Icon={FaBell} />
+            <span
+              className="notificationsSection"
+              onClick={handleNotificationsClick}
+            >
+              <HeaderOption
+                title="Notifications"
+                Icon={FaBell}
+                notifications={notifications}
+              />
+              {notificationsActive && (
+                <div className="notificationsMenu">
+                  {notifications.length === 0 && (
+                    <p>No notifications available</p>
+                  )}
+                  {notifications &&
+                    notifications.length > 0 &&
+                    notifications.map((n) => (
+                      <p>
+                        {n.name} posted {n.postType}
+                      </p>
+                    ))}
+                </div>
+              )}
+            </span>
             {userObj.profilePhotoURL ? (
               <span
                 className="header__profilePhoto"

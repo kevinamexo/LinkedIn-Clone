@@ -14,6 +14,10 @@ import {
   setRemoveFromPosts,
   setPostsChanges,
 } from "../../redux/features/postsSlice";
+import {
+  setNotifications,
+  setNotificationChanges,
+} from "../../redux/features/notificationsSlice";
 import FeedPost from "../FeedPost";
 import UploadModal from "../modals/UploadModal";
 import { db } from "../../firebase/firebaseConfig";
@@ -41,6 +45,7 @@ const MainSection = () => {
   const dispatch = useDispatch();
   const { posts, lastPost } = useSelector((state) => state.posts);
   const { userObj } = useSelector((state) => state.user);
+  const { notifications } = useSelector((state) => state.notifications);
   const {
     showUploadImage,
     showContactCardModal,
@@ -77,14 +82,24 @@ const MainSection = () => {
               orderBy("lastPost", "desc"),
               limit(10)
             );
+
       let postsWithDate = [];
+      let notificationsWithDate = [];
+      let lastNotificationTime = [];
       const fetchedPosts = onSnapshot(postQuery, (querySnapshot) => {
         let unsortedPosts = [];
+        let unsortedNotifications = [];
         console.log("NEW SNAPSHOT");
         if (lastPublished === null) {
           querySnapshot.forEach((doc) => {
             unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
+            unsortedNotifications = [
+              ...unsortedNotifications,
+              ...doc.data().notifications,
+            ];
+            // console.log(doc.data());
           });
+
           //CONVERT TIMESTAMPS TO DATES
           unsortedPosts.forEach((p) => {
             postsWithDate = [
@@ -92,23 +107,42 @@ const MainSection = () => {
               { ...p, published: p.published.toDate() },
             ];
           });
+          console.log("unsorted Posts");
+          console.log(unsortedPosts);
+          console.log(postsWithDate);
+
+          unsortedNotifications.forEach((p) => {
+            notificationsWithDate = [...notificationsWithDate, p];
+          });
           console.log("INITIAL SET POSTS");
           console.log(postsWithDate);
+          console.log("NOTIFICATIONS WITH DATE");
+          console.log(notificationsWithDate);
           dispatch(setPosts(postsWithDate));
+          dispatch(setNotifications(notificationsWithDate));
+
+          console.log(postsWithDate);
           lastPublished = postsWithDate[0].published;
         } else if (lastPublished !== null) {
           const changesSnapshot = [];
+          const notificationChanges = [];
           const fullSnap = [];
+          const fullNotificationsSnap = [];
           querySnapshot.docChanges().forEach((change) => {
             console.log("NEW CHANGE");
             changesSnapshot.push(...change.doc.data().recentPosts);
+            notificationChanges.push(...change.doc.data().notifications);
           });
           querySnapshot.forEach((doc) => {
             fullSnap.push(...doc.data().recentPosts);
+            fullNotificationsSnap.push(...doc.data().notifications);
           });
 
           let changesWithDate = [];
           let fullSnapWithDate = [];
+
+          let notificationsChangesWithDate = [];
+          let fullNotificationsSnapWithDate = [];
 
           // dispatch(setPostsChanges(changesWithDate));setAddNewPosts
           changesSnapshot.forEach((p) => {
@@ -118,11 +152,26 @@ const MainSection = () => {
             ];
           });
 
+          notificationChanges.forEach((p) => {
+            notificationsChangesWithDate = [
+              ...notificationsChangesWithDate,
+              { ...p, published: p.published.toDate() },
+            ];
+          });
+
           console.log("CHANGES WITH DATE");
           console.log(changesWithDate);
+          console.log("NOTIFICATION CHANGES WITH DATE");
+          console.log(notificationsChangesWithDate);
           fullSnap.forEach((p) => {
             fullSnapWithDate = [
               ...fullSnapWithDate,
+              { ...p, published: p.published.toDate() },
+            ];
+          });
+          fullNotificationsSnap.forEach((p) => {
+            fullNotificationsSnapWithDate = [
+              ...fullNotificationsSnapWithDate,
               { ...p, published: p.published.toDate() },
             ];
           });
@@ -148,6 +197,14 @@ const MainSection = () => {
             return new Date(b.date) - new Date(a.date);
           });
 
+          let newNotifications = notificationsChangesWithDate.filter(
+            ({ postRefId: id1 }) =>
+              !notificationsWithDate.some(({ postRefId: id2 }) => id2 === id1)
+          );
+
+          console.log("NEW NOTIFICATIONS");
+          console.log(newNotifications);
+
           let deleted = postsWithDate.filter(
             ({ postRefId: id1 }) =>
               !fullSnapWithDate.some(({ postRefId: id2 }) => id2 === id1)
@@ -159,6 +216,10 @@ const MainSection = () => {
             return new Date(b.date) - new Date(a.date);
           });
 
+          newNotifications = newNotifications.sort(function (a, b) {
+            return new Date(b.date) - new Date(a.date);
+          });
+
           ///ADD NEW ITEMS TO POSTS
           if (newItems.length >= 1) {
             dispatch(setPostsChanges({ type: "NEW_ITEMS", items: newItems }));
@@ -166,6 +227,12 @@ const MainSection = () => {
             console.log("newItems" + JSON.stringify(newItems));
             newItems.forEach((y) => {
               postsWithDate = [y, ...postsWithDate];
+            });
+          }
+          if (newNotifications.length >= 1) {
+            dispatch(setNotificationChanges(newNotifications));
+            newNotifications.forEach((y) => {
+              notificationsWithDate = [y, ...notificationsWithDate];
             });
           }
 
@@ -197,12 +264,14 @@ const MainSection = () => {
           lastPublished = changesWithDate[0].published;
         }
       });
+
       setLoadingPosts(false);
     } catch (e) {
       console.log(e);
       setLoadingPosts(false);
     }
   };
+  const getNotifications = async () => {};
 
   useEffect(() => {
     getFeed();

@@ -36,6 +36,16 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
   const { firstName, lastName, title, organization, username } = userObj;
   const [followDocRefId, setFollowDocRefId] = useState("");
 
+  const name =
+    userObj.name &&
+    `${
+      userObj.name.firstName.charAt(0).toUpperCase() +
+      userObj.name.firstName.slice(1)
+    } ${
+      userObj.name.lastName.charAt(0).toUpperCase() +
+      userObj.name.lastName.slice(1)
+    }`;
+
   const publishPost = async (e) => {
     e.preventDefault();
     const format1 = "YYYY-MM-DD HH:mm:ss";
@@ -87,8 +97,17 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
           published: timestamp,
           postRefId: postDocId,
         }),
+        notifications: arrayUnion({
+          authorId: userObj.username,
+          name: name,
+          postType: "text",
+          published: timestamp,
+          postRefId: postDocId,
+          postText: "text",
+        }),
         lastPost: timestamp,
       });
+      console.log("ADDED RECENTPOSTS AND NOTIFICATION");
 
       const likesRef = await addDoc(collection(db, "likes"), {
         postId: postDocId,
@@ -110,15 +129,7 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
   };
 
   const createPostBodyRef = useRef();
-  const name = userObj.name
-    ? `${
-        userObj.name.firstName.charAt(0).toUpperCase() +
-        userObj.name.firstName.slice(1)
-      } ${
-        userObj.name.lastName.charAt(0).toUpperCase() +
-        userObj.name.lastName.slice(1)
-      }`
-    : null;
+
   return (
     <div className="createPostModal">
       <form className="createPostForm" onSubmit={publishPost}>

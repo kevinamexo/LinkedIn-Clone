@@ -21,6 +21,7 @@ import {
   where,
   query,
   getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 import userSlice, {
   setActiveUser,
@@ -30,6 +31,7 @@ import userSlice, {
   setSearchActive,
 } from "./redux/features/userSlice";
 import { setShowContactCardModal } from "./redux/features/modalsSlice";
+import { setLastNotificationTime } from "./redux/features/notificationsSlice";
 
 import { onAuthStateChange } from "firebase/auth";
 
@@ -41,11 +43,38 @@ function App() {
   );
   const [authenticated, setAuthenticated] = useState(null);
 
+  let username;
+
+  const lastNotification = async () => {
+    console.log("FETCHING LAST NOTIFICATION");
+    const lastNotificationQuery = query(
+      collection(db, "user"),
+      where("username", "==", username)
+    );
+    const fetchLastNotificationTime = onSnapshot(
+      lastNotificationQuery,
+      (querySnapshot) => {
+        console.log("NOTIFICATIONS SNAPSOT");
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data().lastNotification);
+          dispatch(setLastNotificationTime(doc.data.lastNotification));
+        });
+      }
+    );
+  };
+
   const fetchUserDetails = async (db, userEmail) => {
     const q = query(collection(db, "user"), where("email", "==", userEmail));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       dispatch(setActiveUserObj(doc.data()));
+      username = doc.data().username;
+    });
+  };
+
+  const start = async (user) => {
+    await fetchUserDetails(db, user.email).then(() => {
+      lastNotification();
     });
   };
 
@@ -59,7 +88,7 @@ function App() {
     const subscribe = auth.onAuthStateChanged((user) => {
       dispatch(setLoading(true));
       if (user) {
-        fetchUserDetails(db, user.email);
+        start(user);
       } else {
         handleLogout();
       }
