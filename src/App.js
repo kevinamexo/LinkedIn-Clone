@@ -49,13 +49,14 @@ function App() {
     console.log("FETCHING LAST NOTIFICATION");
     const lastNotificationQuery = query(
       collection(db, "user"),
-      where("username", "==", username)
+      where("username", "==", userObj.username)
     );
     const fetchLastNotificationTime = onSnapshot(
       lastNotificationQuery,
       (querySnapshot) => {
         console.log("NOTIFICATIONS SNAPSOT");
         querySnapshot.forEach((doc) => {
+          console.log("NEW NOFI");
           console.log(doc.data().lastNotification);
           dispatch(setLastNotificationTime(doc.data.lastNotification));
         });
@@ -73,9 +74,7 @@ function App() {
   };
 
   const start = async (user) => {
-    await fetchUserDetails(db, user.email).then(() => {
-      lastNotification();
-    });
+    await fetchUserDetails(db, user.email);
   };
 
   const handleLogout = () => dispatch(setUserLogoutState());
@@ -95,6 +94,9 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    if (userObj && userObj.username) lastNotification();
+  }, [userObj]);
   return (
     <div
       className={modalActive ? "appModal" : "app"}

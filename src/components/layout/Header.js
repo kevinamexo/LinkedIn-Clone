@@ -8,7 +8,7 @@ import {
   FaBriefcase,
   FaBell,
 } from "react-icons/fa";
-
+import Notification from "../notifications/Notification";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import HeaderOption from "./HeaderOption";
@@ -43,7 +43,9 @@ const Header = () => {
   const dispatch = useDispatch();
   const navbarSearchRef = useRef();
   const { user, userObj, loading } = useSelector((state) => state.user);
-  const { notifications } = useSelector((state) => state.notifications);
+  const { notifications, lastNotification } = useSelector(
+    (state) => state.notifications
+  );
   const { searchActive } = useSelector((state) => state.modals);
 
   //Event handlers
@@ -86,6 +88,10 @@ const Header = () => {
   useEffect(() => {
     console.log(searchActive);
   }, [searchActive]);
+  useEffect(() => {
+    console.log("NEW LAST NOTIFICATION TIME IS");
+    console.log(lastNotification);
+  }, [lastNotification]);
 
   const handleNotificationsClick = async () => {
     setNotificationsActive(!notificationsActive);
@@ -102,9 +108,11 @@ const Header = () => {
     console.log(date);
     let timestamp = Timestamp.fromDate(date);
     const followsRef = doc(db, "follows", followsRefId);
-    await updateDoc(followsRef, {
-      lastNotification: timestamp,
-    });
+    if (notificationsActive === false) {
+      await updateDoc(followsRef, {
+        lastNotification: timestamp,
+      });
+    }
 
     console.log(`Updated last notification time to ${timestamp.toDate()}`);
   };
@@ -172,10 +180,8 @@ const Header = () => {
                   )}
                   {notifications &&
                     notifications.length > 0 &&
-                    notifications.map((n) => (
-                      <p>
-                        {n.name} posted {n.postType}
-                      </p>
+                    notifications.map((n, idx) => (
+                      <Notification key={idx} notification={n} />
                     ))}
                 </div>
               )}

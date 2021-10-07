@@ -41,8 +41,6 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const postProps = { ...post };
 
   useEffect(() => {
-    console.log(postProps);
-    console.log("POST AUTHOR" + postProps.authorId);
     setLoading(true);
 
     const fetchProfileDetails = async () => {
@@ -96,10 +94,6 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("NEW POSTSS");
-    console.log(post);
-  }, [post]);
   useEffect(() => {
     const loadImage = (image) => {
       return new Promise((resolve, reject) => {

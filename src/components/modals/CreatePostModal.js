@@ -98,12 +98,12 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
           postRefId: postDocId,
         }),
         notifications: arrayUnion({
+          postText: postInput,
           authorId: userObj.username,
-          name: name,
           postType: "text",
+          name: name,
           published: timestamp,
           postRefId: postDocId,
-          postText: "text",
         }),
         lastPost: timestamp,
       });

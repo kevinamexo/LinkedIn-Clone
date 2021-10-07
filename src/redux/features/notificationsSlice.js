@@ -18,8 +18,9 @@ const notificationsSlice = createSlice({
   initialState,
   reducers: {
     setNotifications: (state, action) => {
-      state.notifications = action.payload.sort(function (a, b) {
-        return new Date(b.date) - new Date(a.date);
+      const unsortedNotifications = action.payload;
+      state.notifications = unsortedNotifications.sort(function (a, b) {
+        return new Date(b.published) - new Date(a.published);
       });
     },
     setAddToNotifications: (state, action) => {
@@ -29,13 +30,13 @@ const notificationsSlice = createSlice({
       console.log("Adding new notifications");
       let sortedPosts = [...action.payload, ...state.notifications].sort(
         function (a, b) {
-          return new Date(b.date) - new Date(a.date);
+          return new Date(b.published) - new Date(a.published);
         }
       );
       state.notifications = [...action.payload, ...state.notifications];
     },
     setLastNotificationTime: (state, action) => {
-      state.lastNotificaton = action.payload;
+      state.lastNotification = action.payload;
     },
   },
 });

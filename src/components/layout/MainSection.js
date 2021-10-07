@@ -17,6 +17,7 @@ import {
 import {
   setNotifications,
   setNotificationChanges,
+  setLastNotificationTime,
 } from "../../redux/features/notificationsSlice";
 import FeedPost from "../FeedPost";
 import UploadModal from "../modals/UploadModal";
@@ -85,8 +86,10 @@ const MainSection = () => {
 
       let postsWithDate = [];
       let notificationsWithDate = [];
-      let lastNotificationTime = [];
+      let lastNotificationTime;
       const fetchedPosts = onSnapshot(postQuery, (querySnapshot) => {
+        let lastNotificationTimesWithDate = [];
+        let lastNotificationTimes = [];
         let unsortedPosts = [];
         let unsortedNotifications = [];
         console.log("NEW SNAPSHOT");
@@ -97,8 +100,28 @@ const MainSection = () => {
               ...unsortedNotifications,
               ...doc.data().notifications,
             ];
+
+            //FETCH LAST NOTIFICATION TIME FROM FIRESTORE
+            lastNotificationTimes = [
+              ...lastNotificationTimes,
+              doc.data().lastNotification.toDate(),
+            ];
             // console.log(doc.data());
           });
+
+          console.log("LAST NOTIFICATION TIMES");
+          console.log(lastNotificationTimes);
+
+          let sortedLastNotificationTimes = lastNotificationTimes.sort(
+            function (a, b) {
+              return new Date(b) - new Date(a);
+            }
+          );
+
+          lastNotificationTime = lastNotificationTimes[0];
+          console.log("LAST NOTIFICATION TIME IS ");
+          console.log(lastNotificationTime);
+          dispatch(setLastNotificationTime(lastNotificationTime));
 
           //CONVERT TIMESTAMPS TO DATES
           unsortedPosts.forEach((p) => {
@@ -107,9 +130,6 @@ const MainSection = () => {
               { ...p, published: p.published.toDate() },
             ];
           });
-          console.log("unsorted Posts");
-          console.log(unsortedPosts);
-          console.log(postsWithDate);
 
           unsortedNotifications.forEach((p) => {
             notificationsWithDate = [...notificationsWithDate, p];
@@ -193,6 +213,8 @@ const MainSection = () => {
             ({ postRefId: id1 }) =>
               !postsWithDate.some(({ postRefId: id2 }) => id2 === id1)
           );
+          console.log("NEW ITEMS");
+          console.log(newItems);
           newItems = newItems.sort(function (a, b) {
             return new Date(b.date) - new Date(a.date);
           });
