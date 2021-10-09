@@ -36,25 +36,75 @@ import {
   setCloseModal,
   setCloseSearchModal,
 } from "../../redux/features/modalsSlice";
+import {
+  setLastNotificationTime,
+  setInitialNotificationTime,
+  setFilterNotifications,
+} from "../../redux/features/notificationsSlice";
+
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
+  const [newNotis, setNewNotis] = useState([]);
+  const [oldNotis, setOldNotis] = useState([]);
   const [notificationsActive, setNotificationsActive] = useState(false);
   const dispatch = useDispatch();
   const navbarSearchRef = useRef();
   const { user, userObj, loading } = useSelector((state) => state.user);
-  const { notifications, lastNotification } = useSelector(
-    (state) => state.notifications
-  );
+  const {
+    notifications,
+    lastNotification,
+    nextLastNotification,
+    newNotifications,
+    prevLastNotification,
+    prevPastNotifications,
+  } = useSelector((state) => state.notifications);
   const { searchActive } = useSelector((state) => state.modals);
 
   //Event handlers
   const history = useHistory();
 
+  const sendNotificationsClick = async () => {
+    const q = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    let followsRefId;
+    const qSnap = await getDocs(q);
+    qSnap.forEach((doc) => {
+      followsRefId = doc.id;
+    });
+    let date = new Date();
+    console.log(date);
+    let timestamp = Timestamp.fromDate(date);
+    const followsRef = doc(db, "follows", followsRefId);
+    if (notificationsActive === false) {
+      await updateDoc(followsRef, {
+        lastNotification: timestamp,
+      });
+    }
+
+    console.log(`Updated last notification time to ${timestamp.toDate()}`);
+  };
+  const handleClickNotification = async () => {
+    setNotificationsActive(!notificationsActive);
+    if (notificationsActive === true) {
+      console.log("NOTIFICATIONS ACTIVE");
+      dispatch(setFilterNotifications());
+    } else {
+      let date = new Date();
+      console.log(date);
+      let timestamp = Timestamp.fromDate(date);
+      timestamp = new Date(timestamp.seconds * 1000);
+      dispatch(setLastNotificationTime(timestamp));
+      console.log(false);
+      console.log("NOT NOTIFICATIONS ACTIVE");
+      await sendNotificationsClick();
+    }
+  };
   const handleHeaderSearchChange = (e) => {
     setHeaderSearch(e.target.value);
   };
-
   const fetchSearchResults = async () => {
     const q = query(collection(db, "users"), where("user"));
   };
@@ -85,38 +135,6 @@ const Header = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(searchActive);
-  }, [searchActive]);
-  useEffect(() => {
-    console.log("NEW LAST NOTIFICATION TIME IS");
-    console.log(lastNotification);
-  }, [lastNotification]);
-
-  const handleNotificationsClick = async () => {
-    setNotificationsActive(!notificationsActive);
-    const q = query(
-      collection(db, "follows"),
-      where("username", "==", userObj.username)
-    );
-    let followsRefId;
-    const qSnap = await getDocs(q);
-    qSnap.forEach((doc) => {
-      followsRefId = doc.id;
-    });
-    let date = new Date();
-    console.log(date);
-    let timestamp = Timestamp.fromDate(date);
-    const followsRef = doc(db, "follows", followsRefId);
-    if (notificationsActive === false) {
-      await updateDoc(followsRef, {
-        lastNotification: timestamp,
-      });
-    }
-
-    console.log(`Updated last notification time to ${timestamp.toDate()}`);
-  };
-
   return (
     <>
       <div
@@ -129,6 +147,8 @@ const Header = () => {
           }
         >
           <Link to="/">
+            {newNotis.length}
+            {oldNotis.length}
             <AiFillLinkedin className="linkedin-icon" />
           </Link>
           <div
@@ -166,21 +186,22 @@ const Header = () => {
             />
             <span
               className="notificationsSection"
-              onClick={handleNotificationsClick}
+              // onClick={handleNotificationsClick}
             >
               <HeaderOption
                 title="Notifications"
                 Icon={FaBell}
                 notifications={notifications}
+                onClick={handleClickNotification}
               />
               {notificationsActive && (
                 <div className="notificationsMenu">
                   {notifications.length === 0 && (
                     <p>No notifications available</p>
                   )}
-                  {notifications &&
-                    notifications.length > 0 &&
-                    notifications.map((n, idx) => (
+                  {prevPastNotifications &&
+                    prevPastNotifications.length > 0 &&
+                    prevPastNotifications.map((n, idx) => (
                       <Notification key={idx} notification={n} />
                     ))}
                 </div>

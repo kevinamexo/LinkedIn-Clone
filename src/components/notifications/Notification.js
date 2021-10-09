@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./Notification.css";
 import { query, collection, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+
 function compareTime(time1, time2) {
   return new Date(time1) > new Date(time2); // true if time1 is later
 }
@@ -13,10 +14,9 @@ const Notification = ({ notification }) => {
   const [newNotification, setNewNotification] = useState(null);
   const [notificationUser, setNotificationUser] = useState(null);
   const [loading, setLoading] = useState(null);
-  const { notifications, lastNotification } = useSelector(
+  const { notifications, lastNotification, prevLastNotification } = useSelector(
     (state) => state.notifications
   );
-
   const fetchProfileDetails = async () => {
     if (notification.authorId) {
       // setLoading(true);
@@ -24,34 +24,32 @@ const Notification = ({ notification }) => {
         collection(db, "user"),
         where("username", "==", notification.authorId)
       );
-
       const userSnap = await getDocs(userQ);
-
       userSnap.forEach((doc) => {
         setNotificationUser(doc.data().profilePhotoURL || null);
       });
-      // setLoading(false);
     }
-    console.log("FETCHED NOTIFICATION USER");
+    // console.log("FETCHED NOTIFICATION USER");
   };
+  let notificationStatus = null;
   const checkNotificationStatus = (notification) => {
-    console.log("FULL NOTIFICATION");
-    console.log(notification);
-    setLoading(true);
-    console.log("lastNoti");
-    console.log(lastNotification);
-    console.log("notification time");
-    if (notification.postText) console.log(notification.postText);
+    // if (notification.postText) console.log(notification.postText);
     let t = new Date(notification.published.seconds * 1000);
     console.log(t);
-    if (t >= lastNotification) {
+    if (t > prevLastNotification) {
+      console.log("NEW_NOTIFICATION");
+      notificationStatus = "NEW_NOTIFICATION";
       setNewNotification(true);
-      console.log("GREATER");
-    } else if (t <= lastNotification) {
+      // console.log("GREATER");
+    } else if (t <= prevLastNotification) {
+      console.log(t);
+      notificationStatus = "OLD_NOTIFICATION";
       console.log("LESS");
+      console.log(prevLastNotification);
       setNewNotification(false);
     }
     setLoading(false);
+    console.log(notificationStatus);
   };
 
   const getNotification = async () => {
@@ -64,14 +62,19 @@ const Notification = ({ notification }) => {
     getNotification();
 
     return () => {
-      notification = {};
-      setNewNotification(null);
-
       setNotificationUser({});
       let t = null;
+      // setNewNotification(null);
     };
   }, []);
 
+  useEffect(() => {
+    if (notification.published >= prevLastNotification) {
+      console.log("NEW RENDERED NOTI");
+    } else {
+      console.log("OLD NOTI");
+    }
+  }, []);
   const generateNotificationText = () => {
     switch (notification.postType) {
       case "text":
@@ -90,10 +93,12 @@ const Notification = ({ notification }) => {
     }
   };
 
-  if (loading === false) {
+  if (loading === false && newNotification !== null) {
     return (
       <div
-        className={`${newNotification ? "newNotification" : "oldNotification"}`}
+        className={
+          newNotification === true ? "newNotification" : "oldNotification"
+        }
       >
         <img
           className="notification-profilePhoto"

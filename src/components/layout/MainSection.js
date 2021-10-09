@@ -18,6 +18,8 @@ import {
   setNotifications,
   setNotificationChanges,
   setLastNotificationTime,
+  setInitialNotificationTime,
+  setFilterNotifications,
 } from "../../redux/features/notificationsSlice";
 import FeedPost from "../FeedPost";
 import UploadModal from "../modals/UploadModal";
@@ -42,11 +44,12 @@ import _ from "lodash";
 const MainSection = () => {
   const [postInput, setPostInput] = useState("");
   const [loadingPosts, setLoadingPosts] = useState(null);
-
   const dispatch = useDispatch();
   const { posts, lastPost } = useSelector((state) => state.posts);
   const { userObj } = useSelector((state) => state.user);
-  const { notifications } = useSelector((state) => state.notifications);
+  const { notifications, lastNotification, prevLastNotification } = useSelector(
+    (state) => state.notifications
+  );
   const {
     showUploadImage,
     showContactCardModal,
@@ -86,7 +89,7 @@ const MainSection = () => {
 
       let postsWithDate = [];
       let notificationsWithDate = [];
-      let lastNotificationTime;
+      let nextLastNotificationTime;
       const fetchedPosts = onSnapshot(postQuery, (querySnapshot) => {
         let lastNotificationTimesWithDate = [];
         let lastNotificationTimes = [];
@@ -118,10 +121,13 @@ const MainSection = () => {
             }
           );
 
-          lastNotificationTime = lastNotificationTimes[0];
+          nextLastNotificationTime = lastNotificationTimes[0];
           console.log("LAST NOTIFICATION TIME IS ");
-          console.log(lastNotificationTime);
-          dispatch(setLastNotificationTime(lastNotificationTime));
+          console.log(nextLastNotificationTime);
+          console.log("PREVIOUST ONE IS");
+          console.log(lastNotification);
+          let prevNotiTime = null;
+          dispatch(setInitialNotificationTime(nextLastNotificationTime));
 
           //CONVERT TIMESTAMPS TO DATES
           unsortedPosts.forEach((p) => {
@@ -142,17 +148,29 @@ const MainSection = () => {
           dispatch(setNotifications(notificationsWithDate));
 
           console.log(postsWithDate);
-          lastPublished = postsWithDate[0].published;
+          if (postsWithDate.length > 0) {
+            lastPublished = postsWithDate[0].published;
+          }
         } else if (lastPublished !== null) {
           const changesSnapshot = [];
           const notificationChanges = [];
           const fullSnap = [];
           const fullNotificationsSnap = [];
+          let changeType;
           querySnapshot.docChanges().forEach((change) => {
+            if (change.type === "removed") {
+              changeType = "DELETED";
+            } else {
+              changeType = "Added";
+            }
             console.log("NEW CHANGE");
             changesSnapshot.push(...change.doc.data().recentPosts);
             notificationChanges.push(...change.doc.data().notifications);
           });
+
+          console.log("CHANGE TYPE");
+          console.log(changeType);
+
           querySnapshot.forEach((doc) => {
             fullSnap.push(...doc.data().recentPosts);
             fullNotificationsSnap.push(...doc.data().notifications);
@@ -226,7 +244,6 @@ const MainSection = () => {
 
           console.log("NEW NOTIFICATIONS");
           console.log(newNotifications);
-
           let deleted = postsWithDate.filter(
             ({ postRefId: id1 }) =>
               !fullSnapWithDate.some(({ postRefId: id2 }) => id2 === id1)
@@ -238,9 +255,13 @@ const MainSection = () => {
             return new Date(b.date) - new Date(a.date);
           });
 
+          console.log("NEW NOTIFICATIONS");
+
           newNotifications = newNotifications.sort(function (a, b) {
             return new Date(b.date) - new Date(a.date);
           });
+
+          console.log(newNotifications);
 
           ///ADD NEW ITEMS TO POSTS
           if (newItems.length >= 1) {
@@ -252,7 +273,9 @@ const MainSection = () => {
             });
           }
           if (newNotifications.length >= 1) {
+            console.log(newNotifications);
             dispatch(setNotificationChanges(newNotifications));
+            console.log("NEW NOTIFICATION");
             newNotifications.forEach((y) => {
               notificationsWithDate = [y, ...notificationsWithDate];
             });
@@ -283,7 +306,9 @@ const MainSection = () => {
             indexes = [];
           }
 
-          lastPublished = changesWithDate[0].published;
+          if (changesWithDate && changesWithDate.length > 0) {
+            lastPublished = changesWithDate[0].published;
+          }
         }
       });
 
@@ -304,6 +329,12 @@ const MainSection = () => {
       // let postsSample = [];
     };
   }, []);
+  const notificationsAmount = notifications.length;
+  const newNotificationsList = notifications.filter((n) => {
+    if (notifications.published > prevLastNotification) {
+      return n;
+    }
+  });
 
   return (
     <div className="mainSection">
@@ -314,7 +345,7 @@ const MainSection = () => {
             className="mainSection__startPost"
             onClick={() => dispatch(setShowCreatePostModal())}
           >
-            Start a post
+            Start a post {notificationsAmount} {newNotificationsList.length}
           </div>
         </div>
         <div className="mainSection__postTypes">
