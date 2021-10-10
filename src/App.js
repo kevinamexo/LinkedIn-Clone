@@ -32,7 +32,11 @@ import userSlice, {
 } from "./redux/features/userSlice";
 import { setShowContactCardModal } from "./redux/features/modalsSlice";
 import { setLastNotificationTime } from "./redux/features/notificationsSlice";
-import { setConnectionRequests } from "./redux/features/connectionRequestsSlice";
+import {
+  setConnectionRequests,
+  setAddToConnectionsRequests,
+  setRequestsFetchMade,
+} from "./redux/features/connectionRequestsSlice";
 
 import { onAuthStateChange } from "firebase/auth";
 
@@ -42,32 +46,16 @@ function App() {
   const { modalActive, showContactCardModal } = useSelector(
     (state) => state.modals
   );
-  const { connectionRequests } = useSelector(
+  const { connectionRequests, initialRequestsFetchMade } = useSelector(
     (state) => state.connectionRequests
   );
   const [authenticated, setAuthenticated] = useState(null);
-
+  const [loadingConnectionRequests, setLoadingConnectionRequests] =
+    useState(null);
   let username;
 
-  const lastNotification = async () => {
-    console.log("FETCHING LAST NOTIFICATION");
-    const lastNotificationQuery = query(
-      collection(db, "user"),
-      where("username", "==", userObj.username)
-    );
-    const fetchLastNotificationTime = onSnapshot(
-      lastNotificationQuery,
-      (querySnapshot) => {
-        console.log("NOTIFICATIONS SNAPSOT");
-        querySnapshot.forEach((doc) => {
-          console.log("NEW NOFI");
-          console.log(doc.data().lastNotification);
-          dispatch(setLastNotificationTime(doc.data.lastNotification));
-        });
-      }
-    );
-  };
   const fetchConnectionRequests = async () => {
+    setLoadingConnectionRequests(true);
     const connectionRequestQuery = query(
       collection(db, "follows"),
       where("username", "==", userObj.username)
@@ -76,12 +64,61 @@ function App() {
       connectionRequestQuery,
       (querySnapshot) => {
         console.log("NEW CONNECTION REQUEST");
-        if (connectionRequests.length === 0) {
+        ///INITIAL LOAD
+        if (initialRequestsFetchMade === false) {
+          let fetchedConnectionRequests = [];
           querySnapshot.forEach((doc) => {
-            if (doc.data().connectionRequests.length !== connectionRequests) {
-              dispatch(setConnectionRequests(doc.data().connectionRequests));
-            }
+            //GET A COPY OF CURRENT USERS'S CONNECTION REQUESTS
+            fetchedConnectionRequests = [
+              ...fetchedConnectionRequests,
+              ...doc.data().connectionRequests,
+            ];
+
+            //CONVERT THE TIMESTAMPS TO DATE
+            let fetchedConnectionRequestsWithDate = [];
+            fetchedConnectionRequests = fetchedConnectionRequests.forEach(
+              (p) => {
+                fetchedConnectionRequestsWithDate = [
+                  ...fetchedConnectionRequestsWithDate,
+                  { ...p, published: p.published.toDate() },
+                ];
+              }
+            );
+            console.log(fetchedConnectionRequestsWithDate);
+            dispatch(setConnectionRequests(fetchedConnectionRequestsWithDate));
           });
+          dispatch(setRequestsFetchMade(true));
+        } else if (connectionRequests.length > 0) {
+          let fullConnectionRequestsSnap = [];
+
+          let fullConnectionRequestsSnapWithDate = [];
+
+          ///FETCGH FULL CONNECTION REQUESTS ARRAY
+          querySnapshot.forEach((doc) => {
+            fullConnectionRequestsSnap.push(...doc.data().connectionRequests);
+          });
+
+          ///CHECK FOR NEW connectionRequests
+          function comparer(otherArray) {
+            return function (current) {
+              return (
+                otherArray.filter(function (other) {
+                  return (
+                    other.username === current.username &&
+                    other.published === current.published
+                  );
+                }).length == 0
+              );
+            };
+          }
+          //FIND NEW CONNECTION REQUESTS
+
+          let newRequests = fullConnectionRequestsSnapWithDate.filter(
+            ({ username: id1 }) =>
+              !connectionRequests.some(({ username: id2 }) => id2 === id1)
+          );
+          console.log("The new connection requests are:");
+          console.log(newRequests);
         }
       }
     );
@@ -101,10 +138,6 @@ function App() {
   };
 
   const handleLogout = () => dispatch(setUserLogoutState());
-  // const handleLogin=()=>{
-
-  //   fetchUserDetails
-  // }
 
   useEffect(() => {
     const subscribe = auth.onAuthStateChanged((user) => {
@@ -123,9 +156,6 @@ function App() {
     }
   }, [userObj]);
 
-  useEffect(() => {
-    if (userObj && userObj.username) lastNotification();
-  }, [userObj]);
   return (
     <div
       className={modalActive ? "appModal" : "app"}

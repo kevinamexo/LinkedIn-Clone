@@ -127,52 +127,75 @@
 .header__right .notificationsSection {
   position: relative;
 }
-.notificationsMenu-container{
-  height:480px;
+.notificationsMenu-container {
+  height: 480px;
   position: absolute;
   top: 28px;
   left: -150px;
-  width:400px;
-  background-color:rgb(255, 255, 255);
+  width: 400px;
+  background-color: rgb(255, 255, 255);
   overflow: hidden;
   border-radius: 10px;
-  
+
   border: 1px solid rgb(195, 195, 195);
 }
 .notificationsMenu {
   border-radius: 10px;
   height: 420px;
-  padding:10px 0;
+  padding: 10px 0;
   width: 400px;
   max-width: 400px !important;
   background-color: rgb(255, 255, 255);
   /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
-  overflow:auto;
+  overflow: auto;
 }
 
-.notificationsMenu-footer{
+.notificationsMenu-footer {
   display: flex;
   align-items: center;
-  justify-content:center;
-  padding:5px 0;
+  justify-content: center;
+  padding: 5px 0;
 }
-.notificationsMenu-viewAll{
-  background-color:#fff;
-  outline:none;
-  border:1px solid #0a66c2;
-  color:#0a66c2;
-  padding:5px 10px;
-  border-radius:15px;
+.notificationsMenu-viewAll {
+  background-color: #fff;
+  outline: none;
+  border: 1px solid #0a66c2;
+  color: #0a66c2;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.connectionRequestMenu-viewAll {
+  background-color: #fff;
+  outline: none;
+  border: 1px solid #0a66c2;
+  color: #0a66c2;
+  padding: 5px 10px;
+  border-radius: 15px;
   font-size: 14px;
   font-weight: 600;
 }
 
-.notificationsMenu-viewAll:hover{
- background-color: #70b4f95a;
-
+.notificationsMenu-viewAll:hover {
+  background-color: #70b4f95a;
 }
+.connnectionRequestsSection {
+  position: relative;
+  /* background-color: blue; */
+}
+.connnectionRequestsMenu-container {
+  position: absolute;
+  top: 40px;
+  right: -100px;
+  /* height: 200px; */
+  width: 250px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
 
-
+  border: 1px solid rgb(195, 195, 195);
+}
 @media screen and (max-width: 1030px) {
   .header__right {
     display: flex;

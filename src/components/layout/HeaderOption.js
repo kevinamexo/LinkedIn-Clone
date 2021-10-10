@@ -2,7 +2,14 @@ import React from "react";
 import { useSelector } from "react-redux";
 import "./HeaderOption.css";
 
-const HeaderOption = ({ Icon, title, color, onClick, notifications }) => {
+const HeaderOption = ({
+  Icon,
+  title,
+  color,
+  onClick,
+  notifications,
+  length,
+}) => {
   const { newNotifications, newNotificationsAmount } = useSelector(
     (state) => state.notifications
   );
@@ -12,9 +19,10 @@ const HeaderOption = ({ Icon, title, color, onClick, notifications }) => {
       {Icon && (
         <span className="headerOptions-icons">
           <Icon style={color && { color }} className="headerOption__icon" />
-          {newNotificationsAmount > 0 && (
+          {notifications && newNotificationsAmount > 0 && (
             <span className="headerOptionNotifications">
-              {newNotificationsAmount > 0 && newNotificationsAmount}
+              {!length && newNotificationsAmount > 0 && newNotificationsAmount}
+              {length && length}
             </span>
           )}
         </span>

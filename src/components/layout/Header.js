@@ -9,6 +9,7 @@ import {
   FaBell,
 } from "react-icons/fa";
 import Notification from "../notifications/Notification";
+import ConnectionRequests from "../notifications/ConnectionRequests";
 
 import "./Header.css";
 import { Link } from "react-router-dom";
@@ -48,10 +49,15 @@ const Header = () => {
   const [searchResuts, setSearchResults] = useState([]);
 
   const [notificationsActive, setNotificationsActive] = useState(false);
+  const [connectionRequestsActive, setConnectionRequestsActive] =
+    useState(false);
+
   const dispatch = useDispatch();
   const navbarSearchRef = useRef();
   const { user, userObj, loading } = useSelector((state) => state.user);
-
+  const { connectionRequests } = useSelector(
+    (state) => state.connectionRequests
+  );
   const {
     notifications,
 
@@ -176,7 +182,41 @@ const Header = () => {
                 history.push("/");
               }}
             />
-            <HeaderOption title="My Network" Icon={FaUserFriends} />
+            <span className="connnectionRequestsSection">
+              <HeaderOption
+                title="My Network"
+                Icon={FaUserFriends}
+                length={connectionRequests}
+                onClick={() =>
+                  setConnectionRequestsActive(!connectionRequestsActive)
+                }
+              />
+              {connectionRequestsActive && (
+                <div className="connnectionRequestsMenu-container">
+                  <div className="connnectionRequestsMenu">
+                    {connectionRequests.length === 0 && (
+                      <p>No notifications available</p>
+                    )}
+                    {connectionRequests &&
+                      connectionRequests.length > 0 &&
+                      connectionRequests.map((n, idx) => (
+                        <ConnectionRequests
+                          key={idx}
+                          request={n}
+                          // newNotification={true}
+                        />
+                      ))}
+                  </div>
+                  <div className="notificationsMenu-footer">
+                    <Link to="/myNotifications">
+                      <button className="notificationsMenu-viewAll">
+                        View all Connections
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </span>
             <HeaderOption
               title="Jobs"
               Icon={FaBriefcase}
