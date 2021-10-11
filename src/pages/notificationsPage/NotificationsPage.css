@@ -1,0 +1,98 @@
+.notificationsPage{
+    
+    height: calc(100vh - 54px);
+    overflow: hidden;
+    width: 100vh;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow-y: auto;
+
+}
+
+.notificationSections{
+    width:75%;
+    display:flex;
+    justify-content: center;
+    margin-top:40px;
+    
+}
+
+.notifications__section1,
+.notifications__section2,
+.notifications__section3{
+    height: calc(100vh - 54px);
+    
+}
+.notifications__section1{
+    /* background-color: aqua; */
+    
+    min-width: 250px;
+    max-width:300px;
+    display:flex;
+    justify-content: right !important;
+}
+
+.notifications__section2{
+    
+    border-radius: 10px;
+    min-width:450px;
+    
+    
+}
+
+.notifications__section3{
+    background-color:yellow;height:100%;
+    width:250px;
+}
+
+.notifications-status{
+    position: fixed!important;
+    top:94px !important;
+    background-color:#fff;
+    border:1px solid rgb(230, 230, 230);
+    width:calc(100% - 10px);
+    width:183px;
+    border-radius:10px;
+    padding: 10px 20px;
+    
+    /* margin-right: 10px; */
+
+    height:140px;
+}
+
+
+.notificationStatus1{
+    color:black;
+    font-weight: 600;
+}
+.notificationStatus2{
+    color:rgb(109, 109, 109);
+    font-size:16px;
+    margin-top:8px !important;
+    line-height:23px;
+}
+
+.NotificationsList{
+    background-color:#fff;
+    border:1px solid rgb(230, 230, 230);
+    border-radius:10px;
+ 
+}
+.notificationStatus2 .oldNotification,
+.notificationStatus2 .newNotification{
+    
+    padding:0px;
+    margin:0;
+}
+
+.notifications__section2 .oldNotification{
+    background-color:#fff;
+    height:100px;
+}
+
+.NotificationsList div:first-child{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+

@@ -1,5 +1,7 @@
 .addToFeed {
-  position: sticky;
+  position: fixed;
+  right:px;
+  top: 100px;
   top: 90px;
   padding: 0 7px 10px 7px;
   min-width: 240px;

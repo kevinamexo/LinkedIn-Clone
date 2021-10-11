@@ -5,6 +5,7 @@ import Header from "../../components/layout/Header";
 import MainSection from "../../components/layout/MainSection";
 import RSidebar from "../../components/layout/RSidebar";
 import LSidebar from "../../components/layout/LSidebar";
+import NotificationsPage from "../notificationsPage/NotificationsPage";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import ProfilePage from "../profilepage/ProfilePage";
 const Main = () => {
@@ -17,7 +18,7 @@ const Main = () => {
           <ProfilePage />
         </Route>
         <Route exact path="/myNotifications">
-          <h2>My Notifications</h2>
+          <NotificationsPage />
         </Route>
         <Route exact path={path}>
           <div className="main-page">

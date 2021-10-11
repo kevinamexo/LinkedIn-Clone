@@ -1,3 +1,5 @@
+
+
 .notification-item {
   height: 90px;
   display: flex;
@@ -6,6 +8,7 @@
 
 .oldNotification,
 .newNotification {
+
   cursor: pointer;
   position: relative;
   height: 70px;

@@ -9,6 +9,7 @@ import {
   FaBell,
 } from "react-icons/fa";
 import Notification from "../notifications/Notification";
+
 import "./Header.css";
 import { Link } from "react-router-dom";
 import HeaderOption from "./HeaderOption";

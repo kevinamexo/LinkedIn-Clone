@@ -8,9 +8,10 @@
 
 .LSidebar-widget1 {
   /* position: relative; */
-  position: sticky;
+  position: fixed;
+  left:55px;
   right: 0;
-  top: 90px;
+  top: 100px;
   width: 250px;
   /* max-width: 250px !important; */
   background-color: #fff;
