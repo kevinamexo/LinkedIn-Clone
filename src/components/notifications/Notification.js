@@ -8,10 +8,9 @@ import { db } from "../../firebase/firebaseConfig";
 function compareTime(time1, time2) {
   return new Date(time1) > new Date(time2); // true if time1 is later
 }
-const Notification = ({ notification }) => {
+const Notification = ({ notification, newNotification }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [newNotification, setNewNotification] = useState(null);
   const [notificationUser, setNotificationUser] = useState(null);
   const [loading, setLoading] = useState(null);
   const { notifications, lastNotification, prevLastNotification } = useSelector(
@@ -39,14 +38,13 @@ const Notification = ({ notification }) => {
     if (t > prevLastNotification) {
       console.log("NEW_NOTIFICATION");
       notificationStatus = "NEW_NOTIFICATION";
-      setNewNotification(true);
+
       // console.log("GREATER");
     } else if (t <= prevLastNotification) {
       console.log(t);
       notificationStatus = "OLD_NOTIFICATION";
       console.log("LESS");
       console.log(prevLastNotification);
-      setNewNotification(false);
     }
     setLoading(false);
     console.log(notificationStatus);

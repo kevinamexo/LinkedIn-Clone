@@ -45,22 +45,21 @@ import {
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
-  const [newNotis, setNewNotis] = useState([]);
-  const [oldNotis, setOldNotis] = useState([]);
+
   const [notificationsActive, setNotificationsActive] = useState(false);
   const dispatch = useDispatch();
   const navbarSearchRef = useRef();
   const { user, userObj, loading } = useSelector((state) => state.user);
+
   const {
     notifications,
-    lastNotification,
-    nextLastNotification,
+
     newNotifications,
-    prevLastNotification,
-    prevPastNotifications,
+    pastNotifications,
   } = useSelector((state) => state.notifications);
   const { searchActive } = useSelector((state) => state.modals);
 
+  // const [newNotis, setNewNotis] = useState(newNotifications.length>0);
   //Event handlers
   const history = useHistory();
 
@@ -88,15 +87,15 @@ const Header = () => {
   };
   const handleClickNotification = async () => {
     setNotificationsActive(!notificationsActive);
+    let date = new Date();
+    console.log(date);
+    let timestamp = Timestamp.fromDate(date);
+    timestamp = new Date(timestamp.seconds * 1000);
+    dispatch(setLastNotificationTime(timestamp));
     if (notificationsActive === true) {
       console.log("NOTIFICATIONS ACTIVE");
       dispatch(setFilterNotifications());
     } else {
-      let date = new Date();
-      console.log(date);
-      let timestamp = Timestamp.fromDate(date);
-      timestamp = new Date(timestamp.seconds * 1000);
-      dispatch(setLastNotificationTime(timestamp));
       console.log(false);
       console.log("NOT NOTIFICATIONS ACTIVE");
       await sendNotificationsClick();
@@ -147,8 +146,6 @@ const Header = () => {
           }
         >
           <Link to="/">
-            {newNotis.length}
-            {oldNotis.length}
             <AiFillLinkedin className="linkedin-icon" />
           </Link>
           <div
@@ -195,15 +192,37 @@ const Header = () => {
                 onClick={handleClickNotification}
               />
               {notificationsActive && (
-                <div className="notificationsMenu">
-                  {notifications.length === 0 && (
-                    <p>No notifications available</p>
-                  )}
-                  {prevPastNotifications &&
-                    prevPastNotifications.length > 0 &&
-                    prevPastNotifications.map((n, idx) => (
-                      <Notification key={idx} notification={n} />
-                    ))}
+                <div className="notificationsMenu-container">
+                  <div className="notificationsMenu">
+                    {notifications.length === 0 && (
+                      <p>No notifications available</p>
+                    )}
+                    {newNotifications &&
+                      newNotifications.length > 0 &&
+                      newNotifications.map((n, idx) => (
+                        <Notification
+                          key={idx}
+                          notification={n}
+                          newNotification={true}
+                        />
+                      ))}
+                    {pastNotifications &&
+                      pastNotifications.length > 0 &&
+                      pastNotifications.map((n, idx) => (
+                        <Notification
+                          key={idx}
+                          notification={n}
+                          newNotification={false}
+                        />
+                      ))}
+                  </div>
+                  <div className="notificationsMenu-footer">
+                    <Link to="/myNotifications">
+                      <button className="notificationsMenu-viewAll">
+                        View all Notifications
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               )}
             </span>

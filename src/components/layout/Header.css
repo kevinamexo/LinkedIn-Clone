@@ -127,21 +127,51 @@
 .header__right .notificationsSection {
   position: relative;
 }
-
-.notificationsMenu {
+.notificationsMenu-container{
+  height:480px;
   position: absolute;
   top: 28px;
   left: -150px;
-  /* height: 60px; */
+  width:400px;
+  background-color:rgb(255, 255, 255);
+  overflow: hidden;
+  border-radius: 10px;
+  
+  border: 1px solid rgb(195, 195, 195);
+}
+.notificationsMenu {
+  border-radius: 10px;
+  height: 420px;
   padding:10px 0;
   width: 400px;
   max-width: 400px !important;
   background-color: rgb(255, 255, 255);
-  border-radius: 10px;
-  border: 1px solid rgb(195, 195, 195);
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  overflow-y: auto;
+  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+  overflow:auto;
 }
+
+.notificationsMenu-footer{
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  padding:5px 0;
+}
+.notificationsMenu-viewAll{
+  background-color:#fff;
+  outline:none;
+  border:1px solid #0a66c2;
+  color:#0a66c2;
+  padding:5px 10px;
+  border-radius:15px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.notificationsMenu-viewAll:hover{
+ background-color: #70b4f95a;
+
+}
+
 
 @media screen and (max-width: 1030px) {
   .header__right {

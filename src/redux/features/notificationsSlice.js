@@ -2,15 +2,14 @@ import { createSlice, current } from "@reduxjs/toolkit";
 import { auth } from "../../firebase/firebaseConfig";
 import _ from "lodash";
 const initialState = {
+  prevNewNotifications: null,
+  lastNotification: null,
+  prevLastNotification: null,
   notifications: [],
   newNotifications: [],
   pastNotifications: [],
-  prevPastNotifications: [],
-  lastNotification: null,
-  prevLastNotification: null,
-  prevPrevLastNotification: null,
+  newNotificationsAmount: null,
 };
-
 const removeItem = (arr, index) => {
   let newArray = [...arr];
   if (index !== -1) {
@@ -30,21 +29,16 @@ const notificationsSlice = createSlice({
       state.newNotifications = state.notifications.filter((n) => {
         let date = new Date(n.published.seconds * 1000);
         if (date >= state.prevLastNotification) {
-          console.log(date);
-          console.log("newer");
-          console.log(state.prevLastNotification);
           return n;
         }
       });
+      state.newNotificationsAmount = state.newNotifications.length;
       let i = [...state.notifications];
       state.prevPastNotifications = i;
 
       state.pastNotifications = state.notifications.filter((n) => {
         let date = new Date(n.published.seconds * 1000);
         if (date < state.prevLastNotification) {
-          console.log(date);
-          console.log("older");
-          console.log(state.prevLastNotification);
           return n;
         }
       });
@@ -58,18 +52,14 @@ const notificationsSlice = createSlice({
       });
       let i = [...state.notifications];
       console.log(i);
+
       state.newNotifications = i.filter(
         (x) => x.published >= state.prevLastNotification
       );
-      if (state.prevPrevLastNotification === null) {
-        state.prevPastNotifications = i.filter(
-          (x) => x.published < state.prevLastNotification
-        );
-      } else if (state.prevPrevLastNotification !== null) {
-        state.prevPastNotifications = i.filter(
-          (x) => x.published < state.prevPrevLastNotification
-        );
-      }
+      state.newNotificationsAmount = state.newNotifications.length;
+      state.pastNotifications = i.filter(
+        (x) => x.published < state.prevLastNotification
+      );
     },
     setInitialNotificationTime: (state, action) => {
       state.lastNotification = action.payload;
@@ -77,17 +67,17 @@ const notificationsSlice = createSlice({
     },
     setLastNotificationTime: (state, action) => {
       console.log("LAST NOTIFCATION TIME");
-      state.prevPrevLastNotification = state.prevLastNotification;
       state.prevLastNotification = state.lastNotification;
       state.lastNotification = action.payload;
+      state.newNotificationsAmount = 0;
       let i = [...state.notifications];
       console.log(i);
+
       state.newNotifications = i.filter(
-        (x) => x.published > state.prevLastNotification
+        (x) => x.published >= state.prevLastNotification
       );
-      // state.lastNotification = new Date(action.payload.seconds * 1000);
-      state.prevPastNotifications = i.filter(
-        (x) => x.published > state.prevPrevLastNotification
+      state.pastNotifications = i.filter(
+        (x) => x.published < state.prevLastNotification
       );
     },
     setFilterNotifications: (state, action) => {

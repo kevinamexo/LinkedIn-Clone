@@ -17,9 +17,7 @@ import {
 import {
   setNotifications,
   setNotificationChanges,
-  setLastNotificationTime,
   setInitialNotificationTime,
-  setFilterNotifications,
 } from "../../redux/features/notificationsSlice";
 import FeedPost from "../FeedPost";
 import UploadModal from "../modals/UploadModal";
@@ -99,6 +97,7 @@ const MainSection = () => {
         if (lastPublished === null) {
           querySnapshot.forEach((doc) => {
             unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
+
             unsortedNotifications = [
               ...unsortedNotifications,
               ...doc.data().notifications,
@@ -109,11 +108,10 @@ const MainSection = () => {
               ...lastNotificationTimes,
               doc.data().lastNotification.toDate(),
             ];
-            // console.log(doc.data());
+            if (doc.data().username === userObj.username) {
+              nextLastNotificationTime = doc.data().lastNotification;
+            }
           });
-
-          console.log("LAST NOTIFICATION TIMES");
-          console.log(lastNotificationTimes);
 
           let sortedLastNotificationTimes = lastNotificationTimes.sort(
             function (a, b) {
@@ -121,13 +119,10 @@ const MainSection = () => {
             }
           );
 
-          nextLastNotificationTime = lastNotificationTimes[0];
-          console.log("LAST NOTIFICATION TIME IS ");
-          console.log(nextLastNotificationTime);
-          console.log("PREVIOUST ONE IS");
-          console.log(lastNotification);
           let prevNotiTime = null;
-          dispatch(setInitialNotificationTime(nextLastNotificationTime));
+          dispatch(
+            setInitialNotificationTime(nextLastNotificationTime.toDate())
+          );
 
           //CONVERT TIMESTAMPS TO DATES
           unsortedPosts.forEach((p) => {
@@ -140,14 +135,10 @@ const MainSection = () => {
           unsortedNotifications.forEach((p) => {
             notificationsWithDate = [...notificationsWithDate, p];
           });
-          console.log("INITIAL SET POSTS");
-          console.log(postsWithDate);
-          console.log("NOTIFICATIONS WITH DATE");
-          console.log(notificationsWithDate);
+
           dispatch(setPosts(postsWithDate));
           dispatch(setNotifications(notificationsWithDate));
 
-          console.log(postsWithDate);
           if (postsWithDate.length > 0) {
             lastPublished = postsWithDate[0].published;
           }
@@ -167,9 +158,6 @@ const MainSection = () => {
             changesSnapshot.push(...change.doc.data().recentPosts);
             notificationChanges.push(...change.doc.data().notifications);
           });
-
-          console.log("CHANGE TYPE");
-          console.log(changeType);
 
           querySnapshot.forEach((doc) => {
             fullSnap.push(...doc.data().recentPosts);

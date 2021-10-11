@@ -16,6 +16,9 @@ const Main = () => {
         <Route exact path="/in/:username/">
           <ProfilePage />
         </Route>
+        <Route exact path="/myNotifications">
+          <h2>My Notifications</h2>
+        </Route>
         <Route exact path={path}>
           <div className="main-page">
             <LSidebar />
