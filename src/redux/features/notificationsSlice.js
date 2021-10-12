@@ -2,11 +2,11 @@ import { createSlice, current } from "@reduxjs/toolkit";
 import { auth } from "../../firebase/firebaseConfig";
 import _ from "lodash";
 const initialState = {
-  prevNewNotifications: null,
   lastNotification: null,
   prevLastNotification: null,
   notifications: [],
   newNotifications: [],
+  prevNewNotifications: [],
   pastNotifications: [],
   newNotificationsAmount: null,
 };
@@ -67,6 +67,7 @@ const notificationsSlice = createSlice({
     },
     setLastNotificationTime: (state, action) => {
       console.log("LAST NOTIFCATION TIME");
+      state.prevPrevLastNotification = state.prevLastNotification;
       state.prevLastNotification = state.lastNotification;
       state.lastNotification = action.payload;
       state.newNotificationsAmount = 0;
@@ -79,6 +80,15 @@ const notificationsSlice = createSlice({
       state.pastNotifications = i.filter(
         (x) => x.published < state.prevLastNotification
       );
+      if (state.prevPrevLastNotification) {
+        state.prevNewNotifications = i.filter(
+          (x) => x.published >= state.prevPrevLastNotification
+        );
+      } else if (!state.prevPrevLastNotification) {
+        state.prevNewNotifications = i.filter(
+          (x) => x.published >= state.prevLastNotification
+        );
+      }
     },
     setFilterNotifications: (state, action) => {
       let i = [...state.notifications];
@@ -86,6 +96,7 @@ const notificationsSlice = createSlice({
       state.newNotifications = i.filter(
         (x) => x.published > state.prevLastNotification
       );
+
       state.pastNotifications = i.filter(
         (x) => x.published < state.prevLastNotification
       );

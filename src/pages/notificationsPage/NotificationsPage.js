@@ -6,9 +6,9 @@ const NotificationsPage = () => {
   const { newNotifications, pastNotifications, newNotificationsAmount } =
     useSelector((state) => state.notifications);
   const notificationsMessage =
-    newNotificationsAmount === 0
+    newNotifications.length < 1
       ? `You're all caught up! Check back later for new Notifications`
-      : `You have ${newNotificationsAmount} new notifications`;
+      : `You have ${newNotifications.length} new notifications`;
   return (
     <div className="notificationsPage">
       <div className="notificationSections">
@@ -38,7 +38,16 @@ const NotificationsPage = () => {
               ))}
           </div>
         </div>
-        <div className="notifications__section3"></div>
+        <div className="notifications__section3">
+          <div className="notifications__section3-ad">
+            <img
+              src="https://image.freepik.com/free-photo/two-happy-men-working-together-new-business-project_171337-7319.jpg"
+              alt="ad"
+            />
+            <div className="title">Your dream job is closer than you think</div>
+            <button className="seeJobs">See jobs</button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,14 +1,11 @@
-
-
 .notification-item {
   height: 90px;
   display: flex;
   align-items: center;
 }
 
-.oldNotification,
-.newNotification {
-
+.notificationsMenu .oldNotification,
+.notificationsMenu .newNotification {
   cursor: pointer;
   position: relative;
   height: 70px;
@@ -35,6 +32,16 @@
   align-items: center;
 }
 
+.notificationsMenu .newNotification-tag,
+.newNotification-tag {
+  height: 10px;
+  width: 10px;
+  background-color: #0a66c2;
+  border-radius: 50%;
+  position: absolute;
+  left: 10px;
+  top: 45px;
+}
 .newNotification p,
 .oldNotification p {
   margin-left: 10px;

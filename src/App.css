@@ -2,7 +2,7 @@
   text-align: center;
   margin: 0;
   padding: 0;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   position: relative;
   display: flex;
   flex-direction: column;

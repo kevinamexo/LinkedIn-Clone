@@ -98,6 +98,9 @@ const Notification = ({ notification, newNotification }) => {
           newNotification === true ? "newNotification" : "oldNotification"
         }
       >
+        {newNotification === true && (
+          <span className="newNotification-tag"></span>
+        )}
         <img
           className="notification-profilePhoto"
           src={

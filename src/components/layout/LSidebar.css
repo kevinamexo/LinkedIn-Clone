@@ -8,8 +8,8 @@
 
 .LSidebar-widget1 {
   /* position: relative; */
-  position: fixed;
-  left:55px;
+  position: sticky;
+  left: 55px;
   right: 0;
   top: 100px;
   width: 250px;
@@ -160,28 +160,48 @@
 
 @media screen and (max-width: 900px) {
   .LSidebar {
-    width: 100%;
-    align-items: right;
+    margin-top: 80px;
+    display: flex;
+    align-items: center;
 
-    /* justify-content: right; */
-    margin-right: 0;
+    justify-content: center;
+
+    position: relative;
   }
   .LSidebar-widget1 {
     width: 200px;
     min-width: 200px;
+
+    /* margin-right: 10px; */
+    position: absolute;
+    top: 0;
+    left: 0;
     /* height: 165px; */
+  }
+  .LSidebar-widget2 {
+    display: none;
   }
   .LSidebar__showMore {
     width: 200px;
+  }
+  .LSidebar__showMore {
+    /* display: none; */
+    color: rgb(96, 96, 96);
+    font-weight: 500;
+    /* display: flex; */
+    font-size: 15px;
   }
 }
 @media screen and (max-width: 765px) {
   .LSidebar {
     width: 100%;
-    align-items: center;
+    /* align-items: center; */
+    /* margin-left: -0px; */
+
     /* padding-right: 10px; */
   }
   .LSidebar-widget1 {
+    position: relative;
     width: 90% !important;
     /* height: 165px; */
   }

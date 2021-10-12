@@ -1,98 +1,177 @@
-.notificationsPage{
-    
-    height: calc(100vh - 54px);
-    overflow: hidden;
-    width: 100vh;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    overflow-y: auto;
-
+.notificationsPage {
+  min-height: calc(100vh - 55px);
+  /* overflow: hidden; */
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow-y: auto;
 }
 
-.notificationSections{
-    width:75%;
-    display:flex;
-    justify-content: center;
-    margin-top:40px;
-    
+.notificationSections {
+  width: 100%;
+  display: flex;
+  /* justify-content: center; */
+  margin-top: 40px;
 }
 
 .notifications__section1,
 .notifications__section2,
-.notifications__section3{
-    height: calc(100vh - 54px);
-    
+.notifications__section3 {
+  height: calc(100vh - 54px);
 }
-.notifications__section1{
-    /* background-color: aqua; */
-    
-    min-width: 250px;
-    max-width:300px;
-    display:flex;
-    justify-content: right !important;
+.notifications__section1 {
+  width: 25%;
+  display: flex;
+  justify-content: right !important;
 }
 
-.notifications__section2{
-    
-    border-radius: 10px;
-    min-width:450px;
-    
-    
+.notifications__section2 {
+  display: flex;
+  justify-content: center;
+
+  min-width: 450px;
+  width: 45%;
 }
 
-.notifications__section3{
-    background-color:yellow;height:100%;
-    width:250px;
+P.notifications__section3 {
+  height: 100%;
+  width: 50px;
+  margin-left: 40px;
 }
 
-.notifications-status{
-    position: fixed!important;
-    top:94px !important;
-    background-color:#fff;
-    border:1px solid rgb(230, 230, 230);
-    width:calc(100% - 10px);
-    width:183px;
-    border-radius:10px;
-    padding: 10px 20px;
-    
-    /* margin-right: 10px; */
+.notifications-status {
+  position: fixed !important;
+  min-width: 200px;
+  max-width: 260px;
+  top: calc(0vh + 100px) !important;
+  margin-right: 0px;
+  background-color: #fff;
 
-    height:140px;
+  border: 1px solid rgb(230, 230, 230);
+  width: calc(100% - 10px);
+  width: 200px;
+  border-radius: 10px;
+  padding: 10px 20px;
+
+  /* margin-right: 10px; */
+
+  height: 140px;
 }
 
-
-.notificationStatus1{
-    color:black;
-    font-weight: 600;
+.notificationStatus1 {
+  color: black;
+  font-weight: 600;
 }
-.notificationStatus2{
-    color:rgb(109, 109, 109);
-    font-size:16px;
-    margin-top:8px !important;
-    line-height:23px;
-}
-
-.NotificationsList{
-    background-color:#fff;
-    border:1px solid rgb(230, 230, 230);
-    border-radius:10px;
- 
-}
-.notificationStatus2 .oldNotification,
-.notificationStatus2 .newNotification{
-    
-    padding:0px;
-    margin:0;
+.notificationStatus2 {
+  color: rgb(109, 109, 109);
+  font-size: 16px;
+  margin-top: 8px !important;
+  line-height: 23px;
 }
 
-.notifications__section2 .oldNotification{
-    background-color:#fff;
-    height:100px;
+.NotificationsList {
+  margin-top: 60px;
+  border-radius: 10px;
+  /* max-width: 550px; */
+  width: calc(100% - 40px);
+
+  align-items: center;
+  border: 1px solid rgb(230, 230, 230);
 }
 
-.NotificationsList div:first-child{
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+.NotificationsList .oldNotification {
+  border: 1px solid rgb(230, 230, 230);
+  background-color: #fff;
+  height: 90px !important;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  position: relative;
+  z-index: 10;
+}
+.NotificationsList .newNotification {
+  border: 1px solid rgb(230, 230, 230);
+  background-color: #70b4f95a;
+  z-index: 10;
+  height: 90px !important;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: relative;
 }
 
+.NotificationsList div:first-child {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.notifications__section3-ad {
+  width: 330px;
+  height: 300px;
+  background-color: #fff;
+  margin-top: 60px;
+  position: fixed !important;
+  border-radius: 10px;
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.notifications__section3-ad img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.notifications__section3-ad .title {
+  position: absolute;
+  top: 0;
+  /* left: 5px; */
+  color: #fff;
+  font-size: 26px;
+  font-weight: 500;
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+68,0+100 */
+  height: calc(100% - 25px);
+  width: 50%;
+  padding-top: 20px;
+  padding-left: 10px;
+  text-align: left;
+
+  margin-left: 5px;
+
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+68,0+100 */
+  background: -moz-linear-gradient(
+    left,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.65) 68%,
+    rgba(0, 0, 0, 0) 100%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    left,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.65) 68%,
+    rgba(0, 0, 0, 0) 100%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.65) 68%,
+    rgba(0, 0, 0, 0) 100%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=1 ); /* IE6-9 */
+}
+
+.seeJobs {
+  background-color: #2a85d4;
+  color: #fff;
+  padding: 7px 20px;
+  border: none;
+  border-radius: 7px;
+  font-size: 14px;
+  position: absolute;
+  top: 170px;
+  left: 15px;
+}
+/* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+53,0+100 */

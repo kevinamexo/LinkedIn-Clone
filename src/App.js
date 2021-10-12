@@ -32,6 +32,7 @@ import userSlice, {
 } from "./redux/features/userSlice";
 import { setShowContactCardModal } from "./redux/features/modalsSlice";
 import { setLastNotificationTime } from "./redux/features/notificationsSlice";
+import { setConnectionRequests } from "./redux/features/connectionRequestsSlice";
 
 import { onAuthStateChange } from "firebase/auth";
 
@@ -40,6 +41,9 @@ function App() {
   const { user, userObj, isAuth, loading } = useSelector((state) => state.user);
   const { modalActive, showContactCardModal } = useSelector(
     (state) => state.modals
+  );
+  const { connectionRequests } = useSelector(
+    (state) => state.connectionRequests
   );
   const [authenticated, setAuthenticated] = useState(null);
 
@@ -60,6 +64,25 @@ function App() {
           console.log(doc.data().lastNotification);
           dispatch(setLastNotificationTime(doc.data.lastNotification));
         });
+      }
+    );
+  };
+  const fetchConnectionRequests = async () => {
+    const connectionRequestQuery = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    const connectionRequestListen = onSnapshot(
+      connectionRequestQuery,
+      (querySnapshot) => {
+        console.log("NEW CONNECTION REQUEST");
+        if (connectionRequests.length === 0) {
+          querySnapshot.forEach((doc) => {
+            if (doc.data().connectionRequests.length !== connectionRequests) {
+              dispatch(setConnectionRequests(doc.data().connectionRequests));
+            }
+          });
+        }
       }
     );
   };
@@ -88,11 +111,17 @@ function App() {
       dispatch(setLoading(true));
       if (user) {
         start(user);
-      } else {
+      } else if (!user) {
         handleLogout();
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (userObj) {
+      fetchConnectionRequests();
+    }
+  }, [userObj]);
 
   useEffect(() => {
     if (userObj && userObj.username) lastNotification();
