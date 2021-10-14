@@ -23,6 +23,7 @@ import {
   arrayRemove,
   getDoc,
   orderBy,
+  Timestamp,
   doc,
   limit,
 } from "firebase/firestore";
@@ -135,6 +136,9 @@ const ProfilePage = () => {
     setLoadingFollow(true);
     try {
       setFollowing(true);
+      let date = new Date();
+      console.log(date);
+      let timestamp = Timestamp.fromDate(date);
       console.log(profId);
       const followsDocRef = query(
         collection(db, "follows"),
@@ -148,7 +152,10 @@ const ProfilePage = () => {
       console.log(followDocId);
       const followDoc = doc(db, "follows", followDocId);
       await updateDoc(followDoc, {
-        users: arrayUnion(userObj.username),
+        connectionRequests: arrayUnion({
+          username: userObj.username,
+          published: timestamp,
+        }),
       });
 
       const userDoc = doc(db, "user", profId);

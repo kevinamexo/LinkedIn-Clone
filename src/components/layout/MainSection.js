@@ -102,6 +102,7 @@ const MainSection = () => {
               ...unsortedNotifications,
               ...doc.data().notifications,
             ];
+            console.log(doc.data());
 
             //FETCH LAST NOTIFICATION TIME FROM FIRESTORE
             lastNotificationTimes = [
@@ -110,6 +111,9 @@ const MainSection = () => {
             ];
             if (doc.data().username === userObj.username) {
               nextLastNotificationTime = doc.data().lastNotification;
+              dispatch(
+                setInitialNotificationTime(nextLastNotificationTime.toDate())
+              );
             }
           });
 
@@ -118,11 +122,7 @@ const MainSection = () => {
               return new Date(b) - new Date(a);
             }
           );
-
-          let prevNotiTime = null;
-          dispatch(
-            setInitialNotificationTime(nextLastNotificationTime.toDate())
-          );
+          console.log(nextLastNotificationTime);
 
           //CONVERT TIMESTAMPS TO DATES
           unsortedPosts.forEach((p) => {

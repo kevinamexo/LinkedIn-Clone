@@ -55,9 +55,9 @@ const ConnectionRequests = ({ request, key }) => {
       setLoading(false);
       console.log("DONE FETCHING USER DETAILS");
     });
-  }, [request]);
+  }, [request, request]);
 
-  const acceptConnectionRequest = async (userOb) => {
+  const acceptConnectionRequest = async (userOb, accept) => {
     const followQuery = query(
       collection(db, "follows"),
       where("username", "==", userObj.username)
@@ -68,11 +68,13 @@ const ConnectionRequests = ({ request, key }) => {
       followDocId = doc.id;
     });
     const followDocRef = doc(db, "follows", followDocId);
-
-    await updateDoc(followDocRef, {
-      users: arrayUnion(userOb.username),
-      connectionRequests: arrayRemove(request),
-    });
+    if (accept === true) {
+      await updateDoc(followDocRef, {
+        users: arrayUnion(userOb.username),
+        connectionRequests: arrayRemove(request),
+      });
+    } else {
+    }
     dispatch(removeFromRequests(key));
   };
 
@@ -107,10 +109,12 @@ const ConnectionRequests = ({ request, key }) => {
                 </p>
                 <p className="user-title">{userOb.title}</p>
                 <span>
-                  <button>Ignore </button>
+                  <button onClick={() => acceptConnectionRequest(userOb, true)}>
+                    Ignore{" "}
+                  </button>
                   <button
                     type="button"
-                    onClick={() => acceptConnectionRequest(userOb)}
+                    onClick={() => acceptConnectionRequest(userOb, true)}
                   >
                     Accept
                   </button>
