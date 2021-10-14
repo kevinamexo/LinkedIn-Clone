@@ -37,7 +37,7 @@ const ConnectionRequests = ({ request }) => {
     fetchUser(request.username).then((uO) => {
       setUserObj(uO);
       setLoading(false);
-      console.log("DONE FETCHING USER DETAILSS");
+      console.log("DONE FETCHING USER DETAILS");
     });
   }, [request]);
 
