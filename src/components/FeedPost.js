@@ -262,10 +262,13 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
               {postUserObj.title && (
                 <p className="feedPost__userDetails-userSummary">
                   {postUserObj.title}
-                  {` at ${
-                    postUserObj.organizationName ||
-                    (organizationData.name && organizationData.name)
-                  }` || null}
+                  {(postUserObj.organizationName &&
+                    ` at ${
+                      postUserObj.organizationName ||
+                      (organizationData.name && organizationData.name) ||
+                      null
+                    }`) ||
+                    null}
                 </p>
               )}
               <p className="feedPost__userDetails-postTime">

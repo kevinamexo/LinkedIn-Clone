@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { query, collection, where, getDocs } from "firebase/firestore";
+import {
+  query,
+  collection,
+  where,
+  getDocs,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { useDispatch } from "react-redux";
-import { setAddToConnectionsRequests } from "../../redux/features/connectionRequestsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setAddToConnectionsRequests,
+  removeFromRequests,
+} from "../../redux/features/connectionRequestsSlice";
 import Skeleton from "react-loading-skeleton";
 import "./ConnectionRequest.css";
 import { FaUserCircle } from "react-icons/fa";
 
-const ConnectionRequests = ({ request }) => {
-  const [userObj, setUserObj] = useState({});
+const ConnectionRequests = ({ request, key }) => {
+  const [userOb, setUserOb] = useState({});
   const [loading, setLoading] = useState(null);
+  const { userObj } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const fetchUser = async (user_name) => {
+    //check if object is already in store
+
     const userQuery = query(
       collection(db, "user"),
       where("username", "==", user_name)
@@ -25,40 +40,100 @@ const ConnectionRequests = ({ request }) => {
         title: doc.data().title,
         verified: doc.data().verified,
         location: doc.data().location,
+        username: doc.data().username,
       };
       dispatch(setAddToConnectionsRequests(userObject));
-      // setLoadingConnectionRequests(false);
+      setUserOb(userObject);
+
       return userObject;
     });
   };
 
   useEffect(() => {
     setLoading(true);
-    fetchUser(request.username).then((uO) => {
-      setUserObj(uO);
+    fetchUser(request.username).then(() => {
       setLoading(false);
       console.log("DONE FETCHING USER DETAILS");
     });
   }, [request]);
 
+  const acceptConnectionRequest = async (userOb) => {
+    const followQuery = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    const followSnap = await getDocs(followQuery);
+    let followDocId;
+    followSnap.forEach((doc) => {
+      followDocId = doc.id;
+    });
+    const followDocRef = doc(db, "follows", followDocId);
+
+    await updateDoc(followDocRef, {
+      users: arrayUnion(userOb.username),
+      connectionRequests: arrayRemove(request),
+    });
+    dispatch(removeFromRequests(key));
+  };
+
   return (
     <>
       <div className="connection-requests">
-        {loading === false && (
-          <>
-            <div className="connectionReq__section2">
-              {userObj && userObj.profilePhotoUrl ? (
-                <img src={userObj.profilePhotoUrl} />
-              ) : (
-                <FaUserCircle className="connectionReq__profilePic" />
-              )}
-            </div>
-            <div className="connectionReq__section2">
-              <p>{request.username}</p>
-            </div>
-          </>
-        )}
-        {loading === true && <p>Loading</p>}
+        <div className="connection-requests__main">
+          <div className="connectionReq__section1">
+            {loading === false && userOb && userOb.profilePhotoUrl && (
+              <img src={userOb.profilePhotoUrl} />
+            )}
+            {loading === false && userOb && !userOb.profilePhotoUrl && (
+              <FaUserCircle className="connectionReq__profilePic" />
+            )}
+
+            {loading === true && (
+              <Skeleton
+                className="connectionReq__profilePic"
+                circle="true"
+                height={50}
+                width={50}
+              />
+            )}
+          </div>
+          <div className="connectionReq__section2">
+            {loading === false && (
+              <>
+                <p>
+                  {userOb &&
+                    userOb.name &&
+                    `${userOb.name.firstName} ${userOb.name.lastName}`}
+                </p>
+                <p className="user-title">{userOb.title}</p>
+                <span>
+                  <button>Ignore </button>
+                  <button
+                    type="button"
+                    onClick={() => acceptConnectionRequest(userOb)}
+                  >
+                    Accept
+                  </button>
+                </span>
+              </>
+            )}
+            {loading === true && (
+              <>
+                <Skeleton width={100} height={10} />
+                <Skeleton
+                  width={250}
+                  height={10}
+                  style={{ marginTop: "0px" }}
+                />
+                <Skeleton
+                  width={250}
+                  height={10}
+                  style={{ marginTop: "0px" }}
+                />
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

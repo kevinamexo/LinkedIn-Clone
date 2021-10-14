@@ -67,27 +67,31 @@ function App() {
         ///INITIAL LOAD
         if (initialRequestsFetchMade === false) {
           let fetchedConnectionRequests = [];
-          querySnapshot.forEach((doc) => {
+          querySnapshot.docChanges().forEach((change) => {
             //GET A COPY OF CURRENT USERS'S CONNECTION REQUESTS
-            fetchedConnectionRequests = [
-              ...fetchedConnectionRequests,
-              ...doc.data().connectionRequests,
-            ];
+            if (change.type === "added") {
+              fetchedConnectionRequests = [
+                ...fetchedConnectionRequests,
+                ...change.doc.data().connectionRequests,
+              ];
 
-            //CONVERT THE TIMESTAMPS TO DATE
-            let fetchedConnectionRequestsWithDate = [];
-            fetchedConnectionRequests = fetchedConnectionRequests.forEach(
-              (p) => {
-                fetchedConnectionRequestsWithDate = [
-                  ...fetchedConnectionRequestsWithDate,
-                  { ...p, published: p.published.toDate() },
-                ];
-              }
-            );
-            console.log(fetchedConnectionRequestsWithDate);
-            dispatch(setConnectionRequests(fetchedConnectionRequestsWithDate));
+              //CONVERT THE TIMESTAMPS TO DATE
+              let fetchedConnectionRequestsWithDate = [];
+              fetchedConnectionRequests = fetchedConnectionRequests.forEach(
+                (p) => {
+                  fetchedConnectionRequestsWithDate = [
+                    ...fetchedConnectionRequestsWithDate,
+                    { ...p, published: p.published.toDate() },
+                  ];
+                }
+              );
+              console.log(fetchedConnectionRequestsWithDate);
+              dispatch(
+                setConnectionRequests(fetchedConnectionRequestsWithDate)
+              );
+            }
+            dispatch(setRequestsFetchMade(true));
           });
-          dispatch(setRequestsFetchMade(true));
         } else if (connectionRequests.length > 0) {
           let fullConnectionRequestsSnap = [];
 

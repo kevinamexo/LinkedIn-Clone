@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { remove } from "lodash-es";
 import { auth } from "../../firebase/firebaseConfig";
 
 const initialState = {
@@ -11,6 +12,13 @@ const initialState = {
   pastConnectionRequests: [],
   prevNewConnectionRequests: [],
   newConnectionRequestsAmount: [],
+};
+const removeItem = (arr, index) => {
+  let newArray = [...arr];
+  if (index !== -1) {
+    newArray.splice(index, 1);
+    return newArray;
+  }
 };
 
 const connectionRequestsSlice = createSlice({
@@ -46,6 +54,12 @@ const connectionRequestsSlice = createSlice({
     setRequestsFetchMade: (state, action) => {
       state.initialRequestsFetchMade = action.payload;
     },
+    removeFromRequests: (state, action) => {
+      state.connectionRequests = removeItem(
+        state.connectionRequests,
+        action.payload
+      );
+    },
   },
 });
 
@@ -53,6 +67,7 @@ export const {
   setRequestsFetchMade,
   setConnectionRequests,
   setAddToConnectionsRequests,
-  setLoadingConnectionRequestss,
+  setLoadingConnectionRequests,
+  removeFromRequests,
 } = connectionRequestsSlice.actions;
 export default connectionRequestsSlice;

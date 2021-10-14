@@ -187,9 +187,9 @@
 .connnectionRequestsMenu-container {
   position: absolute;
   top: 40px;
-  right: -100px;
+  right: -175px;
   /* height: 200px; */
-  width: 250px;
+  width: 350px;
   background-color: #fff;
   border-radius: 10px;
   overflow: hidden;
