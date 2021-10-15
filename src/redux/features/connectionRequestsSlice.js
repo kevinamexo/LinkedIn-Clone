@@ -38,15 +38,19 @@ const connectionRequestsSlice = createSlice({
       state.lastViewedRequests = action.payload.toDate();
     },
     setAddToConnectionRequests: (state, action) => {
+      console.log("SET ADD TO CONNETION REQUESTS");
       console.log(action.payload);
       console.log(current(state.connectionRequests));
       let newConnectionRequests = action.payload.filter(
-        ({ postRefId: id1 }) =>
-          !state.connectionRequests.some(({ postRefId: id2 }) => id2 === id1)
+        ({ username: id1 }) =>
+          !state.connectionRequests.some(({ username: id2 }) => id2 === id1)
       );
       console.log(newConnectionRequests);
 
-      console.log("Adding new notifications");
+      state.connectionRequests = [
+        ...newConnectionRequests,
+        ...state.connectionRequests,
+      ];
       // state.connectionRequests = [action.payload, ...state.connectionRequests];
     },
     setRequestsFetchMade: (state, action) => {

@@ -58,6 +58,9 @@ const ConnectionRequests = ({ request, key }) => {
   }, []);
 
   const acceptConnectionRequest = async (userOb, accept) => {
+    if (accept === false) {
+      dispatch(removeFromRequests(key));
+    }
     const followQuery = query(
       collection(db, "follows"),
       where("username", "==", userObj.username)
@@ -78,7 +81,6 @@ const ConnectionRequests = ({ request, key }) => {
         connectionRequests: arrayRemove(request),
       });
     }
-    dispatch(removeFromRequests(key));
   };
 
   return (
