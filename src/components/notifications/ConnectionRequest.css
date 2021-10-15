@@ -1,78 +1,80 @@
 .connection-requests {
-  margin-top: 10px;
+  /* margin-top: 10px; */
   border-bottom: 1px solid rgb(195, 195, 195);
- 
+
   /* padding: 5px 10px; */
 }
-.connection-requests .title{
+.connection-requests .title {
   border-bottom: 1px solid rgb(195, 195, 195);
   /* padding:0 10px; */
   font-size: 12px;
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   padding-bottom: 5px;
-  font-weight:bold;
+  font-weight: bold;
 }
-.connection-requests__main{
-  display:flex;
+.connection-requests__main {
+  display: flex;
   align-items: center;
   /* padding-bottom:px; */
-  padding:0 10px 7px 10px;
+  padding: 0 10px 7px 10px;
 }
 
-.connectionReq__section2{
- 
-  margin-left:10px;
-  width:200px;
+.connectionReq__section2 {
+  margin-left: 10px;
+  width: 200px;
   text-align: left;
-
 }
-.connectionReq__section2 p:first-child{
-  margin:5px 0 7px 0;
+.connectionReq__section2 p:first-child {
+  margin: 5px 0 7px 0;
   font-size: 14px;
-  margin-bottom:1px;
+  margin-bottom: 1px;
   font-weight: 600;
 }
-.connectionReq__section2 .user-title{
-  margin:0 0 5px 0;
+.connectionReq__section2 .user-title {
+  margin: 0 0 5px 0;
   font-size: 12px;
-  color:rgb(93, 93, 93)
+  color: rgb(93, 93, 93);
 }
 
-.connectionReq__section2 button{
-  
+.connectionReq__section2 button {
   border-radius: 15px;
-  padding:5px 15px;
+  padding: 5px 15px;
 }
-.connectionReq__section2 button:first-child{
-  background-color:transparent;
-  border:1px solid rgb(89, 89, 89);
-  color:rgb(89, 89, 89);font-weight: 600;
+.connectionReq__section2 button:first-child {
+  background-color: transparent;
+  border: 1px solid rgb(89, 89, 89);
+  color: rgb(89, 89, 89);
+  font-weight: 600;
 }
-.connectionReq__section2 button:first-child:hover{
+.connectionReq__section2 button:first-child:hover {
   background-color: lightgray;
 }
 
-.connectionReq__section2 button:nth-child(2){
+.connectionReq__section2 button:nth-child(2) {
   border: 1px solid #0a66c2;
-  color:#0a66c2;
+  color: #0a66c2;
   background-color: #fff;
-  margin-left:5px;
+  margin-left: 5px;
 }
-.connectionReq__section2 button:nth-child(2):hover{
-  background:#bddeff;
+.connectionReq__section2 button:nth-child(2):hover {
+  background: #bddeff;
 }
-
 
 .connectionReq__profilePic,
-.connectionReq__section1 img{
-  width:40px;
-  height:40px;
+.connectionReq__section1 img {
+  width: 40px;
+  height: 40px;
   object-fit: cover;
-  
-
 }
-.connectionReq__profilePic{
-  color:grey;
+.connectionReq__profilePic {
+  color: grey;
+}
+
+.connnectionRequestsMenu .newRequest {
+  background-color: #a1d0ff5a;
+}
+
+.connnectionRequestsMenu .oldRequest {
 }

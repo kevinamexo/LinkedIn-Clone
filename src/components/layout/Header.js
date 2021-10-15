@@ -44,6 +44,10 @@ import {
   setFilterNotifications,
 } from "../../redux/features/notificationsSlice";
 
+import {
+  setLastConnectionRequestTime,
+  setFilterConnectionRequests,
+} from "../../redux/features/connectionRequestsSlice";
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
@@ -51,13 +55,17 @@ const Header = () => {
   const [notificationsActive, setNotificationsActive] = useState(false);
   const [connectionRequestsActive, setConnectionRequestsActive] =
     useState(false);
+  const [connectionsMenuActive, setConnectionsMenuActive] = useState(false);
 
   const dispatch = useDispatch();
   const navbarSearchRef = useRef();
   const { user, userObj, loading } = useSelector((state) => state.user);
-  const { connectionRequests } = useSelector(
-    (state) => state.connectionRequests
-  );
+  const {
+    connectionRequests,
+    newConnectionRequests,
+    pastConnectionRequests,
+    loadingConnectionRequests,
+  } = useSelector((state) => state.connectionRequests);
   const {
     notifications,
 
@@ -92,6 +100,29 @@ const Header = () => {
 
     console.log(`Updated last notification time to ${timestamp.toDate()}`);
   };
+  const sendConnectionRequestsClick = async () => {
+    const q = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    let followsRefId;
+    const qSnap = await getDocs(q);
+    qSnap.forEach((doc) => {
+      followsRefId = doc.id;
+    });
+    let date = new Date();
+    console.log(date);
+    let timestamp = Timestamp.fromDate(date);
+    const followsRef = doc(db, "follows", followsRefId);
+    if (notificationsActive === false) {
+      console.log("opened menu");
+      await updateDoc(followsRef, {
+        lastConnectionRequest: timestamp,
+      });
+    }
+
+    console.log(`Updated last notification time to ${timestamp.toDate()}`);
+  };
   const handleClickNotification = async () => {
     setNotificationsActive(!notificationsActive);
     let date = new Date();
@@ -108,11 +139,43 @@ const Header = () => {
       await sendNotificationsClick();
     }
   };
+  const handleClickConnections = async () => {
+    console.log("HANDLING");
+
+    setConnectionsMenuActive(!connectionsMenuActive);
+    let date = new Date();
+    console.log(date);
+    let timestamp = Timestamp.fromDate(date);
+    console.log(timestamp);
+
+    dispatch(setLastConnectionRequestTime(timestamp));
+    if (connectionsMenuActive === true) {
+      console.log("CONNECTIONS ACTIVE");
+      dispatch(setFilterConnectionRequests());
+    } else {
+      console.log(false);
+      console.log("CONNECTIONS NOT ACTIVE");
+      await sendConnectionRequestsClick();
+    }
+  };
   const handleHeaderSearchChange = (e) => {
     setHeaderSearch(e.target.value);
   };
   const fetchSearchResults = async () => {
+    let date = new Date();
+    console.log(date);
+    let timestamp = Timestamp.fromDate(date);
     const q = query(collection(db, "users"), where("user"));
+
+    dispatch(setLastNotificationTime(timestamp));
+    if (connectionsMenuActive === true) {
+      console.log("NOTIFICATIONS ACTIVE");
+      dispatch(setFilterNotifications());
+    } else {
+      console.log(false);
+      console.log("NOT NOTIFICATIONS ACTIVE");
+      await sendConnectionRequestsClick();
+    }
   };
   const handleUserSignOut = async () => {
     signOut(auth)
@@ -187,32 +250,48 @@ const Header = () => {
                 title="My Network"
                 Icon={FaUserFriends}
                 length={connectionRequests}
-                onClick={() =>
-                  setConnectionRequestsActive(!connectionRequestsActive)
-                }
+                onClick={handleClickConnections}
               />
-              {connectionRequestsActive && (
+              {connectionsMenuActive === true && (
                 <div className="connnectionRequestsMenu-container">
-                  <div className="connnectionRequestsMenu">
-                    {connectionRequests.length === 0 && (
-                      <p>No notifications available</p>
-                    )}
-                    {connectionRequests &&
-                      connectionRequests.map((n, idx) => (
-                        <ConnectionRequests
-                          key={idx}
-                          request={n}
-                          // newNotification={true}
-                        />
-                      ))}
-                  </div>
-                  <div className="notificationsMenu-footer">
-                    <Link to="/myNotifications">
-                      <button className="notificationsMenu-viewAll">
-                        View all Connections
-                      </button>
-                    </Link>
-                  </div>
+                  <>
+                    <div className="connnectionRequestsMenu">
+                      <p className="title">Connection Requests</p>
+
+                      {connectionRequests.length === 0 &&
+                        newConnectionRequests.length === 0 &&
+                        pastConnectionRequests.length === 0 && (
+                          <p>No Connection Requests</p>
+                        )}
+                      {newConnectionRequests &&
+                        newConnectionRequests.map((n, idx) => (
+                          <ConnectionRequests
+                            key={idx}
+                            request={n}
+                            newItem={true}
+                            // newNotification={true}
+                            type="connectionRequests"
+                          />
+                        ))}
+                      {pastConnectionRequests &&
+                        pastConnectionRequests.map((n, idx) => (
+                          <ConnectionRequests
+                            key={idx}
+                            request={n}
+                            newItem={false}
+                            type="connectionRequests"
+                            // newNotification={true}
+                          />
+                        ))}
+                    </div>
+                    <div className="notificationsMenu-footer">
+                      <Link to="/myNotifications">
+                        <button className="notificationsMenu-viewAll">
+                          View all Connections
+                        </button>
+                      </Link>
+                    </div>
+                  </>
                 </div>
               )}
             </span>
@@ -230,6 +309,7 @@ const Header = () => {
                 Icon={FaBell}
                 notifications={notifications}
                 onClick={handleClickNotification}
+                type="notifications"
               />
               {notificationsActive && (
                 <div className="notificationsMenu-container">

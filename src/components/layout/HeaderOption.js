@@ -9,9 +9,13 @@ const HeaderOption = ({
   onClick,
   notifications,
   length,
+  type,
 }) => {
   const { newNotifications, newNotificationsAmount } = useSelector(
     (state) => state.notifications
+  );
+  const { newConnectionRequests } = useSelector(
+    (state) => state.connectionRequests
   );
 
   return (
@@ -21,8 +25,13 @@ const HeaderOption = ({
           <Icon style={color && { color }} className="headerOption__icon" />
           {notifications && newNotificationsAmount > 0 && (
             <span className="headerOptionNotifications">
-              {!length && newNotificationsAmount > 0 && newNotificationsAmount}
-              {length && length}
+              {type === "notifications" &&
+                newNotificationsAmount > 0 &&
+                newNotificationsAmount}
+              {type === "connectionRequests" &&
+                newConnectionRequests > 0 &&
+                newConnectionRequests.length}
+              {/* {type==='connectionRequests' && newConnectionRequests > 0 && newConnectionRequest} */}
             </span>
           )}
         </span>

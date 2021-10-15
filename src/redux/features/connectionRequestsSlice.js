@@ -36,6 +36,52 @@ const connectionRequestsSlice = createSlice({
     },
     setLastViewedRequests: (state, action) => {
       state.lastViewedRequests = action.payload.toDate();
+      state.prevLastViewedRequests = action.payload.toDate();
+      state.newConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+        if (date1 >= date2) {
+          console.log(date1);
+          console.log("NEWER");
+          console.log(date2);
+          return n;
+        }
+      });
+      state.pastConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+        if (date1 < date2) {
+          console.log(date1);
+          console.log("OLDER");
+          console.log(date2);
+          return n;
+        }
+      });
+    },
+    setLastConnectionRequestTime: (state, action) => {
+      state.prevPrevLastViewedRequests = state.prevLastViewedRequests;
+      state.prevLastViewedRequests = state.lastViewedRequests;
+      state.lastViewedRequests = action.payload;
+      state.newConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+        if (date1 >= date2) {
+          console.log(date1);
+          console.log("NEWER");
+          console.log(date2);
+          return n;
+        }
+      });
+      state.pastConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+        if (date1 < date2) {
+          console.log(date1);
+          console.log("OLDER");
+          console.log(date2);
+          return n;
+        }
+      });
     },
     setAddToConnectionRequests: (state, action) => {
       console.log("SET ADD TO CONNETION REQUESTS");
@@ -51,16 +97,75 @@ const connectionRequestsSlice = createSlice({
         ...newConnectionRequests,
         ...state.connectionRequests,
       ];
+      state.newConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+
+        let date2 = new Date(state.prevLastViewedRequests);
+        if (date1 >= date2) {
+          console.log(date1);
+          console.log("NEWER");
+          console.log(state.prevLastViewedRequests);
+          console.log(date2);
+          return n;
+        }
+      });
+      state.pastConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+        let date2 = new Date(state.prevLastViewedRequests);
+        if (date1 < date2) {
+          console.log(date1);
+          console.log("OLDER");
+          console.log(date2);
+          return n;
+        }
+      });
+
       // state.connectionRequests = [action.payload, ...state.connectionRequests];
     },
     setRequestsFetchMade: (state, action) => {
       state.initialRequestsFetchMade = action.payload;
     },
+    setFilterConnectionRequests: (state, action) => {
+      let i = [...state.connectionRequests];
+      console.log(i);
+      state.newConnectionRequests = i.filter(
+        (x) => x.published > state.prevLastViewedRequests
+      );
+
+      state.pastConnectionRequests = i.filter(
+        (x) => x.published < state.prevLastViewedRequests
+      );
+    },
     removeFromRequests: (state, action) => {
+      console.log(
+        "removed" +
+          JSON.stringify(state.connectionRequests.slice(action.payload, 1))
+      );
+
       state.connectionRequests = removeItem(
         state.connectionRequests,
         action.payload
       );
+      state.newConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+        if (date1 >= date2) {
+          console.log(date1);
+          console.log("NEWER");
+          console.log(date2);
+          return n;
+        }
+      });
+      state.pastConnectionRequests = state.connectionRequests.filter((n) => {
+        let date1 = new Date(n.published.seconds * 1000);
+        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+        if (date1 < date2) {
+          console.log(date1);
+          console.log("OLDER");
+          console.log(date2);
+          return n;
+        }
+      });
     },
   },
 });
@@ -69,8 +174,10 @@ export const {
   setRequestsFetchMade,
   setConnectionRequests,
   setAddToConnectionRequests,
+  setFilterConnectionRequests,
   setLoadingConnectionRequests,
   removeFromRequests,
   setLastViewedRequests,
+  setLastConnectionRequestTime,
 } = connectionRequestsSlice.actions;
 export default connectionRequestsSlice;

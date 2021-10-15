@@ -193,8 +193,16 @@
   background-color: #fff;
   border-radius: 10px;
   overflow: hidden;
-
   border: 1px solid rgb(195, 195, 195);
+}
+
+.connnectionRequestsMenu .title {
+  margin: 0;
+  border-bottom: 1px solid rgb(195, 195, 195);
+  padding: 5px 0;
+  color: rgb(99, 99, 99);
+  font-size: 14px;
+  font-weight: 500;
 }
 @media screen and (max-width: 1030px) {
   .header__right {

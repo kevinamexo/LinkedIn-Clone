@@ -19,7 +19,7 @@ import Skeleton from "react-loading-skeleton";
 import "./ConnectionRequest.css";
 import { FaUserCircle } from "react-icons/fa";
 
-const ConnectionRequests = ({ request, key }) => {
+const ConnectionRequests = ({ request, key, newItem }) => {
   const [userOb, setUserOb] = useState({});
   const [loading, setLoading] = useState(null);
   const { userObj } = useSelector((state) => state.user);
@@ -85,7 +85,9 @@ const ConnectionRequests = ({ request, key }) => {
 
   return (
     <>
-      <div className="connection-requests">
+      <div
+        className={`connection-requests ${newItem === true && "newRequest"}`}
+      >
         <div className="connection-requests__main">
           <div className="connectionReq__section1">
             {loading === false && userOb && userOb.profilePhotoUrl && (

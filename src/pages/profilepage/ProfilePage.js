@@ -21,7 +21,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
-  getDoc,
+  onSnapshot,
   orderBy,
   Timestamp,
   doc,
@@ -85,11 +85,7 @@ const ProfilePage = () => {
       setProfileObj(doc.data());
       dispatch(setSelectedUser(doc.data()));
     });
-    if (profObj.followers && profObj.followers.includes(currentUser.username)) {
-      setFollowing(true);
-    } else {
-      setFollowing(false);
-    }
+
     return profObj;
   };
   let orgObj = {};
@@ -168,6 +164,23 @@ const ProfilePage = () => {
     setLoadingFollow(false);
   };
 
+  const fetchFollows = () => {
+    const q2 = query(
+      collection(db, "follows"),
+      where("username", "==", profileObj.username)
+    );
+    console.log(profileObj.username);
+    const followsListenter = onSnapshot(q2, (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().users.includes(userObj.username)) {
+          setFollowing(true);
+          console.log("You are connected with " + profileObj.username);
+        } else {
+          setFollowing(false);
+        }
+      });
+    });
+  };
   const unFollowUser = async () => {
     setLoadingFollow(true);
     try {
@@ -256,10 +269,15 @@ const ProfilePage = () => {
   }, [profileObj]);
 
   useEffect(() => {
+    console.log(profileObj.username);
+    if (profileObj.username) {
+      fetchFollows();
+    }
     if (myProfile === true) {
       setSummary(userObj.summary);
     } else {
       setSummary(profileObj.summary);
+      // fetchFollows(profileObj.username);
     }
   }, [profileObj]);
 

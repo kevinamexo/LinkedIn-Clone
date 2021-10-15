@@ -34,6 +34,7 @@ import { setShowContactCardModal } from "./redux/features/modalsSlice";
 import { setLastNotificationTime } from "./redux/features/notificationsSlice";
 import {
   setConnectionRequests,
+  setLoadingConnectionRequests,
   setAddToConnectionRequests,
   setRequestsFetchMade,
   setLastViewedRequests,
@@ -69,7 +70,9 @@ function App() {
       (querySnapshot) => {
         let fullConnectionRequestsSnap = [];
         let fullConnectionRequestsSnapWithDate = [];
-
+        // if (connectionRequests.length === 0) {
+        //   dispatch(setLoadingConnectionRequests(true));
+        // }
         console.log(lastViewedRequests);
         if (lastViewedRequests === null) {
           console.log("INITIAL CONNECTION FETCH");
