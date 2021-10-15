@@ -34,11 +34,13 @@ import { setShowContactCardModal } from "./redux/features/modalsSlice";
 import { setLastNotificationTime } from "./redux/features/notificationsSlice";
 import {
   setConnectionRequests,
-  setAddToConnectionsRequests,
+  setAddToConnectionRequests,
   setRequestsFetchMade,
+  setLastViewedRequests,
 } from "./redux/features/connectionRequestsSlice";
 
 import { onAuthStateChange } from "firebase/auth";
+import { connect } from "react-redux";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,13 +48,15 @@ function App() {
   const { modalActive, showContactCardModal } = useSelector(
     (state) => state.modals
   );
-  const { connectionRequests, initialRequestsFetchMade } = useSelector(
-    (state) => state.connectionRequests
-  );
+  const { connectionRequests, initialRequestsFetchMade, lastViewedRequests } =
+    useSelector((state) => state.connectionRequests);
   const [authenticated, setAuthenticated] = useState(null);
   const [loadingConnectionRequests, setLoadingConnectionRequests] =
     useState(null);
   let username;
+  let connectionRequestsTmp;
+  const [initialConnectionsFetch, setInitialConnectionFetch] = useState(false);
+  let lastViewReq;
 
   const fetchConnectionRequests = async () => {
     setLoadingConnectionRequests(true);
@@ -63,67 +67,48 @@ function App() {
     const connectionRequestListen = onSnapshot(
       connectionRequestQuery,
       (querySnapshot) => {
-        console.log("NEW CONNECTION REQUEST");
-        ///INITIAL LOAD
-        if (initialRequestsFetchMade === false) {
-          let fetchedConnectionRequests = [];
-          querySnapshot.docChanges().forEach((change) => {
-            //GET A COPY OF CURRENT USERS'S CONNECTION REQUESTS
-            if (change.type === "added") {
-              fetchedConnectionRequests = [
-                ...fetchedConnectionRequests,
-                ...change.doc.data().connectionRequests,
-              ];
+        let fullConnectionRequestsSnap = [];
+        let fullConnectionRequestsSnapWithDate = [];
 
-              //CONVERT THE TIMESTAMPS TO DATE
-              let fetchedConnectionRequestsWithDate = [];
-              fetchedConnectionRequests = fetchedConnectionRequests.forEach(
-                (p) => {
-                  fetchedConnectionRequestsWithDate = [
-                    ...fetchedConnectionRequestsWithDate,
-                    { ...p, published: p.published.toDate() },
-                  ];
-                }
-              );
-              console.log(fetchedConnectionRequestsWithDate);
-              dispatch(
-                setConnectionRequests(fetchedConnectionRequestsWithDate)
-              );
-            }
-            dispatch(setRequestsFetchMade(true));
-          });
-        } else if (connectionRequests.length > 0) {
-          let fullConnectionRequestsSnap = [];
-
-          let fullConnectionRequestsSnapWithDate = [];
-
-          ///FETCGH FULL CONNECTION REQUESTS ARRAY
-          querySnapshot.forEach((doc) => {
-            fullConnectionRequestsSnap.push(...doc.data().connectionRequests);
-          });
-
-          ///CHECK FOR NEW connectionRequests
-          function comparer(otherArray) {
-            return function (current) {
-              return (
-                otherArray.filter(function (other) {
-                  return (
-                    other.username === current.username &&
-                    other.published === current.published
-                  );
-                }).length == 0
-              );
-            };
-          }
-          //FIND NEW CONNECTION REQUESTS
-
-          let newRequests = fullConnectionRequestsSnapWithDate.filter(
-            ({ username: id1 }) =>
-              !connectionRequests.some(({ username: id2 }) => id2 === id1)
-          );
-          console.log("The new connection requests are:");
-          console.log(newRequests);
+        console.log(lastViewedRequests);
+        if (lastViewedRequests === null) {
+          console.log("INITIAL CONNECTION FETCH");
         }
+        ///FETCGH FULL CONNECTION REQUESTS ARRAY
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+        });
+        querySnapshot.docChanges().forEach((change) => {
+          console.log(change.doc.data().connectionRequests);
+
+          dispatch(
+            setLastViewedRequests(change.doc.data().lastConnectionRequest)
+          );
+          fullConnectionRequestsSnap.push(
+            ...change.doc.data().connectionRequests
+          );
+        });
+
+        function comparer(otherArray) {
+          return function (current) {
+            return (
+              otherArray.filter(function (other) {
+                return (
+                  other.username === current.username &&
+                  other.published === current.published
+                );
+              }).length == 0
+            );
+          };
+        }
+        console.log(connectionRequests);
+        const results = fullConnectionRequestsSnap.filter(
+          ({ username: id1 }) =>
+            !connectionRequests.some(({ username: id2 }) => id2 === id1)
+        );
+        console.log(results);
+
+        dispatch(setAddToConnectionRequests(results));
       }
     );
   };

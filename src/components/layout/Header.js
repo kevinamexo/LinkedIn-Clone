@@ -198,7 +198,6 @@ const Header = () => {
                       <p>No notifications available</p>
                     )}
                     {connectionRequests &&
-                      connectionRequests.length > 0 &&
                       connectionRequests.map((n, idx) => (
                         <ConnectionRequests
                           key={idx}

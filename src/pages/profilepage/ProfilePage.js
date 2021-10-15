@@ -337,7 +337,7 @@ const ProfilePage = () => {
                       {loadingFollow ? (
                         <ImSpinner2 className="loadingSpinner" />
                       ) : (
-                        "Follow"
+                        "Connect"
                       )}
                     </button>
                   )}
@@ -346,7 +346,7 @@ const ProfilePage = () => {
                       {loadingFollow ? (
                         <ImSpinner2 className="loadingSpinner" />
                       ) : (
-                        "Following"
+                        "Connected"
                       )}
                     </button>
                   )}

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import { remove } from "lodash-es";
 import { auth } from "../../firebase/firebaseConfig";
 
@@ -34,22 +34,20 @@ const connectionRequestsSlice = createSlice({
         return new Date(b.published) - new Date(a.published);
       });
     },
-    setAddToConnectionsRequests: (state, action) => {
+    setLastViewedRequests: (state, action) => {
+      state.lastViewedRequests = action.payload.toDate();
+    },
+    setAddToConnectionRequests: (state, action) => {
       console.log(action.payload);
+      console.log(current(state.connectionRequests));
+      let newConnectionRequests = action.payload.filter(
+        ({ postRefId: id1 }) =>
+          !state.connectionRequests.some(({ postRefId: id2 }) => id2 === id1)
+      );
+      console.log(newConnectionRequests);
+
       console.log("Adding new notifications");
-      // let i = action.payload;
-      state.notifications = [action.payload, ...state.connectionRequests];
-
-      // let i = [...state.notifications];
-      // console.log(i);
-
-      // state.newNotifications = i.filter(
-      //   (x) => x.published >= state.prevLastNotification
-      // );
-      // state.newNotificationsAmount = state.newNotifications.length;
-      // state.pastNotifications = i.filter(
-      //   (x) => x.published < state.prevLastNotification
-      // );
+      // state.connectionRequests = [action.payload, ...state.connectionRequests];
     },
     setRequestsFetchMade: (state, action) => {
       state.initialRequestsFetchMade = action.payload;
@@ -66,8 +64,9 @@ const connectionRequestsSlice = createSlice({
 export const {
   setRequestsFetchMade,
   setConnectionRequests,
-  setAddToConnectionsRequests,
+  setAddToConnectionRequests,
   setLoadingConnectionRequests,
   removeFromRequests,
+  setLastViewedRequests,
 } = connectionRequestsSlice.actions;
 export default connectionRequestsSlice;

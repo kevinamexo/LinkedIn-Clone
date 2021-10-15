@@ -12,7 +12,7 @@ import {
 import { db } from "../../firebase/firebaseConfig";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setAddToConnectionsRequests,
+  setAddToConnectionRequests,
   removeFromRequests,
 } from "../../redux/features/connectionRequestsSlice";
 import Skeleton from "react-loading-skeleton";
@@ -26,7 +26,6 @@ const ConnectionRequests = ({ request, key }) => {
   const dispatch = useDispatch();
   const fetchUser = async (user_name) => {
     //check if object is already in store
-
     const userQuery = query(
       collection(db, "user"),
       where("username", "==", user_name)
@@ -42,7 +41,7 @@ const ConnectionRequests = ({ request, key }) => {
         location: doc.data().location,
         username: doc.data().username,
       };
-      dispatch(setAddToConnectionsRequests(userObject));
+
       setUserOb(userObject);
 
       return userObject;
@@ -50,12 +49,13 @@ const ConnectionRequests = ({ request, key }) => {
   };
 
   useEffect(() => {
+    console.log(request.username);
     setLoading(true);
     fetchUser(request.username).then(() => {
       setLoading(false);
       console.log("DONE FETCHING USER DETAILS");
     });
-  }, [request, request]);
+  }, []);
 
   const acceptConnectionRequest = async (userOb, accept) => {
     const followQuery = query(
@@ -71,9 +71,12 @@ const ConnectionRequests = ({ request, key }) => {
     if (accept === true) {
       await updateDoc(followDocRef, {
         users: arrayUnion(userOb.username),
+      });
+    } else if (accept === false) {
+      await updateDoc(followDocRef, {
+        users: arrayUnion(userOb.username),
         connectionRequests: arrayRemove(request),
       });
-    } else {
     }
     dispatch(removeFromRequests(key));
   };
@@ -109,7 +112,9 @@ const ConnectionRequests = ({ request, key }) => {
                 </p>
                 <p className="user-title">{userOb.title}</p>
                 <span>
-                  <button onClick={() => acceptConnectionRequest(userOb, true)}>
+                  <button
+                    onClick={() => acceptConnectionRequest(userOb, false)}
+                  >
                     Ignore{" "}
                   </button>
                   <button
