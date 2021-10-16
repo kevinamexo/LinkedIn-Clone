@@ -59,6 +59,8 @@ const ProfilePage = () => {
   const [following, setFollowing] = useState(null);
   const [loadingFollow, setLoadingFollow] = useState(null);
   const [loadingPosts, setLoadingPosts] = useState(null);
+  const [pendingConnectionRequest, setPendingConnectionRequest] =
+    useState(null);
   const dispatch = useDispatch();
 
   const pageSize = 3;
@@ -172,14 +174,37 @@ const ProfilePage = () => {
     console.log(profileObj.username);
     const followsListenter = onSnapshot(q2, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        if (doc.data().users.includes(userObj.username)) {
-          setFollowing(true);
-          console.log("You are connected with " + profileObj.username);
-        } else {
+        if (
+          doc
+            .data()
+            .connectionRequests.some((req) => req.username === userObj.username)
+        ) {
+          console.log("pending connection");
+          setPendingConnectionRequest(true);
           setFollowing(false);
+        } else if (
+          !doc
+            .data()
+            .connectionRequests.some(
+              (req) => req.username === userObj.username
+            ) &&
+          !doc.data().users.some((r) => r === userObj.username)
+        ) {
+          setPendingConnectionRequest(false);
+          setFollowing(false);
+        } else if (doc.data().users.some((r) => r === userObj.username)) {
+          setFollowing(true);
+          setPendingConnectionRequest(false);
         }
+        // if (doc.data().users.includes(userObj.username)) {
+        //   setFollowing(true);
+        //   console.log("You are connected with " + profileObj.username);
+        // } else {
+        //   setFollowing(false);
+        // }
       });
     });
+    setLoadingFollow(false);
   };
   const unFollowUser = async () => {
     setLoadingFollow(true);
@@ -207,7 +232,6 @@ const ProfilePage = () => {
     } catch (e) {
       console.log(e);
     }
-    setLoadingFollow(false);
   };
   const fetchPosts = async () => {
     let latestPosts = [];
@@ -350,23 +374,19 @@ const ProfilePage = () => {
                   {profileObj.connections} connections
                 </p>
                 <span className="profilePage__details3-buttons">
-                  {!following && (
-                    <button className="follow" onClick={() => followUser2()}>
-                      {loadingFollow ? (
-                        <ImSpinner2 className="loadingSpinner" />
-                      ) : (
-                        "Connect"
-                      )}
+                  {loadingFollow && <ImSpinner2 className="loadingSpinner" />}
+                  {following === true && pendingConnectionRequest === false && (
+                    <button className="follow" onClick={() => unFollowUser()}>
+                      Connected
                     </button>
                   )}
-                  {following && (
-                    <button className="follow" onClick={() => unFollowUser()}>
-                      {loadingFollow ? (
-                        <ImSpinner2 className="loadingSpinner" />
-                      ) : (
-                        "Connected"
-                      )}
+                  {following === false && pendingConnectionRequest === false && (
+                    <button className="follow" onClick={() => followUser2()}>
+                      Connect
                     </button>
+                  )}
+                  {following === false && pendingConnectionRequest === true && (
+                    <button className="follow">Pending</button>
                   )}
 
                   {following ? (

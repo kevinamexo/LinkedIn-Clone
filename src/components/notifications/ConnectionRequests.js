@@ -74,6 +74,7 @@ const ConnectionRequests = ({ request, key, newItem }) => {
     if (accept === true) {
       await updateDoc(followDocRef, {
         users: arrayUnion(userOb.username),
+        connectionRequests: arrayRemove(request),
       });
     } else if (accept === false) {
       await updateDoc(followDocRef, {
