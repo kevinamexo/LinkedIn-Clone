@@ -58,9 +58,8 @@ const ConnectionRequests = ({ request, key, newItem }) => {
   }, []);
 
   const acceptConnectionRequest = async (userOb, accept) => {
-    if (accept === false) {
-      dispatch(removeFromRequests(key));
-    }
+    dispatch(removeFromRequests(key));
+
     const followQuery = query(
       collection(db, "follows"),
       where("username", "==", userObj.username)

@@ -22,15 +22,14 @@ const LSidebar = () => {
     <div className="LSidebar">
       <div className="LSidebar-widget1">
         <div className="LSidebar-coverImage-container">
-          <img
-            className="LSidebar-coverImage"
-            src={
-              userObj && userObj.coverPhotoURL
-                ? userObj.coverPhotoURL
-                : "https://wallpaperaccess.com/full/1285952.jpg"
-            }
-            alt="cover-photo"
-          />
+          {userObj && userObj.coverPhotoURL ? (
+            <img className="LSidebar-coverImage" src={userObj.coverPhotoURL} />
+          ) : (
+            <img
+              className="LSidebar-coverImage"
+              src="https://wallpaperaccess.com/full/1285952.jpg"
+            />
+          )}
         </div>
         <div className="LSidebar-profile-photo">
           <img

@@ -256,7 +256,9 @@ const Header = () => {
                 <div className="connnectionRequestsMenu-container">
                   <>
                     <div className="connnectionRequestsMenu">
-                      <p className="title">Connection Requests</p>
+                      {connectionRequests.length > 0 && (
+                        <p className="title">Connection Requests</p>
+                      )}
 
                       {connectionRequests.length === 0 &&
                         newConnectionRequests.length === 0 &&
@@ -313,7 +315,13 @@ const Header = () => {
               />
               {notificationsActive && (
                 <div className="notificationsMenu-container">
-                  <div className="notificationsMenu">
+                  <div
+                    className={
+                      notifications.length >= 1
+                        ? "notificationsMenu"
+                        : "notificationsMenu-empty"
+                    }
+                  >
                     {notifications.length === 0 && (
                       <p>No notifications available</p>
                     )}

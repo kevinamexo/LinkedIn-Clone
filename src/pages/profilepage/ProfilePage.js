@@ -125,7 +125,6 @@ const ProfilePage = () => {
       if (profObj.eduInstitutes) {
         getEducation();
       }
-      setLoading(false);
     });
   };
   let followDocId;
@@ -205,6 +204,7 @@ const ProfilePage = () => {
       });
     });
     setLoadingFollow(false);
+    setLoading(false);
   };
   const unFollowUser = async () => {
     setLoadingFollow(true);
@@ -373,28 +373,31 @@ const ProfilePage = () => {
                 <p className="profilePage__details3-Connections">
                   {profileObj.connections} connections
                 </p>
-                <span className="profilePage__details3-buttons">
-                  {loadingFollow && <ImSpinner2 className="loadingSpinner" />}
-                  {following === true && pendingConnectionRequest === false && (
-                    <button className="follow" onClick={() => unFollowUser()}>
-                      Connected
-                    </button>
-                  )}
-                  {following === false && pendingConnectionRequest === false && (
-                    <button className="follow" onClick={() => followUser2()}>
-                      Connect
-                    </button>
-                  )}
-                  {following === false && pendingConnectionRequest === true && (
-                    <button className="follow">Pending</button>
-                  )}
+                {myProfile === false && (
+                  <span className="profilePage__details3-buttons">
+                    {loadingFollow && <ImSpinner2 className="loadingSpinner" />}
+                    {following === true && pendingConnectionRequest === false && (
+                      <button className="follow" onClick={() => unFollowUser()}>
+                        Connected
+                      </button>
+                    )}
+                    {following === false && pendingConnectionRequest === false && (
+                      <button className="follow" onClick={() => followUser2()}>
+                        Connect
+                      </button>
+                    )}
+                    {following === false &&
+                      pendingConnectionRequest === true && (
+                        <button className="follow">Pending</button>
+                      )}
 
-                  {following ? (
-                    <button className="message">More</button>
-                  ) : (
-                    <button className="message">Message</button>
-                  )}
-                </span>
+                    {following ? (
+                      <button className="message">More</button>
+                    ) : (
+                      <button className="message">Message</button>
+                    )}
+                  </span>
+                )}
               </section>
               <div className="profilePage__header-profilePic">
                 <img

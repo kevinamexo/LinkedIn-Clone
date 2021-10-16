@@ -139,8 +139,8 @@
   width: 250px;
   border-radius: 5px;
   justify-content: center;
-  margin: 5px 0;
-  padding: 2px;
+  margin: 7px 0;
+  padding-top: 10px;
   position: sticky;
   position: sticky;
   right: 0;
@@ -158,7 +158,13 @@
   font-weight: bold;
 }
 
-@media screen and (max-width: 900px) {
+@media (max-width: 889px), (min-width: 764px) {
+  .LSidebar-widget1 {
+    right: 0 !important;
+  }
+}
+
+@media screen and (max-width: 765px) {
   .LSidebar {
     margin-top: 80px;
     display: flex;
@@ -213,7 +219,14 @@
   .LSidebar__greeting {
     border-bottom: none;
   }
+  .LSidebar__showMore {
+    font-size: 14px;
+    padding-top: 0;
+  }
   .main-page {
     padding-top: 10px;
+  }
+  .mainSection__post {
+    margin-top: 5px;
   }
 }
