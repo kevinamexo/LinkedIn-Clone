@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { BsCalendar } from "react-icons/bs";
 import { MdPhoto } from "react-icons/md";
 import { RiArticleLine, RiVideoFill } from "react-icons/ri";
+import { AiFillCaretDown } from "react-icons/ai";
 import CreatePostModal from "../modals/CreatePostModal";
 import ContactInfoModal from "../modals/ContactInfoModal";
 import "./MainSection.css";
@@ -10,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import {
   setPosts,
-  setAddToPosts,
+  setSortPostsOrder,
   setRemoveFromPosts,
   setPostsChanges,
 } from "../../redux/features/postsSlice";
@@ -56,7 +57,9 @@ const MainSection = () => {
   } = useSelector((state) => state.modals);
   const [feedPosts, setFeedPosts] = useState([]);
   const [uploadType, setUploadType] = useState(null);
-
+  const [sortPosts, setSortPosts] = useState("latest");
+  const [showSort, setShowSort] = useState(false);
+  const sortMenuRef = useRef();
   //GET USER FEED, LIMIT TO 5 POSTS
   let lastPublished = null;
   let localPosts;
@@ -317,6 +320,13 @@ const MainSection = () => {
       // let postsSample = [];
     };
   }, []);
+
+  useEffect(() => {
+    if (sortPosts) {
+      dispatch(setSortPostsOrder(sortPosts));
+    }
+  }, [sortPosts]);
+
   const notificationsAmount = notifications.length;
   const newNotificationsList = notifications.filter((n) => {
     if (notifications.published > prevLastNotification) {
@@ -367,6 +377,53 @@ const MainSection = () => {
           </span>
         </div>
       </div>
+      <section className="sortPosts">
+        <p className="sortLabel">Sort by:</p>
+        <p
+          className={`sortValue-${sortPosts === "most_likes" && "likes"}`}
+          onClick={() => {
+            setShowSort(!showSort);
+          }}
+        >
+          {sortPosts === "latest" && "Latest"}
+          {sortPosts === "oldest" && "Oldest"}
+          {sortPosts === "most_likes" && "Most Likes"}
+          <AiFillCaretDown />
+        </p>
+        {showSort == true && (
+          <div className="sortValuesMenu" ref={sortMenuRef}>
+            <p
+              className="sortMenuValue"
+              onClick={() => {
+                let sorted = "latest";
+                setSortPosts("latest");
+
+                setShowSort(false);
+              }}
+            >
+              Latest
+            </p>
+            <p
+              className="sortMenuValue"
+              onClick={() => {
+                setSortPosts("oldest");
+                setShowSort(false);
+              }}
+            >
+              Oldest
+            </p>
+            <p
+              className="sortMenuValue"
+              onClick={() => {
+                setSortPosts("most_likes");
+                setShowSort(false);
+              }}
+            >
+              Most Likes
+            </p>
+          </div>
+        )}
+      </section>
       <div className="mainSection__feed">
         {posts &&
           posts.map((post, idx) => (

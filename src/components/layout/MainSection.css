@@ -7,7 +7,7 @@
   margin-left: auto;
   margin-right: auto;
   margin-top: 57px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -111,6 +111,80 @@
   color: #fc9295;
 }
 
+.mainSection .sortPosts {
+  border-top: 2px solid lightgrey;
+  padding-bottom: 10px;
+  width: calc(95% - 120px);
+  margin-left: 2.5%;
+  position: relative;
+}
+
+.mainSection .sortPosts .sortLabel {
+  margin: 0;
+  font-size: 12px;
+  position: absolute;
+  right: -45px;
+  top: -10px;
+  color: gray;
+}
+.mainSection .sortPosts .sortValue-false,
+.mainSection .sortPosts .sortValue-most-likes,
+.mainSection .sortPosts .sortValue-likes {
+  margin: 0;
+  position: absolute;
+  top: -10px;
+  font-size: 12px;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+.mainSection .sortPosts .sortValue-false {
+  right: -100px;
+}
+
+.mainSection .sortPosts .sortValue-likes,
+.mainSection .sortPosts .sortValue-most-likes {
+  right: -123px;
+}
+
+.mainSection .sortPosts .sortValue:hover {
+  background-color: lightgrey;
+}
+
+.sortValuesMenu {
+  position: absolute;
+  top: 10px;
+  right: -100px;
+  height: 100px;
+  width: 100px;
+  border: 2px solid rgb(147, 147, 147);
+  border-radius: 15px;
+  z-index: 10;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.sortValuesMenu p {
+  font-size: 13px;
+  cursor: pointer;
+  margin: 0;
+  padding: 3px 0;
+}
+.sortValuesMenu p:hover {
+  background-color: grey;
+}
+
+.sortValue .likes {
+  right: 110px;
+  color: blue;
+}
+
 .mainSection__feed {
   border-radius: 10px;
   margin: 0px auto;
@@ -141,6 +215,11 @@
   .mainSection__feed,
   .LSidebar {
     width: 90%;
+  }
+
+  .mainSection .sortPosts {
+    margin-left: 5%;
+    width: calc(90% - 120px);
   }
 
   .mainSection__post {

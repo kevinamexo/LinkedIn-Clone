@@ -48,6 +48,25 @@ const postsSlice = createSlice({
           return state;
       }
     },
+    setSortPostsOrder: (state, action) => {
+      let r;
+      if (action.payload === "latest") {
+        console.log("LATESTTTTT");
+        r = state.posts.sort(function (a, b) {
+          return new Date(b.published) - new Date(a.published);
+        });
+      }
+      if (action.payload === "oldest") {
+        console.log("OLDESTTTTTT");
+        r = state.posts.sort(function (a, b) {
+          return new Date(a.published) - new Date(b.published);
+        });
+      }
+      console.log("SUUEEE");
+      console.log(current(r));
+      state.posts = r;
+      // state.posts= state.posts.sort
+    },
   },
 });
 
@@ -58,5 +77,6 @@ export const {
   setPostsChange,
   setAddToPosts,
   setLastPost,
+  setSortPostsOrder,
 } = postsSlice.actions;
 export default postsSlice;
