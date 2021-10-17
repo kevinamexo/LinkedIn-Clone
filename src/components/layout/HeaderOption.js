@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import "./HeaderOption.css";
 
@@ -17,6 +17,10 @@ const HeaderOption = ({
   const { newConnectionRequests } = useSelector(
     (state) => state.connectionRequests
   );
+  useEffect(() => {
+    console.log("TYPEEE");
+    console.log(type);
+  }, []);
 
   return (
     <div className="headerOption" role="button" onClick={onClick}>

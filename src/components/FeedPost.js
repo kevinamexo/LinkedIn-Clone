@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./FeedPost.css";
 import { useSelector, useDispatch } from "react-redux";
-import { setRemoveFromPosts } from "../redux/features/postsSlice";
+import {
+  setRemoveFromPosts,
+  setAddPostLikes,
+} from "../redux/features/postsSlice";
 import { Link } from "react-router-dom";
 import { IoMdGlobe } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
@@ -13,6 +16,7 @@ import {
   query,
   where,
   doc,
+  onSnapshot,
   updateDoc,
   deleteDoc,
   arrayRemove,
@@ -68,10 +72,17 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
           collection(db, "likes"),
           where("postId", "==", post.postRefId)
         );
-        const likesSnap = await getDocs(likes);
-        likesSnap.forEach((doc) => {
-          setLikesUsers(doc.data().users);
-          setLikes(doc.data().users.length);
+        const likeSnap = onSnapshot(likes, (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            setLikesUsers(doc.data().users);
+            setLikes(doc.data().users.length);
+            let t = {
+              ...post,
+              likes: doc.data().users.length,
+              users: doc.data().users,
+            };
+            dispatch(setAddPostLikes(t));
+          });
         });
       } catch (e) {
         console.log(e);
@@ -84,7 +95,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     return () => {
       setLikes(0);
       setLikesUsers([]);
-      setLiked(false);
+      // setLiked(false);
       setPostUserObj({});
       setPostId(null);
       let username = "";
@@ -92,7 +103,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       let post = null;
       let postProps = null;
     };
-  }, []);
+  }, [post.postRefId]);
 
   useEffect(() => {
     const loadImage = (image) => {
@@ -121,17 +132,11 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
     return () => {
       setLikes(0);
-      setLiked(null);
+      // setLiked(null);
       setLikesUsers([]);
     };
   }, [posts]);
 
-  useEffect(() => {
-    if (post.likes === 0) {
-      setLikes(0);
-      setLiked(0);
-    }
-  }, [posts]);
   const likePost = async () => {
     try {
       console.log("liking post");
@@ -149,7 +154,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       likesQuerySnap.forEach((doc) => {
         postLikeColID = doc.id;
       });
-      const checkForUserLike = likesUsers.some((v) => v === userObj.username);
+      const checkForUserLike = post.users.some((v) => v === userObj.username);
       console.log(checkForUserLike);
       if (liked) {
         console.log("ABout to remove like");
@@ -215,14 +220,8 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   };
 
   useEffect(() => {
-    const checkingLike = likesUsers.some((v) => v === userObj.username);
-
-    if (checkingLike === true) {
-      setLiked(true);
-    } else {
-      setLiked(false);
-    }
-  }, [likesUsers]);
+    setLiked(post.users && post.users.some((v) => v === userObj.username));
+  }, [post]);
 
   return (
     <>
@@ -327,7 +326,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
           </div>
           <div className="feedPost__engagements">
             <AiTwotoneLike className="feedPost__likes" />
-            <p>{likes}</p>
+            <p>{post.likes && post.likes}</p>
           </div>
           <div className="feedPost__actions">
             <button

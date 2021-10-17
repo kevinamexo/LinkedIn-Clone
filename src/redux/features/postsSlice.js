@@ -25,6 +25,16 @@ const postsSlice = createSlice({
     setAddToPosts: (state, action) => {
       state.posts = [...action.payload, ...state.posts];
     },
+    setAddPostLikes: (state, action) => {
+      console.log("leeeeeeeelllll");
+      console.log(action.payload);
+      const rO = state.posts.findIndex(
+        (post) => post.postRefId === action.payload.postRefId
+      );
+      console.log(rO);
+      state.posts[rO].likes = action.payload.likes;
+      state.posts[rO].users = action.payload.users;
+    },
     setRemoveFromPosts: (state, action) => {
       console.log(
         "removed" + JSON.stringify(state.posts.slice(action.payload, 1))
@@ -62,8 +72,13 @@ const postsSlice = createSlice({
           return new Date(a.published) - new Date(b.published);
         });
       }
-      console.log("SUUEEE");
-      console.log(current(r));
+      if (action.payload === "most_likes") {
+        console.log("SUUEEE");
+        r = state.posts.sort(function (a, b) {
+          return b.likes - a.likes;
+        });
+      }
+      console.log(r);
       state.posts = r;
       // state.posts= state.posts.sort
     },
@@ -73,6 +88,7 @@ const postsSlice = createSlice({
 export const {
   setPosts,
   setPostsChanges,
+  setAddPostLikes,
   setRemoveFromPosts,
   setPostsChange,
   setAddToPosts,
