@@ -35,7 +35,7 @@ const Messaging = () => {
           } ${
             doc.data().name.lastName.charAt(0).toUpperCase() +
             doc.data().name.lastName.slice(1)
-          }`;
+          }`;cd
 
         setMessageUser(name);
       });
@@ -63,7 +63,7 @@ const Messaging = () => {
 
   return (
     <div className="messagesPage">
-      <p>Messages with </p>
+      <p>Messages with .</p>
     </div>
   );
 };
