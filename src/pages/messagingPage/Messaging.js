@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import _ from "lodash";
 import {
   query,
@@ -33,6 +33,7 @@ const Messaging = () => {
 
   const [messageUserName, setMessageUserName] = useState(null);
   const [messageText, setMessageText] = useState("");
+  const messagesContainerRef = useRef(null);
   useEffect(() => {
     console.log("LOADING MESSAGESSSSS");
     console.log(username);
@@ -95,6 +96,18 @@ const Messaging = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (messagesContainerRef) {
+      messagesContainerRef.current.addEventListener(
+        "DOMNodeInserted",
+        (event) => {
+          const { currentTarget: target } = event;
+          target.scroll({ top: target.scrollHeight, behavior: "smooth" });
+        }
+      );
+    }
+  }, []);
+
   const sendMessage = async (e) => {
     e.preventDefault();
     if (messageText) {
@@ -134,7 +147,10 @@ const Messaging = () => {
       </header>
       <div className="messagesPageContainer">
         <div className="messagesPage__otherChats"></div>
-        <div className="messagesPage__currentMessages">
+        <div
+          className="messagesPage__currentMessages"
+          ref={messagesContainerRef}
+        >
           <div className="currentMessage__messages">
             {messages &&
               messages.map((msg) => (
