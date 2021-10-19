@@ -33,6 +33,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(null);
   const [postUserObj, setPostUserObj] = useState({});
+  const [postWithLikes, setPostWithLikes] = useState({});
   const [likes, setLikes] = useState(0);
   const [likesUsers, setLikesUsers] = useState([]);
   const [liked, setLiked] = useState(null);
@@ -82,6 +83,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
               users: doc.data().users,
             };
             dispatch(setAddPostLikes(t));
+            setPostWithLikes(t);
           });
         });
       } catch (e) {
@@ -135,7 +137,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       // setLiked(null);
       setLikesUsers([]);
     };
-  }, [posts]);
+  }, [post]);
 
   const likePost = async () => {
     try {
@@ -326,7 +328,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
           </div>
           <div className="feedPost__engagements">
             <AiTwotoneLike className="feedPost__likes" />
-            <p>{post.likes && post.likes}</p>
+            <p>{postWithLikes.likes && postWithLikes.likes}</p>
           </div>
           <div className="feedPost__actions">
             <button

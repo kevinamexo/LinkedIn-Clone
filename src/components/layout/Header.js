@@ -251,6 +251,7 @@ const Header = () => {
                 Icon={FaUserFriends}
                 length={connectionRequests}
                 onClick={handleClickConnections}
+                type="connectionRequests"
               />
               {connectionsMenuActive === true && (
                 <div className="connnectionRequestsMenu-container">

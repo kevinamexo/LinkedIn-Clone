@@ -14,30 +14,38 @@ const HeaderOption = ({
   const { newNotifications, newNotificationsAmount } = useSelector(
     (state) => state.notifications
   );
-  const { newConnectionRequests } = useSelector(
+  const { newConnectionRequests, connectionRequests } = useSelector(
     (state) => state.connectionRequests
   );
   useEffect(() => {
     console.log("TYPEEE");
     console.log(type);
   }, []);
+  useEffect(() => {
+    if (length) {
+      console.log("LENGTHTHHHH");
+      console.log(length.length);
+    }
+  }, [length]);
 
   return (
     <div className="headerOption" role="button" onClick={onClick}>
       {Icon && (
         <span className="headerOptions-icons">
           <Icon style={color && { color }} className="headerOption__icon" />
-          {notifications && newNotificationsAmount > 0 && (
-            <span className="headerOptionNotifications">
-              {type === "notifications" &&
-                newNotificationsAmount > 0 &&
-                newNotificationsAmount}
-              {type === "connectionRequests" &&
-                newConnectionRequests > 0 &&
-                newConnectionRequests.length}
-              {/* {type==='connectionRequests' && newConnectionRequests > 0 && newConnectionRequest} */}
-            </span>
-          )}
+          {type === "notifications" &&
+            notifications &&
+            newNotificationsAmount > 0 && (
+              <span className="headerOptionNotifications-noti">
+                {newNotificationsAmount}
+              </span>
+            )}
+          {type === "connectionRequests" &&
+            newConnectionRequests.length > 0 && (
+              <span className="headerOptionNotifications-connection">
+                {newConnectionRequests.length}
+              </span>
+            )}
         </span>
       )}
       <p className="headerOption__title">{title}</p>

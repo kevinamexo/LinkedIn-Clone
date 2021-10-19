@@ -6,6 +6,7 @@ import MainSection from "../../components/layout/MainSection";
 import RSidebar from "../../components/layout/RSidebar";
 import LSidebar from "../../components/layout/LSidebar";
 import NotificationsPage from "../notificationsPage/NotificationsPage";
+import Messaging from "../messagingPage/Messaging";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import ProfilePage from "../profilepage/ProfilePage";
 const Main = () => {
@@ -14,6 +15,9 @@ const Main = () => {
     <>
       <Header />
       <Switch>
+        <Route exact path="/messaging/users/:username">
+          <Messaging />
+        </Route>
         <Route exact path="/in/:username/">
           <ProfilePage />
         </Route>

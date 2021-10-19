@@ -55,7 +55,7 @@ const ConnectionRequests = ({ request, key, newItem }) => {
       setLoading(false);
       console.log("DONE FETCHING USER DETAILS");
     });
-  }, []);
+  }, [request]);
 
   const acceptConnectionRequest = async (userOb, accept) => {
     dispatch(removeFromRequests(key));

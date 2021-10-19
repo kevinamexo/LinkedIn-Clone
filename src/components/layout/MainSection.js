@@ -343,7 +343,7 @@ const MainSection = () => {
             className="mainSection__startPost"
             onClick={() => dispatch(setShowCreatePostModal())}
           >
-            Start a post {notificationsAmount} {newNotificationsList.length}
+            Start a post
           </div>
         </div>
         <div className="mainSection__postTypes">
@@ -427,7 +427,7 @@ const MainSection = () => {
       <div className="mainSection__feed">
         {posts &&
           posts.map((post, idx) => (
-            <FeedPost post={post} key={idx} idx={idx} />
+            <FeedPost feedpost={post} key={idx} idx={idx} />
           ))}
         {posts.length === 0 && loadingPosts === false && (
           <p className="no-posts">No posts in your feed</p>

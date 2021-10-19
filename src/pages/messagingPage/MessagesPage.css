@@ -1,0 +1,6 @@
+.messagesPage {
+  margin-top: 80px;
+  height: calc(100vh - 80px);
+  width: 100vh;
+  overflow: hidden;
+}
