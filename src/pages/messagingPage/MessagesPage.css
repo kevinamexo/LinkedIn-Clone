@@ -1,6 +1,114 @@
 .messagesPage {
   margin-top: 80px;
   height: calc(100vh - 80px);
-  width: 100vh;
+  width: 100vw;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.messagesPage header {
+  display: grid;
+
+  background-color: #fff;
+  grid-template-columns: 200px auto;
+  width: 90%;
+  border: 1px solid rgb(196, 196, 196);
+  border-bottom: none;
+  height: 50px;
+}
+
+.messagesPage header div {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-right: 1px solid rgb(196, 196, 196);
+}
+
+.messagesPage header span {
+  text-align: left;
+  padding: 5px 10px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+}
+.messagesPage header span p {
+  /* font-size: 12px; */
+  margin: 0;
+}
+
+.messageUser-name {
+  color: rgb(77, 77, 77);
+  font-size: 16px;
+  font-weight: 600;
+}
+.messageUser-title {
+  font-size: 13px;
+  color: rgb(130, 130, 130);
+  font-weight: lighter;
+}
+
+.messagesPageContainer {
+  border-radius: 10px;
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  display: grid;
+  grid-template-columns: 200px auto;
+  width: 90%;
+  background-color: #fff;
+
+  border: 1px solid rgb(196, 196, 196);
+}
+.messagesPage__otherChats {
+  min-height: 60vh;
+  width: 100%;
+  /* background-color: rgb(20, 20, 2); */
+  border-right: 1px solid rgb(196, 196, 196);
+}
+.currentMessage__messages {
+  /* background-color: blue; */
+  height: 65vh;
+  width: 100%;
+}
+
+.messageInput-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 90px;
+  justify-content: center;
+}
+.messageInput-section button {
+  background-color: #0a6bc2;
+  color: #fff;
+  width: 18%;
+  /* border-radius: 15px; */
+  margin-left: 1%;
+  height: 30px;
+}
+
+.messageInput {
+  width: 98%;
+  /* margin-left: 0.5%; */
+  height: 50px;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid rgb(196, 196, 196);
+  border-bottom: 1px solid rgb(196, 196, 196);
+  padding: 0;
+
+  margin: 0;
+}
+
+.messagesPage__prevMessages {
+  height: 65vh;
+  /* background-color: blue; */
 }

@@ -4,6 +4,7 @@ import modalsSlice from "../features/modalsSlice";
 import postsSlice from "../features/postsSlice";
 import notificationsSlice from "../features/notificationsSlice";
 import connectionRequestsSlice from "../features/connectionRequestsSlice";
+import chatsSlice from "../features/chatsSlice";
 const store = configureStore({
   reducer: {
     user: userSlice.reducer,
@@ -11,6 +12,7 @@ const store = configureStore({
     posts: postsSlice.reducer,
     notifications: notificationsSlice.reducer,
     connectionRequests: connectionRequestsSlice.reducer,
+    chats: chatsSlice.reducer,
   },
 });
 
