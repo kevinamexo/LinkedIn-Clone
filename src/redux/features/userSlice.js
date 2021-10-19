@@ -39,6 +39,7 @@ const initialState = {
   msg: null,
   loading: null,
   selectedUser: null,
+  fullName: null,
 };
 const userSlice = createSlice({
   name: "user",
@@ -61,6 +62,15 @@ const userSlice = createSlice({
       state.userObj = action.payload;
       state.loading = false;
       state.isAuth = true;
+      state.fullName =
+        action.payload.name &&
+        `${
+          action.payload.name.firstName.charAt(0).toUpperCase() +
+          action.payload.name.firstName.slice(1)
+        } ${
+          action.payload.name.lastName.charAt(0).toUpperCase() +
+          action.payload.name.lastName.slice(1)
+        }`;
     },
 
     setSelectedUser: (state, action) => {

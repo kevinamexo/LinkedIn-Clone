@@ -6,7 +6,10 @@ import {
   doc,
   collection,
   getDocs,
+  arrayUnion,
+  updateDoc,
   onSnapshot,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import "./MessagesPage.css";
@@ -23,11 +26,10 @@ import {
 const Messaging = () => {
   const { username } = useParams();
   const dispatch = useDispatch();
-  const { userObj } = useSelector((state) => state.user);
+  const { userObj, fullName } = useSelector((state) => state.user);
 
-  const { currentChatUser, messages, initialMessageFetch } = useSelector(
-    (state) => state.chats
-  );
+  const { currentChatUser, chatRoomId, messages, initialMessageFetch } =
+    useSelector((state) => state.chats);
 
   const [messageUserName, setMessageUserName] = useState(null);
   const [messageText, setMessageText] = useState("");
@@ -93,6 +95,26 @@ const Messaging = () => {
     });
   }, []);
 
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (messageText) {
+      let date = new Date();
+      console.log(date);
+      let timestamp = Timestamp.fromDate(date);
+      let tmpMessage = messageText;
+      setMessageText("");
+      const messageObj = {
+        postType: "text",
+        text: tmpMessage,
+        published: timestamp,
+        authorId: userObj.username,
+      };
+      const messageDocRef = doc(db, "chats", chatRoomId);
+      await updateDoc(messageDocRef, {
+        messages: arrayUnion(messageObj),
+      });
+    }
+  };
   return (
     <div className="messagesPage">
       <header>
@@ -113,8 +135,39 @@ const Messaging = () => {
       <div className="messagesPageContainer">
         <div className="messagesPage__otherChats"></div>
         <div className="messagesPage__currentMessages">
-          <div className="currentMessage__messages"></div>
-          <form className="messageInput-section">
+          <div className="currentMessage__messages">
+            {messages &&
+              messages.map((msg) => (
+                <>
+                  {msg.text && msg.text.length > 0 && (
+                    <div
+                      className={
+                        msg.authorId === userObj.username
+                          ? "my-message"
+                          : "user-message"
+                      }
+                    >
+                      <span className="messageHeader">
+                        <p className="messageAuthorName">
+                          {msg.authorId === userObj.username
+                            ? fullName
+                            : messageUserName}
+                        </p>
+                        <p className="messageTime">
+                          {msg.published &&
+                            msg.published.seconds &&
+                            new Date(
+                              msg.published.seconds * 1000
+                            ).toLocaleTimeString()}
+                        </p>
+                      </span>
+                      <p className="messageItem">{msg.text}</p>
+                    </div>
+                  )}
+                </>
+              ))}
+          </div>
+          <form className="messageInput-section" onSubmit={sendMessage}>
             <input
               className="messageInput"
               name="messageText"
@@ -122,7 +175,7 @@ const Messaging = () => {
               onChange={(e) => setMessageText(e.target.value)}
               placeholder="Write a message..."
             />
-            <button>send</button>
+            <button type="submit">send</button>
           </form>
         </div>
       </div>

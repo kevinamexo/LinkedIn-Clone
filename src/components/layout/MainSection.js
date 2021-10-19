@@ -99,7 +99,6 @@ const MainSection = () => {
         console.log("NEW SNAPSHOT");
         if (lastPublished === null) {
           querySnapshot.forEach((doc) => {
-    
             unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
 
             unsortedNotifications = [
@@ -129,7 +128,7 @@ const MainSection = () => {
           console.log(nextLastNotificationTime);
 
           //CONVERT TIMESTAMPS TO DATES
-          
+
           unsortedPosts.forEach((p) => {
             postsWithDate = [
               ...postsWithDate,
@@ -141,11 +140,10 @@ const MainSection = () => {
             notificationsWithDate = [...notificationsWithDate, p];
           });
 
-          if(postsWithDate.length>0){
+          if (postsWithDate.length > 0) {
             dispatch(setPosts(postsWithDate));
           }
-          if(notificationsWithDate.length>0){
-
+          if (notificationsWithDate.length > 0) {
             dispatch(setNotifications(notificationsWithDate));
           }
 
@@ -432,7 +430,8 @@ const MainSection = () => {
         )}
       </section>
       <div className="mainSection__feed">
-        {posts &&posts.length>=1&&
+        {posts &&
+          posts.length >= 1 &&
           posts.map((post, idx) => (
             <FeedPost post={post} key={idx} idx={idx} />
           ))}

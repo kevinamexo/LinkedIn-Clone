@@ -15,7 +15,9 @@ const chatsSlice = createSlice({
       state.currentChatUser = action.payload;
     },
     setMessages: (state, action) => {
-      state.messages = action.payload;
+      state.messages = action.payload.sort((a, b) => {
+        return new Date(b.published) - new Date(a.published);
+      });
     },
     setAddToMessages: (state, action) => {
       state.messages = [...state.messages, action.payload];

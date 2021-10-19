@@ -76,6 +76,8 @@
   /* background-color: blue; */
   height: 65vh;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .messageInput-section {
@@ -111,4 +113,58 @@
 .messagesPage__prevMessages {
   height: 65vh;
   /* background-color: blue; */
+}
+
+.currentMessage__messages .user-message,
+.currentMessage__messages .my-message {
+  /* height: 20px; */
+  /* background: blue; */
+
+  border-radius: 15px;
+  margin-left: 10px;
+  margin: 5px 0;
+}
+
+.currentMessage__messages .user-message {
+  text-align: left;
+  margin-left: 10px;
+}
+
+.currentMessage__messages .my-message {
+  text-align: right;
+  margin-right: 10px;
+}
+
+.currentMessage__messages .messageAuthorName {
+  margin: 0;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.my-message .messageHeader {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+.my-message .messageItem {
+  background-color: #0a6bc2;
+  color: #fff;
+}
+.user-message .messageItem {
+  background-color: #ebebeb;
+  color: black;
+}
+.currentMessage__messages .messageTime {
+  margin: 0;
+
+  font-size: 11px;
+}
+
+.currentMessage__messages .messageItem {
+  margin: 0;
+  max-width: 45%;
+  padding: 5px 10px;
+  display: inline-block;
+  border-radius: 10px;
 }

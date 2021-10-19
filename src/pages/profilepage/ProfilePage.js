@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import "./ProfilePage.css";
 
 import { setSelectedUser } from "../../redux/features/userSlice";
@@ -42,6 +42,7 @@ const override = css``;
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
+  const history = useHistory();
   const [myProfile, setMyProfile] = useState(null);
   const [profileObj, setProfileObj] = useState({});
   const [profileId, setProfileId] = useState("");
@@ -391,10 +392,18 @@ const ProfilePage = () => {
                         <button className="follow">Pending</button>
                       )}
 
-                    {following ? (
-                      <button className="message">More</button>
+                    {following === true &&
+                    pendingConnectionRequest === false ? (
+                      <button
+                        className="message"
+                        onClick={() =>
+                          history.push(`/messaging/users/${username}`)
+                        }
+                      >
+                        Message
+                      </button>
                     ) : (
-                      <button className="message">Message</button>
+                      <button className="message">More</button>
                     )}
                   </span>
                 )}
