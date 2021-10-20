@@ -93,7 +93,7 @@ const SignupPage = ({ isAuth }) => {
           joined: moment().format("DD/MM/YYYY"),
           connections: 0,
           coverPhotoUrl: null,
-          profilePhotoUrl: null,
+          profilePhotoURL: null,
           organisation: { name: null, logo: null },
           verified: false,
         });

@@ -90,10 +90,10 @@ const ConnectionRequests = ({ request, key, newItem }) => {
       >
         <div className="connection-requests__main">
           <div className="connectionReq__section1">
-            {loading === false && userOb && userOb.profilePhotoUrl && (
-              <img src={userOb.profilePhotoUrl} />
+            {loading === false && userOb && userOb.profilePhotoURL && (
+              <img src={userOb.profilePhotoURL} />
             )}
-            {loading === false && userOb && !userOb.profilePhotoUrl && (
+            {loading === false && userOb && !userOb.profilePhotoURL && (
               <FaUserCircle className="connectionReq__profilePic" />
             )}
 

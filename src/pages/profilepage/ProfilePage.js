@@ -63,6 +63,7 @@ const ProfilePage = () => {
   const [pendingConnectionRequest, setPendingConnectionRequest] =
     useState(null);
   const dispatch = useDispatch();
+  const [userConnections, setUserConnections] = useState(null);
 
   const pageSize = 3;
   const { selectedUser, userObj } = useSelector((state) => state.user);
@@ -202,6 +203,7 @@ const ProfilePage = () => {
         // } else {
         //   setFollowing(false);
         // }
+        setUserConnections(doc.data().users.length);
       });
     });
     setLoadingFollow(false);
@@ -372,7 +374,7 @@ const ProfilePage = () => {
           </span> */}
               <section className="  = profilePage__details3">
                 <p className="profilePage__details3-Connections">
-                  {profileObj.connections} connections
+                  {(userConnections && userConnections) || 0} connections
                 </p>
                 {myProfile === false && (
                   <span className="profilePage__details3-buttons">

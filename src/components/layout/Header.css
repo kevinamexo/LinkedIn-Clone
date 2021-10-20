@@ -141,7 +141,7 @@
 }
 .notificationsMenu {
   border-radius: 10px;
-  min-height: 120px;
+  /* min-height: 120px; */
   padding: 10px 0;
   width: 400px;
   max-width: 400px !important;

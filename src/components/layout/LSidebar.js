@@ -13,8 +13,8 @@ const LSidebar = () => {
   const userRef = collection(db, "user");
   const [userHeader, setUserHeader] = useState({
     name: null,
-    coverPhotoUrl: null,
-    profilePhotoUrl: null,
+    coverPhotoURL: null,
+    profilePhotoURL: null,
   });
   const [loading, setLoading] = useState(null);
 

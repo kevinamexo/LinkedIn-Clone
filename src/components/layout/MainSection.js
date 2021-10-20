@@ -99,24 +99,31 @@ const MainSection = () => {
         console.log("NEW SNAPSHOT");
         if (lastPublished === null) {
           querySnapshot.forEach((doc) => {
-            unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
+            if (
+              doc.data().notifications &&
+              doc.data().notifications.length > 0
+            ) {
+              unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
 
-            unsortedNotifications = [
-              ...unsortedNotifications,
-              ...doc.data().notifications,
-            ];
-            console.log(doc.data());
+              // if (doc.data().notifictions.length > 0) {
+              unsortedNotifications = [
+                ...unsortedNotifications,
+                ...doc.data().notifications,
+              ];
 
-            //FETCH LAST NOTIFICATION TIME FROM FIRESTORE
-            lastNotificationTimes = [
-              ...lastNotificationTimes,
-              doc.data().lastNotification.toDate(),
-            ];
-            if (doc.data().username === userObj.username) {
-              nextLastNotificationTime = doc.data().lastNotification;
-              dispatch(
-                setInitialNotificationTime(nextLastNotificationTime.toDate())
-              );
+              console.log(doc.data());
+
+              //FETCH LAST NOTIFICATION TIME FROM FIRESTORE
+              lastNotificationTimes = [
+                ...lastNotificationTimes,
+                doc.data().lastNotification.toDate(),
+              ];
+              if (doc.data().username === userObj.username) {
+                nextLastNotificationTime = doc.data().lastNotification;
+                dispatch(
+                  setInitialNotificationTime(nextLastNotificationTime.toDate())
+                );
+              }
             }
           });
 
@@ -162,14 +169,29 @@ const MainSection = () => {
             } else {
               changeType = "Added";
             }
+
             console.log("NEW CHANGE");
-            changesSnapshot.push(...change.doc.data().recentPosts);
-            notificationChanges.push(...change.doc.data().notifications);
+            if (
+              change.doc.data().notifications &&
+              change.doc.data().recentPosts.length > 0
+            ) {
+              changesSnapshot.push(...change.doc.data().recentPosts);
+            }
+            if (
+              change.doc.data().notifications &&
+              change.doc.data().notifications.length > 0
+            ) {
+              notificationChanges.push(...change.doc.data().notifications);
+            }
           });
 
           querySnapshot.forEach((doc) => {
-            fullSnap.push(...doc.data().recentPosts);
-            fullNotificationsSnap.push(...doc.data().notifications);
+            if (doc.data().recenPosts) {
+              fullSnap.push(...doc.data().recentPosts);
+            }
+            if (doc.data().notifications) {
+              fullNotificationsSnap.push(...doc.data().notifications);
+            }
           });
 
           let changesWithDate = [];

@@ -28,12 +28,15 @@ const postsSlice = createSlice({
     setAddPostLikes: (state, action) => {
       console.log("leeeeeeeelllll");
       console.log(action.payload);
+
       const rO = state.posts.findIndex(
         (post) => post.postRefId === action.payload.postRefId
       );
       console.log(rO);
-      state.posts[rO].likes = action.payload.likes;
-      state.posts[rO].users = action.payload.users;
+      if (rO !== -1) {
+        state.posts[rO].likes = action.payload.likes;
+        state.posts[rO].users = action.payload.users;
+      }
     },
     setRemoveFromPosts: (state, action) => {
       console.log(

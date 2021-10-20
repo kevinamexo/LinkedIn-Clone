@@ -60,16 +60,18 @@ const userSlice = createSlice({
     },
     setActiveUserObj: (state, action) => {
       state.userObj = action.payload;
+      state.fullName = action.payload.name;
       state.loading = false;
       state.isAuth = true;
+      const obj = action.payload;
       state.fullName =
-        action.payload.name &&
+        obj.name &&
+        obj.name &&
         `${
-          action.payload.name.firstName.charAt(0).toUpperCase() +
-          action.payload.name.firstName.slice(1)
+          obj.name.firstName.charAt(0).toUpperCase() +
+          obj.name.firstName.slice(1)
         } ${
-          action.payload.name.lastName.charAt(0).toUpperCase() +
-          action.payload.name.lastName.slice(1)
+          obj.name.lastName.charAt(0).toUpperCase() + obj.name.lastName.slice(1)
         }`;
     },
 
