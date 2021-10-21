@@ -41,7 +41,7 @@ const LastMessageCard = ({ chat }) => {
       });
     };
     handleLastRead();
-  }, [currentChatUser, chat]);
+  }, [currentChatUser]);
   useEffect(() => {
     console.log("LAST MESSAGE BY");
     console.log(chat.lastMessage.authorId);
