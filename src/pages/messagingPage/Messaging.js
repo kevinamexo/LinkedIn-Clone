@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { IoChevronBackOutline } from "react-icons/io5";
 import _ from "lodash";
 import {
   query,
@@ -56,6 +57,7 @@ const Messaging = () => {
   const [otherUserObj, setOtherUserObj] = useState({});
   const [chatRoomExisted, setChatRoomExisted] = useState(null);
   const [fetchedAllChatRooms, setFetchedAllChatRooms] = useState(null);
+  const [showCurrentMessages, setShowCurrentMessages] = useState(null);
 
   const history = useHistory();
 
@@ -400,6 +402,24 @@ const Messaging = () => {
     }
   }, [messageEl.current]);
 
+  const handleWindowWResize = () => {
+    if (window.innerWidth <= 630) {
+      setShowCurrentMessages(false);
+      console.log("LESS THAN 630");
+    } else {
+      setShowCurrentMessages(true);
+      console.log("MORE THAN 630");
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowWResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowWResize);
+    };
+  }, []);
+
   const createNewChatRoom = async () => {
     await createNewChat();
     setChatRoomExisted(true);
@@ -455,16 +475,26 @@ const Messaging = () => {
     return (
       <div className="messagesPage">
         <div className="messagesPageContainer">
-          <div className="messagesPage__otherChats">
+          <div
+            className={
+              !currentChatUser && showCurrentMessages === true
+                ? "hide-otherChats"
+                : "messagesPage__otherChats"
+            }
+          >
             <div className="allChats-header">Messaging</div>
             {userChats &&
               userChats.map((chat) => <LastMessageCard chat={chat} />)}
           </div>
-          {currentChatUser && (
+          {currentChatUser ? (
             <div className="messagesPage__currentMessages">
               <span className="currentMessages-header">
+                <IoChevronBackOutline
+                  className="back"
+                  onClick={() => dispatch(setCurrentChatUser(null))}
+                />
                 {messageUserName && (
-                  <>
+                  <div>
                     <p
                       className="messageUser-name"
                       onClick={() => history.push(`/in/${currentChatUser}`)}
@@ -477,106 +507,112 @@ const Messaging = () => {
                         : "Connection"}
                       {/* {currentChatUser&&!currentChatUser.title&& 'Connection'} */}
                     </p>
-                  </>
+                  </div>
                 )}
               </span>
-              <div className="currentMessage__messages" ref={messageEl}>
-                <header className="currentChatUser-summary">
-                  {otherUserObj.profilePhotoURL ? (
-                    <img
-                      src={otherUserObj.profilePhotoURL}
-                      className="currentChatUser-summary-photo"
-                    />
-                  ) : (
-                    <FaUserCircle className="currentChatUser-summary-photo" />
+              {currentChatUser ? (
+                <div className="currentMessage__messages" ref={messageEl}>
+                  <header className="currentChatUser-summary">
+                    {otherUserObj.profilePhotoURL ? (
+                      <img
+                        src={otherUserObj.profilePhotoURL}
+                        className="currentChatUser-summary-photo"
+                      />
+                    ) : (
+                      <FaUserCircle className="currentChatUser-summary-photo" />
+                    )}
+                    <p
+                      className="currentChatUser-summary-name"
+                      onClick={() => history.push(`/in/${currentChatUser}`)}
+                    >
+                      {messageUserName}
+                    </p>
+                    <p className="currentChatUser-summary-title">
+                      {otherUserObj && otherUserObj.title
+                        ? otherUserObj.title
+                        : "Connection"}
+                    </p>
+                  </header>
+                  {groupedMessages && groupedMessages.length === 0 && (
+                    <p className="no_messages">No Messages</p>
                   )}
-                  <p
-                    className="currentChatUser-summary-name"
-                    onClick={() => history.push(`/in/${currentChatUser}`)}
-                  >
-                    {messageUserName}
-                  </p>
-                  <p className="currentChatUser-summary-title">
-                    {otherUserObj && otherUserObj.title
-                      ? otherUserObj.title
-                      : "Connection"}
-                  </p>
-                </header>
-                {groupedMessages && groupedMessages.length === 0 && (
-                  <p className="no_messages">No Messages</p>
-                )}
-                {groupedMessages &&
-                  groupedMessages.map((mesg) => (
-                    <>
-                      {
-                        <p className="date-label">
-                          <span>{convertDateWords(Object.keys(mesg))}</span>
-                        </p>
-                      }
-                      {Object.values(mesg)[0].map((msg) => (
-                        <div
-                          className={
-                            msg.authorId === userObj.username
-                              ? "my-message"
-                              : "user-message"
-                          }
-                        >
-                          <section className="msgSection1">
-                            {msg.authorId === userObj.username &&
-                            userObj.profilePhotoURL !== null &&
-                            userObj.profilePhotoURL !== "" ? (
-                              <img
-                                src={userObj.profilePhotoURL}
-                                className="messages-user-photo"
-                              />
-                            ) : userObj &&
-                              userObj.username &&
-                              msg.authorId === userObj.username &&
-                              userObj.profilePhotoURL === null ? (
-                              <FaUserCircle className="messages-user-photo-noPhoto" />
-                            ) : null}
-                            {currentChatUser !== null &&
-                            currentChatUser.username !== null &&
-                            msg.authorId === currentChatUser.username &&
-                            currentChatUser.profilePhotoURL !== null ? (
-                              <img
-                                src={currentChatUser.profilePhotoURL}
-                                className="messages-user-photo"
-                              />
-                            ) : msg.authorId === currentChatUser.username &&
-                              currentChatUser.profilePhotoUrl === null ? (
-                              <FaUserCircle className="messages-user-photo-noPhoto" />
-                            ) : null}
-                          </section>
-                          <section className="msgSection2">
-                            <span className="messageHeader">
-                              <p
-                                className="messageAuthorName"
-                                onClick={() => {
-                                  if (
-                                    msg.authorId === currentChatUser.username
-                                  ) {
-                                    history.push(
-                                      `/in/${currentChatUser.username}`
-                                    );
-                                  }
-                                }}
-                              >
-                                {msg.authorId === userObj.username
-                                  ? fullName
-                                  : messageUserName}
-                              </p>
-                              <p className="messageTime">
-                                {calculateTimeFromTimestamp(msg.time)}
-                              </p>
-                            </span>
-                            <p className="messageItem">{msg.text}</p>
-                          </section>
-                        </div>
-                      ))}
-                    </>
-                  ))}
-              </div>
+                  {groupedMessages &&
+                    groupedMessages.map((mesg) => (
+                      <>
+                        {
+                          <p className="date-label">
+                            <span>{convertDateWords(Object.keys(mesg))}</span>
+                          </p>
+                        }
+                        {Object.values(mesg)[0].map((msg) => (
+                          <div
+                            className={
+                              msg.authorId === userObj.username
+                                ? "my-message"
+                                : "user-message"
+                            }
+                          >
+                            <section className="msgSection1">
+                              {msg.authorId === userObj.username &&
+                              userObj.profilePhotoURL !== null &&
+                              userObj.profilePhotoURL !== "" ? (
+                                <img
+                                  src={userObj.profilePhotoURL}
+                                  className="messages-user-photo"
+                                />
+                              ) : userObj &&
+                                userObj.username &&
+                                msg.authorId === userObj.username &&
+                                userObj.profilePhotoURL === null ? (
+                                <FaUserCircle className="messages-user-photo-noPhoto" />
+                              ) : null}
+                              {currentChatUser !== null &&
+                              currentChatUser.username !== null &&
+                              msg.authorId === currentChatUser.username &&
+                              currentChatUser.profilePhotoURL !== null ? (
+                                <img
+                                  src={currentChatUser.profilePhotoURL}
+                                  className="messages-user-photo"
+                                />
+                              ) : msg.authorId === currentChatUser.username &&
+                                currentChatUser.profilePhotoUrl === null ? (
+                                <FaUserCircle className="messages-user-photo-noPhoto" />
+                              ) : null}
+                            </section>
+                            <section className="msgSection2">
+                              <span className="messageHeader">
+                                <p
+                                  className="messageAuthorName"
+                                  onClick={() => {
+                                    if (
+                                      msg.authorId === currentChatUser.username
+                                    ) {
+                                      history.push(
+                                        `/in/${currentChatUser.username}`
+                                      );
+                                    }
+                                  }}
+                                >
+                                  {msg.authorId === userObj.username
+                                    ? fullName
+                                    : messageUserName}
+                                </p>
+                                <p className="messageTime">
+                                  {calculateTimeFromTimestamp(msg.time)}
+                                </p>
+                              </span>
+                              <p className="messageItem">{msg.text}</p>
+                            </section>
+                          </div>
+                        ))}
+                      </>
+                    ))}
+                </div>
+              ) : (
+                <div className="currentMessages-noUser">
+                  <p>Select a chat </p>
+                </div>
+              )}
               <form className="messageInput-section" onSubmit={sendMessage}>
                 <input
                   className="messageInput"
@@ -588,6 +624,8 @@ const Messaging = () => {
                 <button type="submit">Send</button>
               </form>
             </div>
+          ) : (
+            <div className="currentMessages-noUser">Select a chat</div>
           )}
         </div>
       </div>

@@ -1,23 +1,12 @@
 .messagesPage {
-  margin-top: 15vh;
+  margin-top: 80px;
   height: calc(100vh - 80px);
   width: 100vw;
   /* overflow: hidden; */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
-}
-
-.messagesPage header {
-  display: grid;
-
-  background-color: #fff;
-  grid-template-columns: 250px auto;
-  width: 90%;
-  border: 1px solid rgb(196, 196, 196);
-  border-bottom: none;
-  height: 50px;
 }
 
 .messagesPage header div {
@@ -59,17 +48,18 @@
 }
 .messageUser-title {
   font-size: 13px;
-  color: rgb(130, 130, 130);
-  font-weight: lighter;
+  color: rgb(133, 133, 133);
+  font-weight: light;
 }
 
 .messagesPageContainer {
   border-radius: 10px;
   border-top: none;
-
+  margin-top: 100px;
   display: grid;
-  grid-template-columns: 250px auto;
+  grid-template-columns: 270px auto;
   width: 90%;
+  max-width: 1600px;
   background-color: #fff;
 
   border: 1px solid rgb(196, 196, 196);
@@ -87,6 +77,7 @@
   padding-top: 100px;
   height: 450px;
   width: 100%;
+
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -149,12 +140,31 @@
   height: 50px !important;
 
   display: flex !important;
-  align-items: flex-start;
-  flex-direction: column !important;
+  align-items: center;
+
   /* background-color: green !important; */
   border-bottom: 1px solid rgb(196, 196, 196);
   padding: 5px 10px;
 }
+
+.currentMessages-header div {
+  display: flex;
+  flex-direction: column !important;
+  align-items: flex-start;
+  margin-left: 10px;
+}
+
+.currentMessages-header .back {
+  font-size: 35px;
+
+  font-weight: bold !important;
+  cursor: pointer;
+}
+
+.currentMessages-header .back:hover {
+  color: #0a6bc2;
+}
+
 .currentMessages-header p {
   margin: 0;
 }
@@ -289,12 +299,43 @@
   object-fit: cover;
 }
 
-@media screen and (max-width: 520px) {
-  .messagesPageContainer {
-    display: block;
+.hide-otherChats {
+  min-height: 60vh;
+  border-right: 1px solid rgb(196, 196, 196);
+}
+.currentMessages-noUser {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  height: 100%;
+  width: 100%;
+  color: rgb(43, 43, 43);
+}
+@media screen and (max-width: 630px) {
+  .messagesPage__currentMessages {
+    display: hidden;
   }
+
+  .messagesPageContainer {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    border: none;
+  }
+
+  .messagesPage__currentMessages {
+    /* background-color: green; */
+    border-radius: 10px;
+  }
+
   .messagesPage__otherChats {
-    width: 90%;
-    margin-top: 150px;
+    position: absolute;
+    top: 0px;
+    background-color: #fff;
+    border: 1px solid rgb(196, 196, 196);
+    border-radius: 10px;
   }
 }
