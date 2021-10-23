@@ -37,7 +37,22 @@ import {
 
 import LastMessageCard from "../../components/messages/LastMessageCard";
 
+function useWindowSize() {
+  const [size, setSize] = useState([window.innerHeight, window.innerWidth]);
+  useEffect(() => {
+    const handleResize = () => {
+      setSize([window.innerHeight, window.innerWidth]);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  return size;
+}
 const Messaging = () => {
+  const [height, width] = useWindowSize();
   const { username } = useParams();
   const dispatch = useDispatch();
   const { userObj, fullName } = useSelector((state) => state.user);
@@ -403,6 +418,7 @@ const Messaging = () => {
   }, [messageEl.current]);
 
   const handleWindowWResize = () => {
+    console.log("LMFAOOO");
     if (window.innerWidth <= 630) {
       setShowCurrentMessages(false);
       console.log("LESS THAN 630");
@@ -471,21 +487,26 @@ const Messaging = () => {
 
     return strTime;
   }
+
   if (userObj && messageUserName) {
     return (
       <div className="messagesPage">
         <div className="messagesPageContainer">
           <div
             className={
-              !currentChatUser && showCurrentMessages === true
+              currentChatUser && width <= 630
                 ? "hide-otherChats"
                 : "messagesPage__otherChats"
             }
           >
-            <div className="allChats-header">Messaging</div>
+            <div className="allChats-header">
+              Messaging
+              {showCurrentMessages}
+            </div>
             {userChats &&
               userChats.map((chat) => <LastMessageCard chat={chat} />)}
           </div>
+
           {currentChatUser ? (
             <div className="messagesPage__currentMessages">
               <span className="currentMessages-header">

@@ -33,7 +33,7 @@
   display: flex;
   align-items: flex-start;
   height: 100%;
-  margin-top: 8px;
+  margin-top: 2px;
   width: 50px;
 }
 
@@ -64,4 +64,12 @@
   border-radius: 50%;
   color: grey;
   object-fit: cover;
+  margin-top: -5px;
+}
+
+@media screen and (max-width: 630px) {
+  .lastMessageCard {
+    padding: 20px 20px 20px 24px;
+    justify-content: space-between;
+  }
 }
