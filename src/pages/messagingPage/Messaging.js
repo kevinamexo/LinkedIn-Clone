@@ -505,10 +505,6 @@ const Messaging = () => {
             </div>
             {userChats &&
               userChats.map((chat) => <LastMessageCard chat={chat} />)}
-            {userChats &&
-              userChats.map((chat) => <LastMessageCard chat={chat} />)}
-            {userChats &&
-              userChats.map((chat) => <LastMessageCard chat={chat} />)}
           </div>
 
           {currentChatUser ? (

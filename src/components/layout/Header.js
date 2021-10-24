@@ -8,6 +8,7 @@ import {
   FaBriefcase,
   FaBell,
 } from "react-icons/fa";
+import { BsChatDotsFill } from "react-icons/bs";
 import Notification from "../notifications/Notification";
 import ConnectionRequests from "../notifications/ConnectionRequests";
 
@@ -298,6 +299,11 @@ const Header = () => {
                 </div>
               )}
             </span>
+            <HeaderOption
+              title="Messaging"
+              Icon={BsChatDotsFill}
+              onClick={() => history.push("/messaging/user")}
+            />
             <HeaderOption
               title="Jobs"
               Icon={FaBriefcase}

@@ -101,7 +101,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       setPostUserObj({});
       setPostId(null);
       let username = "";
-      setLoading(null);
+      // setLoading(null);
       let post = null;
       let postProps = null;
     };
@@ -227,7 +227,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
   return (
     <>
-      {loading === false && postUserObj ? (
+      {loading === false && postUserObj.username ? (
         <div className="feedPost">
           <div className="feedPost__header">
             {userObj.username === post.authorId && (
