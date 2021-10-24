@@ -9,6 +9,8 @@ import NotificationsPage from "../notificationsPage/NotificationsPage";
 import Messaging from "../messagingPage/Messaging";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import ProfilePage from "../profilepage/ProfilePage";
+import TestPage from "../TestPage";
+
 const Main = () => {
   const { path } = useRouteMatch();
   return (
@@ -31,6 +33,7 @@ const Main = () => {
             <RSidebar />
           </div>
         </Route>
+        <Route exact path="/test" component={TestPage} />
       </Switch>
     </>
   );

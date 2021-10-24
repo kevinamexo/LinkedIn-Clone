@@ -15,7 +15,7 @@ const firebaseApp = initializeApp({
 
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
-
+export const rtDB = getDatabase(firebaseApp);
 export const storage = getStorage();
 export async function getUser(db) {
   const citiesCol = collection(db, "user");
@@ -23,7 +23,5 @@ export async function getUser(db) {
   const cityList = citySnapshot.docs.map((doc) => doc.data());
   return cityList;
 }
-
-const rtDBConfig = {};
 
 export default firebaseApp;

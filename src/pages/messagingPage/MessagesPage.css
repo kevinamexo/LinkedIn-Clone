@@ -59,14 +59,17 @@
   display: grid;
   grid-template-columns: 270px auto;
   width: 90%;
-  max-width: 1600px;
+  max-width: 1300px;
   background-color: #fff;
+  min-height: 60vh;
 
   border: 1px solid rgb(196, 196, 196);
 }
 .messagesPage__otherChats {
   min-height: 60vh;
   width: 100%;
+  height: 100%;
+  overflow-y: scroll;
   /* background-color: rgb(20, 20, 2); */
   border-right: 1px solid rgb(196, 196, 196);
   /* border-radius: 10px; */
@@ -77,7 +80,7 @@
   padding-top: 100px;
   height: 450px;
   width: 100%;
-
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;

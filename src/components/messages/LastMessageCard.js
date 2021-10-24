@@ -78,6 +78,21 @@ const LastMessageCard = ({ chat }) => {
     setOtherUserObj(nameObj);
   }, [userFullNames]);
 
+  //CHECK WHETHER MESSAGE IS NEW OR NOT
+  useEffect(() => {
+    const lastMessageTime = chat.lastMessage.published;
+    const lastReadTime = new Date(
+      chat[`lastRead${userObj.username}`].seconds * 1000
+    );
+
+    console.log(lastMessageTime);
+    console.log(lastReadTime);
+
+    if (lastMessageTime > lastReadTime) {
+      console.log("UNREAD MESSAGE");
+    }
+  }, [chat]);
+
   const handleMesssageCardClick = async () => {
     const otherUser = chat.users.filter((n) => n !== userObj.username)[0];
     console.log(otherUser);

@@ -8,6 +8,7 @@ import Main from "./pages/main/Main";
 import CreatePostModal from "./components/modals/CreatePostModal";
 import LoginPage from "./pages/login/LoginPage";
 import SignupPage from "./pages/signup/SignupPage";
+import TestPage from "./pages/TestPage";
 import ProfilePage from "./pages/profilepage/ProfilePage";
 import ContactInfoModal from "./components/modals/ContactInfoModal";
 import LoadingModal from "./components/modals/LoadingModal";
@@ -136,6 +137,7 @@ function App() {
       dispatch(setLoading(true));
       if (user) {
         start(user);
+        console.log(user.uid);
       } else if (!user) {
         handleLogout();
       }
