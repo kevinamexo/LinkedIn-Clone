@@ -288,12 +288,14 @@ const Messaging = () => {
           userArr.push(doc.data());
 
           return dispatch(setCurrentChatUser(username));
+        } else {
+          dispatch(setCurrentChatUser(null));
         }
       });
 
-      if (userArr.length === 0) {
-        history.push("/");
-      }
+      // if (userArr.length === 0) {
+      //   history.push("/");
+      // }
     };
     if (userObj) {
       checkUserExists();
@@ -488,7 +490,7 @@ const Messaging = () => {
     return strTime;
   }
 
-  if (userObj && messageUserName) {
+  if (userObj) {
     return (
       <div className="messagesPage">
         <div className="messagesPageContainer">
@@ -504,10 +506,14 @@ const Messaging = () => {
               {showCurrentMessages}
             </div>
             {userChats &&
+              userChats.length > 0 &&
               userChats.map((chat) => <LastMessageCard chat={chat} />)}
+            {userChats && userChats.length === 0 && (
+              <div className="no-userChats">You have no messages</div>
+            )}
           </div>
 
-          {currentChatUser ? (
+          {currentChatUser && messageUserName ? (
             <div className="messagesPage__currentMessages">
               <span className="currentMessages-header">
                 <IoChevronBackOutline
@@ -538,6 +544,7 @@ const Messaging = () => {
                       <img
                         src={otherUserObj.profilePhotoURL}
                         className="currentChatUser-summary-photo"
+                        alt="profile_photo"
                       />
                     ) : (
                       <FaUserCircle className="currentChatUser-summary-photo" />
@@ -579,25 +586,25 @@ const Messaging = () => {
                               userObj.profilePhotoURL !== "" ? (
                                 <img
                                   src={userObj.profilePhotoURL}
-                                  className="messages-user-photo"
+                                  alt={userObj.username}
+                                  className="messages-user-photo "
                                 />
-                              ) : userObj &&
-                                userObj.username &&
-                                msg.authorId === userObj.username &&
-                                userObj.profilePhotoURL === null ? (
-                                <FaUserCircle className="messages-user-photo-noPhoto" />
+                              ) : msg.authorId === userObj.username &&
+                                !userObj.profilePhotoURL ? (
+                                <FaUserCircle className="messages-user-photo " />
                               ) : null}
-                              {currentChatUser !== null &&
-                              currentChatUser.username !== null &&
-                              msg.authorId === currentChatUser.username &&
-                              currentChatUser.profilePhotoURL !== null ? (
+
+                              {msg.authorId === otherUserObj.username &&
+                              otherUserObj.profilePhotoURL !== null &&
+                              otherUserObj.profilePhotoURL !== "" ? (
                                 <img
-                                  src={currentChatUser.profilePhotoURL}
-                                  className="messages-user-photo"
+                                  src={otherUserObj.profilePhotoURL}
+                                  alt={otherUserObj.username}
+                                  className="messages-user-photo "
                                 />
-                              ) : msg.authorId === currentChatUser.username &&
-                                currentChatUser.profilePhotoUrl === null ? (
-                                <FaUserCircle className="messages-user-photo-noPhoto" />
+                              ) : msg.authorId === otherUserObj.username &&
+                                !otherUserObj.profilePhotoURL ? (
+                                <FaUserCircle className="messages-user-photo " />
                               ) : null}
                             </section>
                             <section className="msgSection2">

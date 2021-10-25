@@ -80,16 +80,18 @@ const LastMessageCard = ({ chat }) => {
 
   //CHECK WHETHER MESSAGE IS NEW OR NOT
   useEffect(() => {
-    const lastMessageTime = chat.lastMessage.published;
-    const lastReadTime = new Date(
-      chat[`lastRead${userObj.username}`].seconds * 1000
-    );
+    if (chat) {
+      const lastMessageTime = chat.lastMessage.published;
+      const lastReadTime = new Date(
+        chat[`lastRead${userObj.username}`].seconds * 1000
+      );
 
-    console.log(lastMessageTime);
-    console.log(lastReadTime);
+      console.log(lastMessageTime);
+      console.log(lastReadTime);
 
-    if (lastMessageTime > lastReadTime) {
-      console.log("UNREAD MESSAGE");
+      if (lastMessageTime > lastReadTime) {
+        console.log("UNREAD MESSAGE");
+      }
     }
   }, [chat]);
 

@@ -265,6 +265,7 @@
   width: 40px;
   object-fit: cover;
   border-radius: 50%;
+  color: grey;
 }
 
 .currentMessage__messages .messages-user-photo-noPhoto {
@@ -300,6 +301,7 @@
   width: 70px;
   color: grey;
   object-fit: cover;
+  border-radius: 50px;
 }
 
 .hide-otherChats {

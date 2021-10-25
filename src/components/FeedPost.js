@@ -67,7 +67,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       }
     };
 
-    const fetchLikes = async () => {
+    const fetchLikes = () => {
       try {
         const likes = query(
           collection(db, "likes"),

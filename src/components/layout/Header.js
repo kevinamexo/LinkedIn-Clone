@@ -302,7 +302,7 @@ const Header = () => {
             <HeaderOption
               title="Messaging"
               Icon={BsChatDotsFill}
-              onClick={() => history.push("/messaging/user")}
+              onClick={() => history.push("/messaging/users/all")}
             />
             <HeaderOption
               title="Jobs"
