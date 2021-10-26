@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { IoChevronBackOutline } from "react-icons/io5";
+import ClipLoader from "react-spinners/ClipLoader";
 import _ from "lodash";
 import {
   query,
@@ -71,7 +72,8 @@ const Messaging = () => {
   const messagesContainerRef = useRef(null);
   const [otherUserObj, setOtherUserObj] = useState({});
   const [chatRoomExisted, setChatRoomExisted] = useState(null);
-  const [fetchedAllChatRooms, setFetchedAllChatRooms] = useState(null);
+  const [fetchedAllChatRooms, setFetchedAllChatRooms] = useState(false);
+  const [fetchedMessages, setFetchedMessages] = useState(false);
   const [showCurrentMessages, setShowCurrentMessages] = useState(null);
 
   const history = useHistory();
@@ -165,16 +167,18 @@ const Messaging = () => {
         console.log(tmpChats);
 
         dispatch(setUserChats([tmpChats2]));
+        setFetchedAllChatRooms(true);
 
         // dispatch(setUserIds());ss
       } else if (initialMessageFetch === true) {
         querySnapshot.forEach((doc) => {
           dispatch(setChatRoomSnapshot(doc.data()));
+          setFetchedAllChatRooms(true);
+
           ///fetch userName if not in data store
         });
       }
     });
-    setFetchedAllChatRooms(true);
   };
 
   const createNewChat = async () => {
@@ -271,27 +275,33 @@ const Messaging = () => {
     } else {
       dispatch(setGroupedMessages([]));
     }
+    setFetchedMessages(true);
   }, [messages]);
   /// SET CURRENT CHAT USER NAME ON LOAD FROM URL
   useEffect(() => {
     const checkUserExists = async () => {
-      let userExists = null;
-      const usernameQuery = query(
-        collection(db, "user"),
-        where("username", "==", username)
-      );
-      const userSnap = await getDocs(usernameQuery);
-      let userArr = [];
-      userSnap.forEach((doc) => {
-        if (doc.data().username === username) {
-          console.log(username + "DOES EXIST");
-          userArr.push(doc.data());
+      if (username !== "all") {
+        const usernameQuery = query(
+          collection(db, "user"),
+          where("username", "==", username)
+        );
+        const userSnap = await getDocs(usernameQuery);
+        let userArr = [];
+        userSnap.forEach((doc) => {
+          if (doc.data().username === username) {
+            console.log(username + "DOES EXIST");
+            userArr.push(doc.data());
 
-          return dispatch(setCurrentChatUser(username));
-        } else {
-          dispatch(setCurrentChatUser(null));
-        }
-      });
+            return dispatch(setCurrentChatUser(username));
+          } else {
+            dispatch(setCurrentChatUser(null));
+            setFetchedMessages(true);
+          }
+        });
+      } else {
+        dispatch(setCurrentChatUser(null));
+        setFetchedMessages(true);
+      }
 
       // if (userArr.length === 0) {
       //   history.push("/");
@@ -505,12 +515,19 @@ const Messaging = () => {
               Messaging
               {showCurrentMessages}
             </div>
-            {userChats &&
-              userChats.length > 0 &&
-              userChats.map((chat) => <LastMessageCard chat={chat} />)}
-            {userChats && userChats.length === 0 && (
+            {fetchedAllChatRooms === false ? (
+              <div className="no-chats">
+                <ClipLoader color={"#0a66c2;"} loading={true} size={50} />
+              </div>
+            ) : fetchedAllChatRooms === true &&
+              userChats &&
+              userChats.length > 0 ? (
+              userChats.map((chat) => <LastMessageCard chat={chat} />)
+            ) : fetchedAllChatRooms === true &&
+              userChats &&
+              userChats.length === 0 ? (
               <div className="no-userChats">You have no messages</div>
-            )}
+            ) : null}
           </div>
 
           {currentChatUser && messageUserName ? (
@@ -537,7 +554,7 @@ const Messaging = () => {
                   </div>
                 )}
               </span>
-              {currentChatUser ? (
+              {currentChatUser && fetchedMessages === true && (
                 <div className="currentMessage__messages" ref={messageEl}>
                   <header className="currentChatUser-summary">
                     {otherUserObj.profilePhotoURL ? (
@@ -561,10 +578,13 @@ const Messaging = () => {
                         : "Connection"}
                     </p>
                   </header>
-                  {groupedMessages && groupedMessages.length === 0 && (
-                    <p className="no_messages">No Messages</p>
-                  )}
-                  {groupedMessages &&
+                  {fetchedMessages === true &&
+                    groupedMessages &&
+                    groupedMessages.length === 0 && (
+                      <p className="no_messages">No Messages</p>
+                    )}
+                  {fetchedMessages === true &&
+                    groupedMessages &&
                     groupedMessages.map((mesg) => (
                       <>
                         {
@@ -635,26 +655,33 @@ const Messaging = () => {
                         ))}
                       </>
                     ))}
-                </div>
-              ) : (
-                <div className="currentMessages-noUser">
-                  <p>Select a chat </p>
+
+                  {fetchedMessages === false && <h2>LOADIN MESSAGES</h2>}
                 </div>
               )}
-              <form className="messageInput-section" onSubmit={sendMessage}>
-                <input
-                  className="messageInput"
-                  name="messageText"
-                  value={messageText}
-                  onChange={(e) => setMessageText(e.target.value)}
-                  placeholder="Write a message..."
-                />
-                <button type="submit">Send</button>
-              </form>
+              {currentChatUser && fetchedMessages === true && groupedMessages && (
+                <form className="messageInput-section" onSubmit={sendMessage}>
+                  <input
+                    className="messageInput"
+                    name="messageText"
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    placeholder="Write a message..."
+                  />
+                  <button type="submit">Send</button>
+                </form>
+              )}
             </div>
-          ) : (
+          ) : (currentChatUser === null) & (fetchedMessages === false) ? (
+            <div className="currentMessages-noUser">
+              <ClipLoader color={"#0a66c2;"} loading={true} size={50} />
+            </div>
+          ) : (currentChatUser === null &&
+              fetchedMessages === true &&
+              username === "all") ||
+            null ? (
             <div className="currentMessages-noUser">Select a chat</div>
-          )}
+          ) : null}
         </div>
       </div>
     );
