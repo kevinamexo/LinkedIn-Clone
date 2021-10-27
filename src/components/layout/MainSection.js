@@ -14,6 +14,8 @@ import {
   setSortPostsOrder,
   setRemoveFromPosts,
   setPostsChanges,
+  setAddToPosts,
+  setSortedPosts,
 } from "../../redux/features/postsSlice";
 import {
   setNotifications,
@@ -44,7 +46,7 @@ const MainSection = () => {
   const [postInput, setPostInput] = useState("");
   const [loadingPosts, setLoadingPosts] = useState(null);
   const dispatch = useDispatch();
-  const { posts, lastPost } = useSelector((state) => state.posts);
+  const { posts, lastPost, sortedPosts } = useSelector((state) => state.posts);
   const { userObj } = useSelector((state) => state.user);
   const { notifications, lastNotification, prevLastNotification } = useSelector(
     (state) => state.notifications
@@ -62,10 +64,6 @@ const MainSection = () => {
   const sortMenuRef = useRef();
   //GET USER FEED, LIMIT TO 5 POSTS
   let lastPublished = null;
-  let localPosts;
-  useEffect(() => {
-    console.log(posts.length);
-  }, [posts]);
 
   const getFeed = async () => {
     let latestPosts = [];
@@ -99,31 +97,20 @@ const MainSection = () => {
         console.log("NEW SNAPSHOT");
         if (lastPublished === null) {
           querySnapshot.forEach((doc) => {
-            if (
-              doc.data().notifications &&
-              doc.data().notifications.length > 0
-            ) {
-              unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
+            unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
 
-              // if (doc.data().notifictions.length > 0) {
-              unsortedNotifications = [
-                ...unsortedNotifications,
-                ...doc.data().notifications,
-              ];
+            unsortedNotifications = [
+              ...unsortedNotifications,
+              ...doc.data().notifications,
+            ];
 
-              console.log(doc.data());
-
-              //FETCH LAST NOTIFICATION TIME FROM FIRESTORE
-              lastNotificationTimes = [
-                ...lastNotificationTimes,
-                doc.data().lastNotification.toDate(),
-              ];
-              if (doc.data().username === userObj.username) {
-                nextLastNotificationTime = doc.data().lastNotification;
-                dispatch(
-                  setInitialNotificationTime(nextLastNotificationTime.toDate())
-                );
-              }
+            //FETCH LAST NOTIFICATION TIME FROM FIRESTORE
+            lastNotificationTimes = [
+              ...lastNotificationTimes,
+              doc.data().lastNotification.toDate(),
+            ];
+            if (doc.data().username === userObj.username) {
+              nextLastNotificationTime = doc.data().lastNotification;
             }
           });
 
@@ -132,10 +119,13 @@ const MainSection = () => {
               return new Date(b) - new Date(a);
             }
           );
-          console.log(nextLastNotificationTime);
+
+          let prevNotiTime = null;
+          dispatch(
+            setInitialNotificationTime(nextLastNotificationTime.toDate())
+          );
 
           //CONVERT TIMESTAMPS TO DATES
-
           unsortedPosts.forEach((p) => {
             postsWithDate = [
               ...postsWithDate,
@@ -147,12 +137,8 @@ const MainSection = () => {
             notificationsWithDate = [...notificationsWithDate, p];
           });
 
-          if (postsWithDate.length > 0) {
-            dispatch(setPosts(postsWithDate));
-          }
-          if (notificationsWithDate.length > 0) {
-            dispatch(setNotifications(notificationsWithDate));
-          }
+          dispatch(setPosts(postsWithDate));
+          dispatch(setNotifications(notificationsWithDate));
 
           if (postsWithDate.length > 0) {
             lastPublished = postsWithDate[0].published;
@@ -169,29 +155,14 @@ const MainSection = () => {
             } else {
               changeType = "Added";
             }
-
             console.log("NEW CHANGE");
-            if (
-              change.doc.data().notifications &&
-              change.doc.data().recentPosts.length > 0
-            ) {
-              changesSnapshot.push(...change.doc.data().recentPosts);
-            }
-            if (
-              change.doc.data().notifications &&
-              change.doc.data().notifications.length > 0
-            ) {
-              notificationChanges.push(...change.doc.data().notifications);
-            }
+            changesSnapshot.push(...change.doc.data().recentPosts);
+            notificationChanges.push(...change.doc.data().notifications);
           });
 
           querySnapshot.forEach((doc) => {
-            if (doc.data().recenPosts) {
-              fullSnap.push(...doc.data().recentPosts);
-            }
-            if (doc.data().notifications) {
-              fullNotificationsSnap.push(...doc.data().notifications);
-            }
+            fullSnap.push(...doc.data().recentPosts);
+            fullNotificationsSnap.push(...doc.data().notifications);
           });
 
           let changesWithDate = [];
@@ -336,10 +307,30 @@ const MainSection = () => {
       setLoadingPosts(false);
     }
   };
+
+  const getPosts = () => {
+    const postsQuery = query(
+      collection(db, "follows"),
+      where("users", "array-contains", userObj.username)
+    );
+
+    const postsSnapshot = onSnapshot(postsQuery, (querySnapshot) => {
+      const postsArr = [];
+      querySnapshot.docChanges().forEach((change) => {
+        if (change.type !== "removed" && change.doc.data()) {
+          postsArr.push(...change.doc.data().recentPosts);
+        }
+      });
+      console.log("New items are:");
+      console.log(postsArr);
+
+      dispatch(setAddToPosts(postsArr));
+    });
+  };
   const getNotifications = async () => {};
 
   useEffect(() => {
-    getFeed();
+    getPosts();
     return () => {
       setLoadingPosts(null);
       let followedUsers;
@@ -354,6 +345,20 @@ const MainSection = () => {
     }
   }, [sortPosts]);
 
+  // useEffect(() => {
+  //   if (posts) {
+  //     let postsCopy = [...posts];
+  //     const sortedPosts = postsCopy.sort((a, b) => {
+  //       return (
+  //         new Date(b.published.seconds * 1000) -
+  //         new Date(a.published.seconds * 1000)
+  //       );
+  //     });
+  //     console.log("THE LATEST POST IS");
+  //     console.log(sortedPosts[0]);
+  //     dispatch(setSortedPosts(sortedPosts));
+  //   }
+  // }, [posts]);
   const notificationsAmount = notifications.length;
   const newNotificationsList = notifications.filter((n) => {
     if (notifications.published > prevLastNotification) {
@@ -405,15 +410,15 @@ const MainSection = () => {
         </div>
       </div>
       <section className="sortPosts">
-        <p className="sortLabel">Sort by:</p>
+        <p className="sortLabel">Sort by: </p>
         <p
           className={`sortValue-${sortPosts === "most_likes" && "likes"}`}
           onClick={() => {
             setShowSort(!showSort);
           }}
         >
-          {sortPosts === "latest" && "Latest"}
-          {sortPosts === "oldest" && "Oldest"}
+          {sortPosts === "latest" && " Latest"}
+          {sortPosts === "oldest" && " Oldest"}
           {sortPosts === "most_likes" && "Most Likes"}
           <AiFillCaretDown />
         </p>

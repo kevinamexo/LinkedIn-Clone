@@ -46,11 +46,11 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const postProps = { ...post };
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
 
     const fetchProfileDetails = async () => {
       if (profileObj || post.authorId) {
-        setLoading(true);
+        // setLoading(true);
         const userQ = query(
           collection(db, "user"),
           where("username", "==", post.authorId)
@@ -96,14 +96,9 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     fetchProfileDetails();
     return () => {
       setLikes(0);
-      setLikesUsers([]);
-      // setLiked(false);
-      setPostUserObj({});
+      // setLikesUsers([]);
+      // setPostUserObj({});
       setPostId(null);
-      let username = "";
-      // setLoading(null);
-      let post = null;
-      let postProps = null;
     };
   }, [post.postRefId]);
 
@@ -227,7 +222,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
   return (
     <>
-      {loading === false && postUserObj.username ? (
+      {postUserObj.username && (
         <div className="feedPost">
           <div className="feedPost__header">
             {userObj.username === post.authorId && (
@@ -344,20 +339,6 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
               <AiOutlineComment className="feedPost__action-icon" />
               <p>Comment</p>
             </button>
-          </div>
-        </div>
-      ) : (
-        <div className="feedPost">
-          <div className="feedPost__header">
-            <Skeleton circle={true} height={48} width={48} />
-            <span
-              style={{ width: "100%", marginTop: "4px", marginLeft: "10px" }}
-            >
-              <Skeleton count={2} height={10} />
-            </span>
-          </div>
-          <div className="postContent">
-            <Skeleton count={3} />
           </div>
         </div>
       )}

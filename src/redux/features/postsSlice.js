@@ -4,6 +4,7 @@ import _ from "lodash";
 const initialState = {
   posts: [],
   lastPost: null,
+  sortedPosts: [],
 };
 
 const removeItem = (arr, index) => {
@@ -17,22 +18,34 @@ const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    setPosts: (state, action) => {
-      state.posts = action.payload.sort(function (a, b) {
-        return new Date(b.date) - new Date(a.date);
+    setAddToPosts: (state, action) => {
+      console.log("setting posts");
+      state.posts = action.payload.sort((a, b) => {
+        return new Date(b.published) - new Date(a.published);
       });
     },
-    setAddToPosts: (state, action) => {
-      state.posts = [...action.payload, ...state.posts];
+    setPosts: (state, action) => {
+      const received = [...action.payload];
+
+      const currentPosts = [...state.posts];
+      console.log(received);
+      console.log(currentPosts);
+      const results = received.filter(
+        ({ postRefId: id1 }) =>
+          !currentPosts.some(({ postRefId: id2 }) => id2 === id1)
+      );
+      console.log("NEW POSTS ARE");
+
+      state.posts.unshift(...results);
+    },
+    setSortedPosts: (state, action) => {
+      state.sortedPosts = action.payload;
     },
     setAddPostLikes: (state, action) => {
-      console.log("leeeeeeeelllll");
-      console.log(action.payload);
-
       const rO = state.posts.findIndex(
         (post) => post.postRefId === action.payload.postRefId
       );
-      console.log(rO);
+
       if (rO !== -1) {
         state.posts[rO].likes = action.payload.likes;
         state.posts[rO].users = action.payload.users;
@@ -66,13 +79,19 @@ const postsSlice = createSlice({
       if (action.payload === "latest") {
         console.log("LATESTTTTT");
         r = state.posts.sort(function (a, b) {
-          return new Date(b.published) - new Date(a.published);
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
         });
       }
       if (action.payload === "oldest") {
         console.log("OLDESTTTTTT");
         r = state.posts.sort(function (a, b) {
-          return new Date(a.published) - new Date(b.published);
+          return (
+            new Date(a.published.seconds * 1000) -
+            new Date(b.published.seconds * 1000)
+          );
         });
       }
       if (action.payload === "most_likes") {
@@ -90,6 +109,7 @@ const postsSlice = createSlice({
 
 export const {
   setPosts,
+  setSortedPosts,
   setPostsChanges,
   setAddPostLikes,
   setRemoveFromPosts,
