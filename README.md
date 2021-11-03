@@ -4,13 +4,14 @@
 A full stack clone of LinkedIn made with React and Firebase. 
 
 - React JS
+- Complete Routing with React Router
 - Firebase
 - Redux Toolkit for State Management
 - CSS (no preprocessors)
 
 Currently has the following features:
 
-1. User authentication -with Public
+1. User authentication
 2. Connection Requests - send, accept and decline
 3. Realtime notifications - for user posts, connection request , post interactions and post interactions (i.e likes)
 4. Ability share the following types of posts: text, video and images (using google cloud for media storage)
