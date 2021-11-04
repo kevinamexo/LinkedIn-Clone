@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import "./Main.css";
 import Header from "../../components/layout/Header";
@@ -8,11 +8,74 @@ import LSidebar from "../../components/layout/LSidebar";
 import NotificationsPage from "../notificationsPage/NotificationsPage";
 import Messaging from "../messagingPage/Messaging";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addNewNotifications,
+  setInitialNotificationTime,
+} from "../../redux/features/notificationsSlice";
 import ProfilePage from "../profilepage/ProfilePage";
 import TestPage from "../TestPage";
+import { db } from "../../firebase/firebaseConfig";
+import {
+  query,
+  collection,
+  where,
+  onSnapshot,
+  getDocs,
+} from "firebase/firestore";
 
 const Main = () => {
   const { path } = useRouteMatch();
+  const { userObj } = useSelector((state) => state.user);
+  const { lastNotification } = useSelector((state) => state.notifications);
+  const dispatch = useDispatch();
+
+  const notificationsListener = () => {
+    const notificationsQuery = query(
+      collection(db, "follows"),
+      where("users", "array-contains", userObj.username)
+    );
+    const notificationsSnap = onSnapshot(
+      notificationsQuery,
+      (querySnapshot) => {
+        let notifications = [];
+
+        querySnapshot.docChanges().forEach((change) => {
+          // if (lastNotification === null) {
+          //   console.log('')
+          //   setInitialNotificationTime(change.doc.data().lastNotification);
+          // }
+          if (change.type !== "removed" && change.doc.data().notifications) {
+            notifications.push(...change.doc.data().notifications);
+          }
+        });
+        if (lastNotification !== null) {
+          dispatch(addNewNotifications(notifications));
+        }
+      }
+    );
+  };
+  const intialNotifications = async () => {
+    const notificationsQuery = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    const notificationTimeSnap = await getDocs(notificationsQuery);
+
+    notificationTimeSnap.forEach((doc) => {
+      dispatch(setInitialNotificationTime(doc.data().lastNotification));
+    });
+  };
+
+  useEffect(() => {
+    notificationsListener();
+  }, [userObj, lastNotification]);
+
+  useEffect(() => {
+    if (lastNotification === null) {
+      intialNotifications();
+    }
+  }, [userObj]);
   return (
     <>
       <Header />

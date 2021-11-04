@@ -62,8 +62,8 @@ const notificationsSlice = createSlice({
       );
     },
     setInitialNotificationTime: (state, action) => {
-      state.lastNotification = action.payload;
-      state.prevLastNotification = action.payload;
+      state.lastNotification = new Date(action.payload.seconds * 1000);
+      state.prevLastNotification = new Date(action.payload.seconds * 1000);
     },
     setLastNotificationTime: (state, action) => {
       console.log("LAST NOTIFCATION TIME");
@@ -101,10 +101,38 @@ const notificationsSlice = createSlice({
         (x) => x.published < state.prevLastNotification
       );
     },
+    addNewNotifications: (state, action) => {
+      const newNotifications = _.difference(
+        action.payload,
+        state.notifications
+      );
+
+      const unsortedNotifications = action.payload;
+      state.notifications = unsortedNotifications.sort(function (a, b) {
+        return new Date(b.published) - new Date(a.published);
+      });
+      state.newNotifications = state.notifications.filter((n) => {
+        let date = new Date(n.published.seconds * 1000);
+        if (date >= state.prevLastNotification) {
+          return n;
+        }
+      });
+      state.newNotificationsAmount = state.newNotifications.length;
+      let i = [...state.notifications];
+      state.prevPastNotifications = i;
+
+      state.pastNotifications = state.notifications.filter((n) => {
+        let date = new Date(n.published.seconds * 1000);
+        if (date < state.prevLastNotification) {
+          return n;
+        }
+      });
+    },
   },
 });
 
 export const {
+  addNewNotifications,
   setNotifications,
   setNotificationChanges,
   setLastNotificationTime,

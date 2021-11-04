@@ -52,7 +52,7 @@ import {
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
-
+  const [loadingNotifications, setLoadingNotifications] = useState(null);
   const [notificationsActive, setNotificationsActive] = useState(false);
   const [connectionRequestsActive, setConnectionRequestsActive] =
     useState(false);
@@ -67,12 +67,9 @@ const Header = () => {
     pastConnectionRequests,
     loadingConnectionRequests,
   } = useSelector((state) => state.connectionRequests);
-  const {
-    notifications,
-
-    newNotifications,
-    pastNotifications,
-  } = useSelector((state) => state.notifications);
+  const { notifications, newNotifications, pastNotifications } = useSelector(
+    (state) => state.notifications
+  );
   const { searchActive } = useSelector((state) => state.modals);
 
   // const [newNotis, setNewNotis] = useState(newNotifications.length>0);
@@ -125,6 +122,7 @@ const Header = () => {
     console.log(`Updated last notification time to ${timestamp.toDate()}`);
   };
   const handleClickNotification = async () => {
+    setLoadingNotifications(true);
     setNotificationsActive(!notificationsActive);
     let date = new Date();
     console.log(date);
@@ -139,6 +137,7 @@ const Header = () => {
       console.log("NOT NOTIFICATIONS ACTIVE");
       await sendNotificationsClick();
     }
+    setLoadingNotifications(false);
   };
   const handleClickConnections = async () => {
     console.log("HANDLING");
@@ -320,7 +319,9 @@ const Header = () => {
                 onClick={handleClickNotification}
                 type="notifications"
               />
-              {notificationsActive && (
+              {notificationsActive &&
+              loadingNotifications === false &&
+              notifications.length > 0 ? (
                 <div className="notificationsMenu-container">
                   <div
                     className={
@@ -343,23 +344,35 @@ const Header = () => {
                       ))}
                     {pastNotifications &&
                       pastNotifications.length > 0 &&
-                      pastNotifications.map((n, idx) => (
-                        <Notification
-                          key={idx}
-                          notification={n}
-                          newNotification={false}
-                        />
-                      ))}
+                      pastNotifications
+                        .slice(0, 5)
+                        .map((n, idx) => (
+                          <Notification
+                            key={idx}
+                            notification={n}
+                            newNotification={false}
+                          />
+                        ))}
                   </div>
                   <div className="notificationsMenu-footer">
-                    <Link to="/myNotifications">
-                      <button className="notificationsMenu-viewAll">
-                        View all Notifications
-                      </button>
-                    </Link>
+                    <button
+                      onClick={() => {
+                        setNotificationsActive(false);
+                        history.push("/myNotifications");
+                      }}
+                      className="notificationsMenu-viewAll"
+                    >
+                      View all Notifications
+                    </button>
                   </div>
                 </div>
-              )}
+              ) : notificationsActive && loadingNotifications === true ? (
+                <div className="notificationsMenu-container">
+                  <div className="notificationsMenu-empty">
+                    <p>LOADING CONNECTION REQUESTS</p>
+                  </div>
+                </div>
+              ) : null}
             </span>
             {userObj.profilePhotoURL ? (
               <span
