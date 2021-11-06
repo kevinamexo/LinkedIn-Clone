@@ -63,56 +63,65 @@ function App() {
   const fetchConnectionRequests = async () => {
     setLoadingConnectionRequests(true);
     const connectionRequestQuery = query(
-      collection(db, "follows"),
+      collection(db, "connectionRequests"),
       where("username", "==", userObj.username)
     );
     const connectionRequestListen = onSnapshot(
       connectionRequestQuery,
       (querySnapshot) => {
-        let fullConnectionRequestsSnap = [];
-        let fullConnectionRequestsSnapWithDate = [];
-        // if (connectionRequests.length === 0) {
-        //   dispatch(setLoadingConnectionRequests(true));
-        // }
-        console.log(lastViewedRequests);
-        if (lastViewedRequests === null) {
-          console.log("INITIAL CONNECTION FETCH");
-        }
-        ///FETCGH FULL CONNECTION REQUESTS ARRAY
-        querySnapshot.forEach((doc) => {
-          console.log(doc.data());
-        });
         querySnapshot.docChanges().forEach((change) => {
-          console.log(change.doc.data().connectionRequests);
+          if (change.type !== "remeeoved" && change.doc.data()) {
+            console.log("added or modified");
+            let fullConnectionRequestsSnap = [];
+            let fullConnectionRequestsSnapWithDate = [];
+            // if (connectionRequests.length === 0) {
+            //   dispatch(setLoadingConnectionRequests(true));
+            // }
+            console.log(lastViewedRequests);
+            if (lastViewedRequests === null) {
+              console.log("INITIAL CONNECTION FETCH");
+            }
+            ///FETCGH FULL CONNECTION REQUESTS ARRAY
+            querySnapshot.forEach((doc) => {
+              console.log(doc.data());
+            });
+            querySnapshot.docChanges().forEach((change) => {
+              console.log(change.doc.data().connectionRequests);
 
-          dispatch(
-            setLastViewedRequests(change.doc.data().lastConnectionRequest)
-          );
-          fullConnectionRequestsSnap.push(
-            ...change.doc.data().connectionRequests
-          );
-        });
+              dispatch(
+                setLastViewedRequests(change.doc.data().lastConnectionRequest)
+              );
+              fullConnectionRequestsSnap.push(
+                ...change.doc.data().connectionRequests
+              );
+            });
 
-        function comparer(otherArray) {
-          return function (current) {
-            return (
-              otherArray.filter(function (other) {
+            function comparer(otherArray) {
+              return function (current) {
                 return (
-                  other.username === current.username &&
-                  other.published === current.published
+                  otherArray.filter(function (other) {
+                    return (
+                      other.username === current.username &&
+                      other.published === current.published
+                    );
+                  }).length == 0
                 );
-              }).length == 0
+              };
+            }
+            console.log(connectionRequests);
+            const results = fullConnectionRequestsSnap.filter(
+              ({ username: id1 }) =>
+                !connectionRequests.some(({ username: id2 }) => id2 === id1)
             );
-          };
-        }
-        console.log(connectionRequests);
-        const results = fullConnectionRequestsSnap.filter(
-          ({ username: id1 }) =>
-            !connectionRequests.some(({ username: id2 }) => id2 === id1)
-        );
-        console.log(results);
+            console.log(results);
 
-        dispatch(setAddToConnectionRequests(results));
+            dispatch(setAddToConnectionRequests(results));
+          }
+          if (change.type === "removed") {
+            console.log("connection request removued");
+            console.log(change.doc);
+          }
+        });
       }
     );
   };

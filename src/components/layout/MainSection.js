@@ -89,217 +89,6 @@ const MainSection = () => {
       let postsWithDate = [];
       let notificationsWithDate = [];
       let nextLastNotificationTime;
-      const fetchedPosts = onSnapshot(postQuery, (querySnapshot) => {
-        let lastNotificationTimesWithDate = [];
-        let lastNotificationTimes = [];
-        let unsortedPosts = [];
-        let unsortedNotifications = [];
-        console.log("NEW SNAPSHOT");
-        if (lastPublished === null) {
-          querySnapshot.forEach((doc) => {
-            unsortedPosts = [...unsortedPosts, ...doc.data().recentPosts];
-
-            unsortedNotifications = [
-              ...unsortedNotifications,
-              ...doc.data().notifications,
-            ];
-
-            //FETCH LAST NOTIFICATION TIME FROM FIRESTORE
-            lastNotificationTimes = [
-              ...lastNotificationTimes,
-              doc.data().lastNotification.toDate(),
-            ];
-            if (doc.data().username === userObj.username) {
-              nextLastNotificationTime = doc.data().lastNotification;
-            }
-          });
-
-          let sortedLastNotificationTimes = lastNotificationTimes.sort(
-            function (a, b) {
-              return new Date(b) - new Date(a);
-            }
-          );
-
-          let prevNotiTime = null;
-          dispatch(
-            setInitialNotificationTime(nextLastNotificationTime.toDate())
-          );
-
-          //CONVERT TIMESTAMPS TO DATES
-          unsortedPosts.forEach((p) => {
-            postsWithDate = [
-              ...postsWithDate,
-              { ...p, published: p.published.toDate() },
-            ];
-          });
-
-          unsortedNotifications.forEach((p) => {
-            notificationsWithDate = [...notificationsWithDate, p];
-          });
-
-          dispatch(setPosts(postsWithDate));
-          dispatch(setNotifications(notificationsWithDate));
-
-          if (postsWithDate.length > 0) {
-            lastPublished = postsWithDate[0].published;
-          }
-        } else if (lastPublished !== null) {
-          const changesSnapshot = [];
-          const notificationChanges = [];
-          const fullSnap = [];
-          const fullNotificationsSnap = [];
-          let changeType;
-          querySnapshot.docChanges().forEach((change) => {
-            if (change.type === "removed") {
-              changeType = "DELETED";
-            } else {
-              changeType = "Added";
-            }
-            console.log("NEW CHANGE");
-            changesSnapshot.push(...change.doc.data().recentPosts);
-            notificationChanges.push(...change.doc.data().notifications);
-          });
-
-          querySnapshot.forEach((doc) => {
-            fullSnap.push(...doc.data().recentPosts);
-            fullNotificationsSnap.push(...doc.data().notifications);
-          });
-
-          let changesWithDate = [];
-          let fullSnapWithDate = [];
-
-          let notificationsChangesWithDate = [];
-          let fullNotificationsSnapWithDate = [];
-
-          // dispatch(setPostsChanges(changesWithDate));setAddNewPosts
-          changesSnapshot.forEach((p) => {
-            changesWithDate = [
-              ...changesWithDate,
-              { ...p, published: p.published.toDate() },
-            ];
-          });
-
-          notificationChanges.forEach((p) => {
-            notificationsChangesWithDate = [
-              ...notificationsChangesWithDate,
-              { ...p, published: p.published.toDate() },
-            ];
-          });
-
-          console.log("CHANGES WITH DATE");
-          console.log(changesWithDate);
-          console.log("NOTIFICATION CHANGES WITH DATE");
-          console.log(notificationsChangesWithDate);
-          fullSnap.forEach((p) => {
-            fullSnapWithDate = [
-              ...fullSnapWithDate,
-              { ...p, published: p.published.toDate() },
-            ];
-          });
-          fullNotificationsSnap.forEach((p) => {
-            fullNotificationsSnapWithDate = [
-              ...fullNotificationsSnapWithDate,
-              { ...p, published: p.published.toDate() },
-            ];
-          });
-
-          function comparer(otherArray) {
-            return function (current) {
-              return (
-                otherArray.filter(function (other) {
-                  return (
-                    other.postRefId === current.postRefId &&
-                    other.published === current.published
-                  );
-                }).length == 0
-              );
-            };
-          }
-
-          let newItems = changesWithDate.filter(
-            ({ postRefId: id1 }) =>
-              !postsWithDate.some(({ postRefId: id2 }) => id2 === id1)
-          );
-          console.log("NEW ITEMS");
-          console.log(newItems);
-          newItems = newItems.sort(function (a, b) {
-            return new Date(b.date) - new Date(a.date);
-          });
-
-          let newNotifications = notificationsChangesWithDate.filter(
-            ({ postRefId: id1 }) =>
-              !notificationsWithDate.some(({ postRefId: id2 }) => id2 === id1)
-          );
-
-          console.log("NEW NOTIFICATIONS");
-          console.log(newNotifications);
-          let deleted = postsWithDate.filter(
-            ({ postRefId: id1 }) =>
-              !fullSnapWithDate.some(({ postRefId: id2 }) => id2 === id1)
-          );
-
-          console.log("DELETED ITEMS");
-          console.log(deleted);
-          newItems = newItems.sort(function (a, b) {
-            return new Date(b.date) - new Date(a.date);
-          });
-
-          console.log("NEW NOTIFICATIONS");
-
-          newNotifications = newNotifications.sort(function (a, b) {
-            return new Date(b.date) - new Date(a.date);
-          });
-
-          console.log(newNotifications);
-
-          ///ADD NEW ITEMS TO POSTS
-          if (newItems.length >= 1) {
-            dispatch(setPostsChanges({ type: "NEW_ITEMS", items: newItems }));
-
-            console.log("newItems" + JSON.stringify(newItems));
-            newItems.forEach((y) => {
-              postsWithDate = [y, ...postsWithDate];
-            });
-          }
-          if (newNotifications.length >= 1) {
-            console.log(newNotifications);
-            dispatch(setNotificationChanges(newNotifications));
-            console.log("NEW NOTIFICATION");
-            newNotifications.forEach((y) => {
-              notificationsWithDate = [y, ...notificationsWithDate];
-            });
-          }
-
-          function returnIndex(obj) {
-            let s = postsWithDate.findIndex(
-              (p) => p.postRefId === obj.postRefId
-            );
-
-            return s;
-          }
-          let indexes = [];
-          if (deleted.length >= 1) {
-            console.log(deleted[0]);
-            deleted.forEach((f) => indexes.push(returnIndex(f)));
-            indexes.filter((x) => x !== -1);
-            console.log("index of deleted");
-            console.log(indexes);
-            console.log(postsWithDate[indexes]);
-            let n = [...postsWithDate];
-            dispatch(setRemoveFromPosts(Number(indexes)));
-            const deleteItem = n.splice(Number(indexes[0]), 1);
-            console.log("removed");
-            console.log(n);
-            postsWithDate = n;
-            console.log(postsWithDate);
-            indexes = [];
-          }
-
-          if (changesWithDate && changesWithDate.length > 0) {
-            lastPublished = changesWithDate[0].published;
-          }
-        }
-      });
 
       setLoadingPosts(false);
     } catch (e) {
@@ -313,9 +102,8 @@ const MainSection = () => {
       collection(db, "follows"),
       where("users", "array-contains", userObj.username)
     );
-
     const postsSnapshot = onSnapshot(postsQuery, (querySnapshot) => {
-      const postsArr = [];
+      let postsArr = [];
       querySnapshot.docChanges().forEach((change) => {
         if (change.type !== "removed" && change.doc.data()) {
           postsArr.push(...change.doc.data().recentPosts);
@@ -323,11 +111,15 @@ const MainSection = () => {
       });
       console.log("New items are:");
       console.log(postsArr);
+      const postsArr2 = postsArr.sort((a, b) => {
+        return new Date(b.published) - new Date(a.published);
+      });
+      console.log(postsArr2[0]);
+      console.log(posts);
 
       dispatch(setAddToPosts(postsArr));
     });
   };
-  const getNotifications = async () => {};
 
   useEffect(() => {
     getPosts();

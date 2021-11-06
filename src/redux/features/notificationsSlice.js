@@ -117,6 +117,13 @@ const notificationsSlice = createSlice({
           return n;
         }
       });
+      state.prevNewNotifications = state.notifications.filter((n) => {
+        let date = new Date(n.published.seconds * 1000);
+        if (date >= state.prevPrevLastNotification) {
+          return n;
+        }
+      });
+
       state.newNotificationsAmount = state.newNotifications.length;
       let i = [...state.notifications];
       state.prevPastNotifications = i;

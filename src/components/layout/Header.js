@@ -11,7 +11,7 @@ import {
 import { BsChatDotsFill } from "react-icons/bs";
 import Notification from "../notifications/Notification";
 import ConnectionRequests from "../notifications/ConnectionRequests";
-
+import ClipLoader from "react-spinners/ClipLoader";
 import "./Header.css";
 import { Link } from "react-router-dom";
 import HeaderOption from "./HeaderOption";
@@ -49,6 +49,7 @@ import {
   setLastConnectionRequestTime,
   setFilterConnectionRequests,
 } from "../../redux/features/connectionRequestsSlice";
+import useOutsideClick from "../../customHooks";
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
@@ -57,10 +58,14 @@ const Header = () => {
   const [connectionRequestsActive, setConnectionRequestsActive] =
     useState(false);
   const [connectionsMenuActive, setConnectionsMenuActive] = useState(false);
-
-  const dispatch = useDispatch();
+  const connectionRequestsMenuRef = useRef();
   const navbarSearchRef = useRef();
-  const { user, userObj, loading } = useSelector((state) => state.user);
+  const connectionsIconRef = useRef();
+  const notificationsMenuRef = useRef();
+  const notificationsMenuRef2 = useRef();
+  const notificationsIconRef = useRef();
+  const dispatch = useDispatch();
+  const { userObj, loading } = useSelector((state) => state.user);
   const {
     connectionRequests,
     newConnectionRequests,
@@ -78,7 +83,7 @@ const Header = () => {
 
   const sendNotificationsClick = async () => {
     const q = query(
-      collection(db, "follows"),
+      collection(db, "notifications"),
       where("username", "==", userObj.username)
     );
     let followsRefId;
@@ -89,7 +94,7 @@ const Header = () => {
     let date = new Date();
     console.log(date);
     let timestamp = Timestamp.fromDate(date);
-    const followsRef = doc(db, "follows", followsRefId);
+    const followsRef = doc(db, "notifications", followsRefId);
     if (notificationsActive === false) {
       await updateDoc(followsRef, {
         lastNotification: timestamp,
@@ -100,18 +105,18 @@ const Header = () => {
   };
   const sendConnectionRequestsClick = async () => {
     const q = query(
-      collection(db, "follows"),
+      collection(db, "connectionRequests"),
       where("username", "==", userObj.username)
     );
-    let followsRefId;
+    let requestsRefId;
     const qSnap = await getDocs(q);
     qSnap.forEach((doc) => {
-      followsRefId = doc.id;
+      requestsRefId = doc.id;
     });
     let date = new Date();
     console.log(date);
     let timestamp = Timestamp.fromDate(date);
-    const followsRef = doc(db, "follows", followsRefId);
+    const followsRef = doc(db, "connectionRequests", requestsRefId);
     if (notificationsActive === false) {
       console.log("opened menu");
       await updateDoc(followsRef, {
@@ -124,39 +129,44 @@ const Header = () => {
   const handleClickNotification = async () => {
     setLoadingNotifications(true);
     setNotificationsActive(!notificationsActive);
+    let state = !notificationsActive;
     let date = new Date();
     console.log(date);
     let timestamp = Timestamp.fromDate(date);
     timestamp = new Date(timestamp.seconds * 1000);
     dispatch(setLastNotificationTime(timestamp));
-    if (notificationsActive === true) {
+    if (state === true) {
       console.log("NOTIFICATIONS ACTIVE");
-      dispatch(setFilterNotifications());
+      await sendNotificationsClick();
+      // setLoadingNotifications(false);
     } else {
       console.log(false);
       console.log("NOT NOTIFICATIONS ACTIVE");
-      await sendNotificationsClick();
+      dispatch(setFilterNotifications());
     }
     setLoadingNotifications(false);
   };
   const handleClickConnections = async () => {
     console.log("HANDLING");
+    console.log(connectionsMenuActive);
 
     setConnectionsMenuActive(!connectionsMenuActive);
+    let state = !connectionsMenuActive;
     let date = new Date();
     console.log(date);
     let timestamp = Timestamp.fromDate(date);
     console.log(timestamp);
 
+    console.log(state);
     dispatch(setLastConnectionRequestTime(timestamp));
-    if (connectionsMenuActive === true) {
+    if (state === true) {
       console.log("CONNECTIONS ACTIVE");
-      dispatch(setFilterConnectionRequests());
-    } else {
-      console.log(false);
-      console.log("CONNECTIONS NOT ACTIVE");
       await sendConnectionRequestsClick();
+    } else {
+      console.log("CONNECTIONS NOT ACTIVE");
+      dispatch(setFilterConnectionRequests());
     }
+    console.log(connectionsMenuActive);
   };
   const handleHeaderSearchChange = (e) => {
     setHeaderSearch(e.target.value);
@@ -189,6 +199,29 @@ const Header = () => {
       });
   };
 
+  // useOutsideClick(connectionRequestsMenuRef, () => {
+  //   console.log("IS MENU ACTIVE");
+  //   console.log(connectionsMenuActive);
+  //   dispatch(setFilterConnectionRequests());
+  //   setConnectionsMenuActive(false);
+  // });
+  useEffect(() => {
+    console.log(connectionRequestsMenuRef.current);
+  }, [connectionRequestsMenuRef.current]);
+
+  useOutsideClick(connectionRequestsMenuRef, connectionsIconRef, (e) => {
+    setConnectionsMenuActive(false);
+    console.log("CONNECTIONS NOT ACTIVE");
+    dispatch(setFilterConnectionRequests());
+  });
+  useOutsideClick(notificationsMenuRef, notificationsIconRef, (e) => {
+    setNotificationsActive(false);
+    console.log("CONNECTIONS NOT ACTIVE");
+    dispatch(setFilterNotifications());
+  });
+  useOutsideClick(notificationsMenuRef2, notificationsIconRef, (e) => {
+    setNotificationsActive(false);
+  });
   const handleSearchActive = (e) => {
     if (navbarSearchRef.current && navbarSearchRef.current.contains(e.target)) {
     } else {
@@ -198,7 +231,6 @@ const Header = () => {
 
   useEffect(() => {
     document.addEventListener("click", handleSearchActive);
-
     return () => {
       document.removeEventListener("click", handleSearchActive);
     };
@@ -245,7 +277,10 @@ const Header = () => {
                 history.push("/");
               }}
             />
-            <span className="connnectionRequestsSection">
+            <span
+              className="connnectionRequestsSection"
+              ref={connectionsIconRef}
+            >
               <HeaderOption
                 title="My Network"
                 Icon={FaUserFriends}
@@ -254,7 +289,10 @@ const Header = () => {
                 type="connectionRequests"
               />
               {connectionsMenuActive === true && (
-                <div className="connnectionRequestsMenu-container">
+                <div
+                  className="connnectionRequestsMenu-container"
+                  ref={connectionRequestsMenuRef}
+                >
                   <>
                     <div className="connnectionRequestsMenu">
                       {connectionRequests.length > 0 && (
@@ -271,7 +309,7 @@ const Header = () => {
                           <ConnectionRequests
                             key={idx}
                             request={n}
-                            newItem={true}
+                            newConnectionRequest={true}
                             // newNotification={true}
                             type="connectionRequests"
                           />
@@ -311,6 +349,8 @@ const Header = () => {
             <span
               className="notificationsSection"
               // onClick={handleNotificationsClick}
+
+              ref={notificationsIconRef}
             >
               <HeaderOption
                 title="Notifications"
@@ -322,7 +362,10 @@ const Header = () => {
               {notificationsActive &&
               loadingNotifications === false &&
               notifications.length > 0 ? (
-                <div className="notificationsMenu-container">
+                <div
+                  className="notificationsMenu-container"
+                  ref={notificationsMenuRef}
+                >
                   <div
                     className={
                       notifications.length >= 1
@@ -367,8 +410,12 @@ const Header = () => {
                   </div>
                 </div>
               ) : notificationsActive && loadingNotifications === true ? (
-                <div className="notificationsMenu-container">
+                <div
+                  className="notificationsMenu-container "
+                  ref={notificationsMenuRef2}
+                >
                   <div className="notificationsMenu-empty">
+                    <ClipLoader color={"#0a66c2"} size={20} />
                     <p>LOADING CONNECTION REQUESTS</p>
                   </div>
                 </div>

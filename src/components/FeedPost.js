@@ -83,6 +83,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
               users: doc.data().users,
             };
             dispatch(setAddPostLikes(t));
+            // setLiked(doc.data().user.some(name=>name===userOby.usenrma))
             setPostWithLikes(t);
           });
         });
@@ -218,6 +219,9 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
 
   useEffect(() => {
     setLiked(post.users && post.users.some((v) => v === userObj.username));
+    return () => {
+      setLiked(null);
+    };
   }, [post]);
 
   return (

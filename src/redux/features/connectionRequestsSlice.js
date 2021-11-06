@@ -131,6 +131,9 @@ const connectionRequestsSlice = createSlice({
       state.newConnectionRequests = i.filter(
         (x) => x.published > state.prevLastViewedRequests
       );
+      state.prevNewNotifications = i.filter(
+        (x) => x.published > state.prevPrevLastViewedRequests
+      );
 
       state.pastConnectionRequests = i.filter(
         (x) => x.published < state.prevLastViewedRequests

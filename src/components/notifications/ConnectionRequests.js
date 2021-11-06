@@ -19,7 +19,7 @@ import Skeleton from "react-loading-skeleton";
 import "./ConnectionRequest.css";
 import { FaUserCircle } from "react-icons/fa";
 
-const ConnectionRequests = ({ request, key, newItem }) => {
+const ConnectionRequests = ({ request, key, newConnectionRequest }) => {
   const [userOb, setUserOb] = useState({});
   const [loading, setLoading] = useState(null);
   const { userObj } = useSelector((state) => state.user);
@@ -60,6 +60,16 @@ const ConnectionRequests = ({ request, key, newItem }) => {
   const acceptConnectionRequest = async (userOb, accept) => {
     dispatch(removeFromRequests(key));
 
+    const connectionRequestsQuery = query(
+      collection(db, "connectionRequests"),
+      where("username", "==", userObj.username)
+    );
+    const connectionRequestsSnap = await getDocs(connectionRequestsQuery);
+    let connectionRequestDocId;
+    connectionRequestsSnap.forEach((doc) => {
+      connectionRequestDocId = doc.id;
+      console.log(doc.data());
+    });
     const followQuery = query(
       collection(db, "follows"),
       where("username", "==", userObj.username)
@@ -70,15 +80,23 @@ const ConnectionRequests = ({ request, key, newItem }) => {
       followDocId = doc.id;
     });
     const followDocRef = doc(db, "follows", followDocId);
+    const connectionRequestsDocRef = doc(
+      db,
+      "connectionRequests",
+      connectionRequestDocId
+    );
+    console.log(connectionRequestDocId);
+    console.log(request);
+    await updateDoc(connectionRequestsDocRef, {
+      connectionRequests: arrayRemove(request),
+    });
     if (accept === true) {
       await updateDoc(followDocRef, {
         users: arrayUnion(userOb.username),
-        connectionRequests: arrayRemove(request),
       });
     } else if (accept === false) {
       await updateDoc(followDocRef, {
-        users: arrayUnion(userOb.username),
-        connectionRequests: arrayRemove(request),
+        users: arrayRemove(userOb.username),
       });
     }
   };
@@ -86,7 +104,9 @@ const ConnectionRequests = ({ request, key, newItem }) => {
   return (
     <>
       <div
-        className={`connection-requests ${newItem === true && "newRequest"}`}
+        className={`connection-requests ${
+          newConnectionRequest === true && "newRequest"
+        }`}
       >
         <div className="connection-requests__main">
           <div className="connectionReq__section1">

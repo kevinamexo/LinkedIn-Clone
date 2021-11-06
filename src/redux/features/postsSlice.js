@@ -19,7 +19,6 @@ const postsSlice = createSlice({
   initialState,
   reducers: {
     setAddToPosts: (state, action) => {
-      console.log("setting posts");
       state.posts = action.payload.sort((a, b) => {
         return new Date(b.published) - new Date(a.published);
       });

@@ -32,7 +32,7 @@ const Main = () => {
 
   const notificationsListener = () => {
     const notificationsQuery = query(
-      collection(db, "follows"),
+      collection(db, "notifications"),
       where("users", "array-contains", userObj.username)
     );
     const notificationsSnap = onSnapshot(
@@ -41,27 +41,24 @@ const Main = () => {
         let notifications = [];
 
         querySnapshot.docChanges().forEach((change) => {
-          // if (lastNotification === null) {
-          //   console.log('')
-          //   setInitialNotificationTime(change.doc.data().lastNotification);
-          // }
           if (change.type !== "removed" && change.doc.data().notifications) {
             notifications.push(...change.doc.data().notifications);
           }
         });
         if (lastNotification !== null) {
-          dispatch(addNewNotifications(notifications));
+          if (notifications.length > 0) {
+            dispatch(addNewNotifications(notifications));
+          }
         }
       }
     );
   };
   const intialNotifications = async () => {
     const notificationsQuery = query(
-      collection(db, "follows"),
+      collection(db, "notifications"),
       where("username", "==", userObj.username)
     );
     const notificationTimeSnap = await getDocs(notificationsQuery);
-
     notificationTimeSnap.forEach((doc) => {
       dispatch(setInitialNotificationTime(doc.data().lastNotification));
     });
@@ -76,6 +73,8 @@ const Main = () => {
       intialNotifications();
     }
   }, [userObj]);
+
+  useEffect(() => {}, []);
   return (
     <>
       <Header />

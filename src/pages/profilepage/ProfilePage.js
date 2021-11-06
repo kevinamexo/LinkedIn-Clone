@@ -89,7 +89,23 @@ const ProfilePage = () => {
       setProfileObj(doc.data());
       dispatch(setSelectedUser(doc.data()));
     });
-
+    const connectionRequestsQuery = query(
+      collection(db, "connectionRequests"),
+      where("username", "==", username)
+    );
+    const connectionRequestsSnap = await getDocs(connectionRequestsQuery);
+    connectionRequestsSnap.forEach((doc) => {
+      if (
+        doc
+          .data()
+          .connectionRequests.some((r) => r.username === userObj.username)
+      ) {
+        console.log("PENDING CONNECTION REQUESR");
+        setPendingConnectionRequest(true);
+      } else {
+        setPendingConnectionRequest(false);
+      }
+    });
     return profObj;
   };
   let orgObj = {};
@@ -140,7 +156,7 @@ const ProfilePage = () => {
       let timestamp = Timestamp.fromDate(date);
       console.log(profId);
       const followsDocRef = query(
-        collection(db, "follows"),
+        collection(db, "connectionRequests"),
         where("username", "==", profileObj.username)
       );
       const followsDocSnap = await getDocs(followsDocRef);
@@ -149,17 +165,12 @@ const ProfilePage = () => {
       });
 
       console.log(followDocId);
-      const followDoc = doc(db, "follows", followDocId);
-      await updateDoc(followDoc, {
+      const followDocRef = doc(db, "connectionRequests", followDocId);
+      await updateDoc(followDocRef, {
         connectionRequests: arrayUnion({
           username: userObj.username,
           published: timestamp,
         }),
-      });
-
-      const userDoc = doc(db, "user", profId);
-      await updateDoc(userDoc, {
-        followers: arrayUnion(userObj.username),
       });
     } catch (e) {
       console.log(e);
@@ -174,29 +185,16 @@ const ProfilePage = () => {
     );
     console.log(profileObj.username);
     const followsListenter = onSnapshot(q2, (querySnapshot) => {
+      let following;
       querySnapshot.forEach((doc) => {
-        if (
-          doc
-            .data()
-            .connectionRequests.some((req) => req.username === userObj.username)
-        ) {
-          console.log("pending connection");
-          setPendingConnectionRequest(true);
-          setFollowing(false);
-        } else if (
-          !doc
-            .data()
-            .connectionRequests.some(
-              (req) => req.username === userObj.username
-            ) &&
-          !doc.data().users.some((r) => r === userObj.username)
-        ) {
-          setPendingConnectionRequest(false);
-          setFollowing(false);
-        } else if (doc.data().users.some((r) => r === userObj.username)) {
+        if (doc.data().users.some((r) => r === userObj.username)) {
           setFollowing(true);
-          setPendingConnectionRequest(false);
+          following = true;
+        } else {
+          setFollowing(false);
+          following = false;
         }
+        console.log("FOLLOWING USER" + following);
         // if (doc.data().users.includes(userObj.username)) {
         //   setFollowing(true);
         //   console.log("You are connected with " + profileObj.username);
@@ -231,6 +229,7 @@ const ProfilePage = () => {
       await updateDoc(userDoc, {
         followers: arrayRemove(userObj.username),
       });
+      setLoadingFollow(false);
       setFollowing(false);
     } catch (e) {
       console.log(e);
@@ -258,6 +257,7 @@ const ProfilePage = () => {
     }
   };
   useEffect(() => {
+    console.log("FETCHING PROFILE USER");
     fetchProfileData();
     return () => {
       setOrganizationData({});
@@ -297,7 +297,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     console.log(profileObj.username);
-    if (profileObj.username) {
+    console.log(pendingConnectionRequest);
+    if (profileObj.username && pendingConnectionRequest !== null) {
       fetchFollows();
     }
     if (myProfile === true) {
@@ -306,9 +307,9 @@ const ProfilePage = () => {
       setSummary(profileObj.summary);
       // fetchFollows(profileObj.username);
     }
-  }, [profileObj]);
+  }, [profileObj, pendingConnectionRequest]);
 
-  if (loading === false && myProfile !== null) {
+  if (loading === false && myProfile !== null && profileObj) {
     return (
       <>
         <div className="profilePage">
@@ -369,7 +370,7 @@ const ProfilePage = () => {
               {/* <span>
             <p className="profileSummary">{profileObj.summary}</p>
             <p className="profileFollowers">229</p>
-            profileUsername,profileId, currUserName
+            profileUsegrname,profileId, currUserName
             <p className="profileConnections">234</p>
           </span> */}
               <section className="  = profilePage__details3">

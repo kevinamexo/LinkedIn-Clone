@@ -97,14 +97,6 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
           published: timestamp,
           postRefId: postDocId,
         }),
-        notifications: arrayUnion({
-          postText: postInput,
-          authorId: userObj.username,
-          postType: "text",
-          name: name,
-          published: timestamp,
-          postRefId: postDocId,
-        }),
         lastPost: timestamp,
       });
       console.log("ADDED RECENTPOSTS AND NOTIFICATION");
@@ -114,6 +106,29 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
         likes: 0,
         users: [],
       }).then(() => console.log("added interactions collections"));
+
+      const notificationsQuery = query(
+        collection(db, "notifications"),
+        where("username", "==", userObj.username)
+      );
+      const notificationSnap = await getDocs(notificationsQuery);
+      let notificationsDocID;
+      notificationSnap.forEach((doc) => {
+        notificationsDocID = doc.id;
+      });
+      console.log("NOTIFICATIONS ID IS");
+      console.log(notificationsDocID);
+      const notificationsRef = doc(db, "notifications", notificationsDocID);
+      await updateDoc(notificationsRef, {
+        notifications: arrayUnion({
+          postText: postInput,
+          authorId: userObj.username,
+          postType: "text",
+          name: name,
+          published: timestamp,
+          postRefId: postDocId,
+        }),
+      });
 
       setTimeout(() => {
         console.log("confirming post document id:");

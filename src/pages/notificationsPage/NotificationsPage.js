@@ -29,13 +29,15 @@ const NotificationsPage = () => {
                 />
               ))}
             {pastNotifications &&
-              pastNotifications.map((n, key) => (
-                <Notification
-                  key={key}
-                  newNotification={false}
-                  notification={n}
-                />
-              ))}
+              pastNotifications
+                .slice(0, 10)
+                .map((n, key) => (
+                  <Notification
+                    key={key}
+                    newNotification={false}
+                    notification={n}
+                  />
+                ))}
           </div>
         </div>
         <div className="notifications__section3">
