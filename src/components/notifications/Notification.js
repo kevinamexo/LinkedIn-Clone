@@ -12,6 +12,7 @@ const Notification = ({ notification, newNotification }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [notificationUser, setNotificationUser] = useState(null);
+  const [notificationUserObj, setNotificationUserObj] = useState(null);
   const [loading, setLoading] = useState(null);
   const { notifications, lastNotification, prevLastNotification } = useSelector(
     (state) => state.notifications
@@ -25,7 +26,8 @@ const Notification = ({ notification, newNotification }) => {
       );
       const userSnap = await getDocs(userQ);
       userSnap.forEach((doc) => {
-        setNotificationUser(doc.data().profilePhotoURL || null);
+        setNotificationUser(doc.data().profilePhotoURL);
+        setNotificationUserObj(doc.data());
       });
     }
     // console.log("FETCHED NOTIFICATION USER");
@@ -64,7 +66,7 @@ const Notification = ({ notification, newNotification }) => {
       let t = null;
       // setNewNotification(null);
     };
-  }, []);
+  }, [notification]);
 
   useEffect(() => {
     if (notification.published >= prevLastNotification) {
@@ -86,6 +88,18 @@ const Notification = ({ notification, newNotification }) => {
             shared a post: "{notification.postText.substring(0, 10)} ...";
           </p>
         );
+      case "pageView":
+        return (
+          <p className="notificationSummary">
+            {/* <Link to={`/in/${notification.authorId}`}> */}
+            <b onClick={() => history.push(`/in/${notification.authorId}`)}>
+              {notification.name}
+            </b>{" "}
+            {/* </Link> */}
+            viewed your profile
+          </p>
+        );
+
       default:
         return notification.postText;
     }

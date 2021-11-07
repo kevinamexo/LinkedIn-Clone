@@ -416,7 +416,7 @@ const Header = () => {
                 >
                   <div className="notificationsMenu-empty">
                     <ClipLoader color={"#0a66c2"} size={20} />
-                    <p>LOADING CONNECTION REQUESTS</p>
+                    <p>LOADING NOTIFICATIONS</p>
                   </div>
                 </div>
               ) : null}

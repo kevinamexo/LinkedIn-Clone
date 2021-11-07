@@ -308,6 +308,112 @@ const ProfilePage = () => {
       // fetchFollows(profileObj.username);
     }
   }, [profileObj, pendingConnectionRequest]);
+  const fullName =
+    userObj.name &&
+    `${
+      userObj.name.firstName.charAt(0).toUpperCase() +
+      userObj.name.firstName.slice(1)
+    } ${
+      userObj.name.lastName.charAt(0).toUpperCase() +
+      userObj.name.lastName.slice(1)
+    }`;
+  const datesAreOnSameDay = (first, second) =>
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate();
+
+  const fetchPageViews = async () => {
+    console.log("FETCHING PAGE VIEWS");
+    const q = query(
+      collection(db, "follows"),
+      where("username", "==", profileObj.username)
+    );
+    const pageViewsSnap = await getDocs(q);
+    let profileNotificationsId;
+
+    const notificationsQuery = query(
+      collection(db, "notifications"),
+      where("username", "==", profileObj.username)
+    );
+    const notificationsDocSnap = await getDocs(notificationsQuery);
+    notificationsDocSnap.forEach((document) => {
+      profileNotificationsId = document.id;
+    });
+    const profileNotificationsDocRef = doc(
+      db,
+      "notifications",
+      profileNotificationsId
+    );
+    pageViewsSnap.forEach(async (document) => {
+      let date = new Date();
+      console.log(date);
+      let timestamp = Timestamp.fromDate(date);
+      const newPageView = {
+        username: userObj.username,
+        viewed: timestamp,
+      };
+      if (document.data()) {
+        const docRef = doc(db, "follows", document.id);
+        const pageViews = document.data().pageViews;
+        const userPageViews = document
+          .data()
+          .pageViews.some((v) => v.username === userObj.username);
+        if (userPageViews) {
+          const mySortedPageViews = document.data().pageViews.sort((a, b) => {
+            return (
+              new Date(b.viewed.seconds * 1000) -
+              new Date(a.viewed.seconds * 1000)
+            );
+          });
+          console.log("PAGE VIEWS");
+          console.log(userPageViews);
+          console.log("MY LATEST PAGE VIEW");
+          console.log({
+            ...mySortedPageViews[0],
+            viewed: new Date(mySortedPageViews[0].viewed.seconds * 1000),
+          });
+          console.log("SAME DAY?");
+          const previouslyViewedToday = datesAreOnSameDay(
+            date,
+            new Date(mySortedPageViews[0].viewed.seconds * 1000)
+          );
+          console.log(previouslyViewedToday);
+          if (previouslyViewedToday === false) {
+            await updateDoc(docRef, {
+              pageViews: arrayUnion(newPageView),
+            });
+            await updateDoc(profileNotificationsDocRef, {
+              notifications: arrayUnion({
+                username: userObj.username,
+                published: timestamp,
+                postType: "pageView",
+                name: fullName,
+              }),
+            });
+          }
+        } else {
+          console.log("NO PREVIOUS PAGE VIEWS");
+          await updateDoc(docRef, {
+            pageViews: arrayUnion(newPageView),
+          });
+          await updateDoc(profileNotificationsDocRef, {
+            notifications: arrayUnion({
+              username: userObj.username,
+              published: timestamp,
+              postType: "pageView",
+              name: fullName,
+            }),
+          });
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (profileObj && profileObj.username) {
+      fetchPageViews();
+    }
+  }, [profileObj]);
 
   if (loading === false && myProfile !== null && profileObj) {
     return (
