@@ -63,32 +63,36 @@ const notificationsSlice = createSlice({
       );
     },
     setInitialNotificationTime: (state, action) => {
-      state.lastNotification = new Date(action.payload.seconds * 1000);
-      state.prevLastNotification = new Date(action.payload.seconds * 1000);
+      if (action.payload && action.payload.seconds) {
+        state.lastNotification = new Date(action.payload.seconds * 1000);
+        state.prevLastNotification = new Date(action.payload.seconds * 1000);
+      }
     },
     setLastNotificationTime: (state, action) => {
       console.log("LAST NOTIFCATION TIME");
-      state.prevPrevLastNotification = state.prevLastNotification;
-      state.prevLastNotification = state.lastNotification;
-      state.lastNotification = action.payload;
-      state.newNotificationsAmount = 0;
-      let i = [...state.notifications];
-      console.log(i);
+      if (action.payload) {
+        state.prevPrevLastNotification = state.prevLastNotification;
+        state.prevLastNotification = state.lastNotification;
+        state.lastNotification = action.payload;
+        state.newNotificationsAmount = 0;
+        let i = [...state.notifications];
+        console.log(i);
 
-      state.newNotifications = i.filter(
-        (x) => x.published >= state.prevLastNotification
-      );
-      state.pastNotifications = i.filter(
-        (x) => x.published < state.prevLastNotification
-      );
-      if (state.prevPrevLastNotification) {
-        state.prevNewNotifications = i.filter(
-          (x) => x.published >= state.prevPrevLastNotification
-        );
-      } else if (!state.prevPrevLastNotification) {
-        state.prevNewNotifications = i.filter(
+        state.newNotifications = i.filter(
           (x) => x.published >= state.prevLastNotification
         );
+        state.pastNotifications = i.filter(
+          (x) => x.published < state.prevLastNotification
+        );
+        if (state.prevPrevLastNotification) {
+          state.prevNewNotifications = i.filter(
+            (x) => x.published >= state.prevPrevLastNotification
+          );
+        } else if (!state.prevPrevLastNotification) {
+          state.prevNewNotifications = i.filter(
+            (x) => x.published >= state.prevLastNotification
+          );
+        }
       }
     },
     setFilterNotifications: (state, action) => {
@@ -120,6 +124,9 @@ const notificationsSlice = createSlice({
       });
     },
     addNewNotifications: (state, action) => {
+      if(action.payload){
+
+      
       const newNotifications = _.difference(
         action.payload,
         state.notifications
@@ -140,6 +147,7 @@ const notificationsSlice = createSlice({
         if (date >= state.prevPrevLastNotification) {
           return n;
         }
+      
       });
 
       state.newNotificationsAmount = state.newNotifications.length;
@@ -152,6 +160,7 @@ const notificationsSlice = createSlice({
           return n;
         }
       });
+      }
     },
   },
 });

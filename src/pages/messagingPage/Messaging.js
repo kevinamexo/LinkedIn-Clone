@@ -191,6 +191,8 @@ const Messaging = () => {
       users: [userObj.username, username],
       lastMessage: { published: timestamp },
       messages: [],
+      [`lastRead${userObj.username}`]: timestamp,
+      [`lastRead${username}`]: timestamp,
     }).then((docRef) => {
       const chatName = [username, userObj.username].sort().join("");
       console.log(docRef.id);

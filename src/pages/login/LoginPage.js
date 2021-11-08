@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { GrLinkedin } from "react-icons/gr";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
+import SyncLoader from "react-spinners/SyncLoader";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "./LoginPage.css";
 import { Link } from "react-router-dom";
@@ -14,6 +15,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorCode, setErrorCode] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingLogin, setLoadingLogin] = useState(null);
+  const [loadingDemoLogin, setLoadingDemoLogin] = useState(null);
   const [authenticated, setAuthenticated] = useState(null);
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -40,17 +43,43 @@ const LoginPage = () => {
   });
 
   const handleLoginSubmit = async (data) => {
-    await signInWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCredential) => {
-        console.log(userCredential);
-        history.push("/");
-      })
-      .catch((e) => {
-        console.log(e);
-        setErrorCode(e.code);
-      });
+    try {
+      setLoadingLogin(true);
+
+      await signInWithEmailAndPassword(auth, data.email, data.password)
+        .then((userCredential) => {
+          console.log(userCredential);
+          history.push("/");
+        })
+        .catch((e) => {
+          console.log(e);
+          setErrorCode(e.code);
+        });
+    } catch (e) {
+      console.log(e);
+      history.push("/login");
+    }
+    setLoadingLogin(null);
   };
 
+  const handleDemoSignIn = async () => {
+    try {
+      setLoadingDemoLogin(true);
+      await signInWithEmailAndPassword(auth, "demo2@mail.com", "123ABCd@")
+        .then((userCredential) => {
+          console.log(userCredential);
+          history.push("/");
+        })
+        .catch((e) => {
+          console.log(e);
+          setErrorCode(e.code);
+        });
+    } catch (e) {
+      console.log(e);
+      history.push("/login");
+    }
+    setLoadingDemoLogin(null);
+  };
   const errorMessage = () => {
     // if (!errorCode) return
 
@@ -125,7 +154,24 @@ const LoginPage = () => {
             <p className="form-error">{errors.password?.message}</p>
           </div>
           <a className="form-group__forgotPassword">Forgot Password?</a>
-          <button className="form-group__loginButton">Sign in</button>
+          <button className="form-group__loginButton">
+            {loadingLogin === null ? (
+              "Sign in"
+            ) : loadingLogin === true ? (
+              <SyncLoader size={10} color={"#fff"} />
+            ) : null}
+          </button>
+          <button
+            type="button"
+            onClick={handleDemoSignIn}
+            className="form-group__loginButton2"
+          >
+            {loadingDemoLogin === null ? (
+              "Sign in - Demo Account"
+            ) : loadingDemoLogin === true ? (
+              <SyncLoader size={10} color={"#fff"} />
+            ) : null}
+          </button>
         </form>
       </div>
     </div>

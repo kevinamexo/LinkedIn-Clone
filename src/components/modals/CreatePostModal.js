@@ -167,11 +167,11 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
           )}
           <span className="createPost__authorSection-span">
             <p>{name}</p>
-            <button className="createPost__visibleTo">
+            {/* <button className="createPost__visibleTo">
               <IoMdGlobe />
               Everyone
               <AiFillCaretDown />
-            </button>
+            </button> */}
           </span>
         </div>
         <div className="createPost__contentSection">

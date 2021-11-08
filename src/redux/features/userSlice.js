@@ -41,6 +41,7 @@ const initialState = {
   selectedUser: null,
   fullName: null,
   pageViews: null,
+  followers: null,
 };
 const userSlice = createSlice({
   name: "user",
@@ -85,6 +86,10 @@ const userSlice = createSlice({
     setUpdatedSummary: (state, action) => {
       state.userObj.summary = action.payload;
     },
+    setFollowers: (state, action) => {
+      console.log("SETTING FOLLOWERS");
+      state.followers = action.payload;
+    },
   },
 });
 
@@ -96,5 +101,6 @@ export const {
   setLoading,
   setSelectedUser,
   setUpdatedSummary,
+  setFollowers,
 } = userSlice.actions;
 export default userSlice;

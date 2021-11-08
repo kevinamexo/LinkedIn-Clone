@@ -69,7 +69,6 @@ const MainSection = () => {
     let latestPosts = [];
     let followedUsers;
     try {
-      setLoadingPosts(true);
       const postQuery =
         lastPublished !== null
           ? query(
@@ -89,7 +88,6 @@ const MainSection = () => {
       let postsWithDate = [];
       let notificationsWithDate = [];
       let nextLastNotificationTime;
-
       setLoadingPosts(false);
     } catch (e) {
       console.log(e);
@@ -98,6 +96,7 @@ const MainSection = () => {
   };
 
   const getPosts = () => {
+    setLoadingPosts(true);
     const postsQuery = query(
       collection(db, "follows"),
       where("users", "array-contains", userObj.username)
@@ -119,6 +118,7 @@ const MainSection = () => {
 
       dispatch(setAddToPosts(postsArr));
     });
+    setLoadingPosts(false);
   };
 
   useEffect(() => {
@@ -137,20 +137,6 @@ const MainSection = () => {
     }
   }, [sortPosts]);
 
-  // useEffect(() => {
-  //   if (posts) {
-  //     let postsCopy = [...posts];
-  //     const sortedPosts = postsCopy.sort((a, b) => {
-  //       return (
-  //         new Date(b.published.seconds * 1000) -
-  //         new Date(a.published.seconds * 1000)
-  //       );
-  //     });
-  //     console.log("THE LATEST POST IS");
-  //     console.log(sortedPosts[0]);
-  //     dispatch(setSortedPosts(sortedPosts));
-  //   }
-  // }, [posts]);
   const notificationsAmount = notifications.length;
   const newNotificationsList = notifications.filter((n) => {
     if (notifications.published > prevLastNotification) {

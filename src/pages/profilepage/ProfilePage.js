@@ -83,6 +83,7 @@ const ProfilePage = () => {
     const querySnapshot = await getDocs(q);
     let eduInstitute;
     querySnapshot.forEach((doc) => {
+      console.log(username);
       let o = doc.id;
       setProfId(o);
       profObj = { ...doc.data() };
@@ -93,19 +94,25 @@ const ProfilePage = () => {
       collection(db, "connectionRequests"),
       where("username", "==", username)
     );
-    const connectionRequestsSnap = await getDocs(connectionRequestsQuery);
-    connectionRequestsSnap.forEach((doc) => {
-      if (
-        doc
-          .data()
-          .connectionRequests.some((r) => r.username === userObj.username)
-      ) {
-        console.log("PENDING CONNECTION REQUESR");
-        setPendingConnectionRequest(true);
-      } else {
-        setPendingConnectionRequest(false);
+    const connectionRequestsSnap = onSnapshot(
+      connectionRequestsQuery,
+      (querySnapshot) => {
+        querySnapshot.docChanges().forEach((change) => {
+          if (
+            change.type !== "removed" &&
+            change.doc.data().connectionRequests &&
+            change.doc
+              .data()
+              .connectionRequests.some((r) => r.username === userObj.username)
+          ) {
+            console.log("PENDING CONNECTION REQUESR");
+            setPendingConnectionRequest(true);
+          } else {
+            setPendingConnectionRequest(false);
+          }
+        });
       }
-    });
+    );
     return profObj;
   };
   let orgObj = {};
@@ -187,7 +194,10 @@ const ProfilePage = () => {
     const followsListenter = onSnapshot(q2, (querySnapshot) => {
       let following;
       querySnapshot.forEach((doc) => {
-        if (doc.data().users.some((r) => r === userObj.username)) {
+        if (
+          doc.data() &&
+          doc.data().users.some((r) => r === userObj.username)
+        ) {
           setFollowing(true);
           following = true;
         } else {
@@ -204,8 +214,8 @@ const ProfilePage = () => {
         setUserConnections(doc.data().users.length);
       });
     });
-    setLoadingFollow(false);
     setLoading(false);
+    setLoadingFollow(false);
   };
   const unFollowUser = async () => {
     setLoadingFollow(true);
@@ -236,24 +246,31 @@ const ProfilePage = () => {
     }
   };
   const fetchPosts = async () => {
-    let latestPosts = [];
-    try {
-      setLoadingPosts(true);
-      const followedUsers = query(
-        collection(db, "follows"),
-        where("username", "==", profileObj.username),
-        orderBy("lastPost", "desc"),
-        limit(10)
-      );
-      const posts = await getDocs(followedUsers);
-      posts.forEach((doc) => {
-        console.log(doc.data());
-        latestPosts = [...latestPosts, ...doc.data().recentPosts];
-      });
-      setProfilePosts(latestPosts);
-      setLoadingPosts(false);
-    } catch (e) {
-      console.log(e);
+    if (profileObj.username) {
+      let latestPosts = [];
+      try {
+        setLoadingPosts(true);
+        const followedUsers = query(
+          collection(db, "follows"),
+          where("username", "==", profileObj.username),
+          orderBy("lastPost", "desc"),
+          limit(10)
+        );
+        const posts = await getDocs(followedUsers);
+        posts.forEach((doc) => {
+          if (doc.data().recentPosts.length > 0) {
+            console.log(doc.data());
+
+            latestPosts = [...latestPosts, ...doc.data().recentPosts];
+          } else {
+            latestPosts = [];
+          }
+        });
+        setProfilePosts(latestPosts);
+        setLoadingPosts(false);
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
   useEffect(() => {
@@ -277,17 +294,19 @@ const ProfilePage = () => {
   }, [profilePosts]);
 
   useEffect(() => {
-    if (!profileObj) return;
-    // console.log(userObj);
-    console.log("selectedUser");
-    console.log(selectedUser);
-    console.log("userObj");
-    console.log(userObj);
-    if (profileObj.username === userObj.username) {
-      setMyProfile(true);
-    } else {
-      console.log("not my profile");
-      setMyProfile(false);
+    if (profileObj) {
+      console.log("PROFILE OBJECT IS");
+      console.log(profileObj);
+      console.log("selectedUser");
+      console.log(selectedUser);
+      console.log("userObj");
+      console.log(userObj);
+      if (profileObj.username === userObj.username) {
+        setMyProfile(true);
+      } else {
+        console.log("not my profile");
+        setMyProfile(false);
+      }
     }
 
     return () => {
@@ -336,11 +355,13 @@ const ProfilePage = () => {
       console.log(date);
       let timestamp = Timestamp.fromDate(date);
 
-      if (document.data()) {
+      if (document.data() && document.data().pageViews) {
         const pageViews = document.data().pageViews;
-        const userPageViews = document
-          .data()
-          .pageViews.some((v) => v.username === userObj.username);
+        const userPageViews =
+          document.data() &&
+          document
+            .data()
+            .pageViews.some((v) => v.username === userObj.username);
         if (userPageViews) {
           const mySortedPageViews = document.data().pageViews.sort((a, b) => {
             return (
@@ -387,10 +408,19 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
+    console.log("MY PROFILE?");
+    console.log(myProfile);
+  }, [myProfile]);
+  useEffect(() => {
     if (profileObj && profileObj.username) {
       fetchPageViews();
     }
   }, [profileObj]);
+
+  useEffect(() => {
+    console.log("LOADING?");
+    console.log(loading);
+  }, [loading]);
 
   if (loading === false && myProfile !== null && profileObj) {
     return (
@@ -478,19 +508,14 @@ const ProfilePage = () => {
                         <button className="follow">Pending</button>
                       )}
 
-                    {following === true &&
-                    pendingConnectionRequest === false ? (
-                      <button
-                        className="message"
-                        onClick={() =>
-                          history.push(`/messaging/users/${username}`)
-                        }
-                      >
-                        Message
-                      </button>
-                    ) : (
-                      <button className="message">More</button>
-                    )}
+                    <button
+                      className="message"
+                      onClick={() =>
+                        history.push(`/messaging/users/${username}`)
+                      }
+                    >
+                      Message
+                    </button>
                   </span>
                 )}
               </section>

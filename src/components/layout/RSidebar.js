@@ -1,41 +1,66 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./RSidebar.css";
 import AddToFeedItem from "./AddToFeedItem";
-
+import { useSelector, useDispatch } from "react-redux";
+import { query, collection, where, getDocs, limit } from "firebase/firestore";
+import { db } from "../../firebase/firebaseConfig";
+import { setOtherUsers } from "../../redux/features/otherUsersSlice";
 const addToFeedItems = [
   {
     name: "Tony Robbins",
     imageUrl:
-      "https://media-exp1.licdn.com/dms/image/C5603AQGEdRXt-tOAbw/profile-displayphoto-shrink_100_100/0/1588621541709?e=1634774400&v=beta&t=IJni8xOR-N9zfH5on7sn0jQ7ClkGZorjJXnxyUYBAdU",
+      "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
     summary: "#1 New York Times best-selling author",
     verified: true,
   },
   {
     name: "Tony Robbins",
     imageUrl:
-      "https://media-exp1.licdn.com/dms/image/C5603AQGEdRXt-tOAbw/profile-displayphoto-shrink_100_100/0/1588621541709?e=1634774400&v=beta&t=IJni8xOR-N9zfH5on7sn0jQ7ClkGZorjJXnxyUYBAdU",
+      "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
     summary: "#1 New York Times best-selling author",
     verified: true,
   },
   {
     name: "Tony Robbins",
     imageUrl:
-      "https://media-exp1.licdn.com/dms/image/C5603AQGEdRXt-tOAbw/profile-displayphoto-shrink_100_100/0/1588621541709?e=1634774400&v=beta&t=IJni8xOR-N9zfH5on7sn0jQ7ClkGZorjJXnxyUYBAdU",
+      "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+
     summary: "#1 New York Times best-selling author",
     verified: true,
   },
 ];
+
 const RSidebar = () => {
+  const { userObj } = useSelector((state) => state.user);
+  const { otherUsersArr } = useSelector((state) => state.otherUsers);
+  const dispatch = useDispatch();
+  const fetchOtherUsers = async () => {
+    const otherUsersQuery = query(
+      collection(db, "user"),
+      where("username", "!=", userObj.username),
+      limit(3)
+    );
+    const otherUsersSnap = await getDocs(otherUsersQuery);
+    const tmpOtherUsers = [];
+    otherUsersSnap.forEach((doc) => {
+      tmpOtherUsers.push(doc.data());
+    });
+    dispatch(setOtherUsers(tmpOtherUsers));
+  };
+
+  useEffect(() => {
+    fetchOtherUsers();
+  }, []);
   return (
     <div className="RSidebar">
       <div className="addToFeed">
         <span className="addToFeed__header">
-          <p>Add to your feed</p>
+          <p>View other profiles</p>
           <p>+</p>
         </span>
-        {addToFeedItems &&
-          addToFeedItems.map((item, idx) => (
-            <AddToFeedItem item={item} key={idx} />
+        {otherUsersArr &&
+          otherUsersArr.map((user, idx) => (
+            <AddToFeedItem user={user} key={idx} />
           ))}
       </div>
     </div>

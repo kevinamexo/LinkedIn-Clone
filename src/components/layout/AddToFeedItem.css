@@ -3,17 +3,25 @@
   min-height: 80px;
   margin-top: 10px;
 }
+.addToFeed__item .addToFeed__pfp {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .addToFeed__item p {
   margin: 0;
 }
 
-.addToFeed__item img {
+.addToFeed__item .profilePhoto {
   height: 48px;
   width: 48px;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: 50%;
   margin-right: 12px;
+  margin-top: 5px;
+  color: grey;
 }
 
 .addToFeed__details {
@@ -21,7 +29,7 @@
   flex-direction: column;
   font-size: 14px;
   align-items: flex-start;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
 .addToFeed__details p,
@@ -46,6 +54,22 @@
   cursor: pointer;
 }
 
+.addToFeed__following {
+  display: flex;
+  /* margin-top: 5px; */
+  justify-content: center;
+  align-items: center;
+  width: 97px;
+  border-radius: 15px;
+  border: none;
+  height: 32px;
+  outline: none;
+  font-size: 15px;
+  color: rgb(255, 255, 255);
+  font-weight: 500;
+  background-color: #0b549d;
+}
+
 .addToFeed__follow:hover {
   background-color: lightgray;
   border: 2px solid rgb(150, 150, 150);
@@ -57,6 +81,11 @@
 
 .addToFeed__name {
   font-weight: 600;
+  cursor: pointer;
+  color: #0a66c2;
+}
+.addToFeed__name:hover {
+  text-decoration: underline;
 }
 
 .addToFeed__summary {

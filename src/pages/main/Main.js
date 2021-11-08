@@ -13,7 +13,7 @@ import {
   addNewNotifications,
   setInitialNotificationTime,
 } from "../../redux/features/notificationsSlice";
-import { setPageViews } from "../../redux/features/userSlice";
+import { setPageViews, setFollowers } from "../../redux/features/userSlice";
 import ProfilePage from "../profilepage/ProfilePage";
 import TestPage from "../TestPage";
 import { db } from "../../firebase/firebaseConfig";
@@ -32,55 +32,57 @@ const Main = () => {
   const dispatch = useDispatch();
 
   const notificationsListener = () => {
-    const notificationsQuery = query(
-      collection(db, "notifications"),
-      where("users", "array-contains", userObj.username)
-    );
-    const notificationsSnap = onSnapshot(
-      notificationsQuery,
-      (querySnapshot) => {
-        let notifications = [];
-        let pageViews = 0;
-        querySnapshot.docChanges().forEach((change) => {
-          if (change.type !== "removed" && change.doc.data().notifications) {
-            notifications.push(
-              ...change.doc.data().notifications.filter((n) => {
-                //FOR POSTS
-                if (n.authorId) {
-                  return n.authorId !== userObj.username;
-                } else if (n.username) {
-                  //FOR PAGE VIEWS
-                  return n.username !== userObj.username;
-                }
-              })
-            );
-          }
-          if (change.type !== "removed" && change.doc.data().pageViews) {
-            notifications.push(
-              ...change.doc.data().pageViews.filter((n) => {
-                //FOR POSTS
-                if (n.authorId) {
-                  return n.authorId !== userObj.username;
-                } else if (n.username) {
-                  //FOR PAGE VIEWS
-                  return n.username !== userObj.username;
-                }
-              })
-            );
-            pageViews += change.doc.data().pageViews.length;
-          }
+    if (userObj.username) {
+      const notificationsQuery = query(
+        collection(db, "notifications"),
+        where("users", "array-contains", userObj.username)
+      );
+      const notificationsSnap = onSnapshot(
+        notificationsQuery,
+        (querySnapshot) => {
+          let notifications = [];
+          let pageViews = 0;
+          querySnapshot.docChanges().forEach((change) => {
+            if (change.type !== "removed" && change.doc.data().notifications) {
+              notifications.push(
+                ...change.doc.data().notifications.filter((n) => {
+                  //FOR POSTS
+                  if (n.authorId) {
+                    return n.authorId !== userObj.username;
+                  } else if (n.username) {
+                    //FOR PAGE VIEWS
+                    return n.username !== userObj.username;
+                  }
+                })
+              );
+            }
+            if (change.type !== "removed" && change.doc.data().pageViews) {
+              notifications.push(
+                ...change.doc.data().pageViews.filter((n) => {
+                  //FOR POSTS
+                  if (n.authorId) {
+                    return n.authorId !== userObj.username;
+                  } else if (n.username) {
+                    //FOR PAGE VIEWS
+                    return n.username !== userObj.username;
+                  }
+                })
+              );
+              pageViews += change.doc.data().pageViews.length;
+            }
 
-          console.log("NOTIFICATIONS WITHOUT MINE");
-          console.log(notifications);
-        });
-        if (lastNotification !== null) {
-          if (notifications.length > 0) {
-            dispatch(addNewNotifications(notifications));
+            console.log("NOTIFICATIONS WITHOUT MINE");
+            console.log(notifications);
+          });
+          if (lastNotification !== null) {
+            if (notifications.length > 0) {
+              dispatch(addNewNotifications(notifications));
+            }
           }
+          dispatch(setPageViews(pageViews));
         }
-        dispatch(setPageViews(pageViews));
-      }
-    );
+      );
+    }
   };
   const intialNotifications = async () => {
     const notificationsQuery = query(
@@ -92,10 +94,31 @@ const Main = () => {
       dispatch(setInitialNotificationTime(doc.data().lastNotification));
     });
   };
+  const followersListener = () => {
+    const followersQuery = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    const followersSnap = onSnapshot(followersQuery, (querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if (doc.data().users) {
+          dispatch(setFollowers(doc.data().users));
+        } else {
+          dispatch(setFollowers([]));
+        }
+      });
+    });
+  };
 
   useEffect(() => {
-    notificationsListener();
+    if (userObj) {
+      notificationsListener();
+    }
   }, [userObj, lastNotification]);
+
+  useEffect(() => {
+    followersListener();
+  }, [userObj]);
 
   useEffect(() => {
     if (lastNotification === null) {
@@ -103,7 +126,6 @@ const Main = () => {
     }
   }, [userObj]);
 
-  useEffect(() => {}, []);
   return (
     <>
       <Header />
