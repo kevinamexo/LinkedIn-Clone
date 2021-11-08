@@ -2,6 +2,7 @@
   margin-top: 80px;
   height: calc(100vh - 80px);
   width: 100vw;
+  overflow: hidden;
   /* overflow: hidden; */
   display: flex;
   flex-direction: column;
@@ -27,6 +28,7 @@
   text-align: left;
   padding: 5px 10px;
   font-weight: bold;
+
   display: flex;
   flex-direction: column;
 }
@@ -55,7 +57,7 @@
 .messagesPageContainer {
   border-radius: 10px;
   border-top: none;
-  margin-top: 100px;
+  margin-top: 0px;
   display: grid;
   grid-template-columns: 270px auto;
   width: 90%;
@@ -83,7 +85,8 @@
   max-height: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
   padding-top: 10px;
 }
 
