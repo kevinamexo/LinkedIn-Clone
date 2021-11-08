@@ -23,6 +23,7 @@ const notificationsSlice = createSlice({
   reducers: {
     setNotifications: (state, action) => {
       const unsortedNotifications = action.payload;
+
       state.notifications = unsortedNotifications.sort(function (a, b) {
         return new Date(b.published) - new Date(a.published);
       });
@@ -91,15 +92,32 @@ const notificationsSlice = createSlice({
       }
     },
     setFilterNotifications: (state, action) => {
-      let i = [...state.notifications];
-      console.log(i);
-      state.newNotifications = i.filter(
-        (x) => x.published > state.prevLastNotification
-      );
+      state.notifications = state.notifications.sort(function (a, b) {
+        return new Date(b.published) - new Date(a.published);
+      });
+      state.newNotifications = state.notifications.filter((n) => {
+        let date = new Date(n.published.seconds * 1000);
+        if (date >= state.prevLastNotification) {
+          return n;
+        }
+      });
+      state.prevNewNotifications = state.notifications.filter((n) => {
+        let date = new Date(n.published.seconds * 1000);
+        if (date >= state.prevPrevLastNotification) {
+          return n;
+        }
+      });
 
-      state.pastNotifications = i.filter(
-        (x) => x.published < state.prevLastNotification
-      );
+      state.newNotificationsAmount = state.newNotifications.length;
+      let i = [...state.notifications];
+      state.prevPastNotifications = i;
+
+      state.pastNotifications = state.notifications.filter((n) => {
+        let date = new Date(n.published.seconds * 1000);
+        if (date < state.prevPrevLastNotification) {
+          return n;
+        }
+      });
     },
     addNewNotifications: (state, action) => {
       const newNotifications = _.difference(
@@ -130,7 +148,7 @@ const notificationsSlice = createSlice({
 
       state.pastNotifications = state.notifications.filter((n) => {
         let date = new Date(n.published.seconds * 1000);
-        if (date < state.prevLastNotification) {
+        if (date < state.prevPrevLastNotification) {
           return n;
         }
       });

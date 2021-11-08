@@ -72,9 +72,12 @@ const Header = () => {
     pastConnectionRequests,
     loadingConnectionRequests,
   } = useSelector((state) => state.connectionRequests);
-  const { notifications, newNotifications, pastNotifications } = useSelector(
-    (state) => state.notifications
-  );
+  const {
+    notifications,
+    newNotifications,
+    prevNewNotifications,
+    pastNotifications,
+  } = useSelector((state) => state.notifications);
   const { searchActive } = useSelector((state) => state.modals);
 
   // const [newNotis, setNewNotis] = useState(newNotifications.length>0);
@@ -199,12 +202,6 @@ const Header = () => {
       });
   };
 
-  // useOutsideClick(connectionRequestsMenuRef, () => {
-  //   console.log("IS MENU ACTIVE");
-  //   console.log(connectionsMenuActive);
-  //   dispatch(setFilterConnectionRequests());
-  //   setConnectionsMenuActive(false);
-  // });
   useEffect(() => {
     console.log(connectionRequestsMenuRef.current);
   }, [connectionRequestsMenuRef.current]);
@@ -359,9 +356,7 @@ const Header = () => {
                 onClick={handleClickNotification}
                 type="notifications"
               />
-              {notificationsActive &&
-              loadingNotifications === false &&
-              notifications.length > 0 ? (
+              {notificationsActive && loadingNotifications === false ? (
                 <div
                   className="notificationsMenu-container"
                   ref={notificationsMenuRef}
@@ -373,12 +368,10 @@ const Header = () => {
                         : "notificationsMenu-empty"
                     }
                   >
-                    {notifications.length === 0 && (
-                      <p>No notifications available</p>
-                    )}
-                    {newNotifications &&
-                      newNotifications.length > 0 &&
-                      newNotifications.map((n, idx) => (
+                    {notifications.length === 0 && <p>No notifications</p>}
+                    {prevNewNotifications &&
+                      prevNewNotifications.length > 0 &&
+                      prevNewNotifications.map((n, idx) => (
                         <Notification
                           key={idx}
                           notification={n}

@@ -39,6 +39,7 @@
 
 .lastMessageCard-section2 .message-name {
   margin-top: 8px;
+  text-overflow: ellipsis;
 }
 
 .lastMessageCard-section2 .message-text,

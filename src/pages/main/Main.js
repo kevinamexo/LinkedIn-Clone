@@ -13,6 +13,7 @@ import {
   addNewNotifications,
   setInitialNotificationTime,
 } from "../../redux/features/notificationsSlice";
+import { setPageViews } from "../../redux/features/userSlice";
 import ProfilePage from "../profilepage/ProfilePage";
 import TestPage from "../TestPage";
 import { db } from "../../firebase/firebaseConfig";
@@ -39,17 +40,45 @@ const Main = () => {
       notificationsQuery,
       (querySnapshot) => {
         let notifications = [];
-
+        let pageViews = 0;
         querySnapshot.docChanges().forEach((change) => {
           if (change.type !== "removed" && change.doc.data().notifications) {
-            notifications.push(...change.doc.data().notifications);
+            notifications.push(
+              ...change.doc.data().notifications.filter((n) => {
+                //FOR POSTS
+                if (n.authorId) {
+                  return n.authorId !== userObj.username;
+                } else if (n.username) {
+                  //FOR PAGE VIEWS
+                  return n.username !== userObj.username;
+                }
+              })
+            );
           }
+          if (change.type !== "removed" && change.doc.data().pageViews) {
+            notifications.push(
+              ...change.doc.data().pageViews.filter((n) => {
+                //FOR POSTS
+                if (n.authorId) {
+                  return n.authorId !== userObj.username;
+                } else if (n.username) {
+                  //FOR PAGE VIEWS
+                  return n.username !== userObj.username;
+                }
+              })
+            );
+            pageViews += change.doc.data().pageViews.length;
+          }
+
+          console.log("NOTIFICATIONS WITHOUT MINE");
+          console.log(notifications);
         });
         if (lastNotification !== null) {
           if (notifications.length > 0) {
             dispatch(addNewNotifications(notifications));
           }
         }
+        dispatch(setPageViews(pageViews));
       }
     );
   };

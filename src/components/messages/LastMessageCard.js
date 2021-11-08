@@ -130,7 +130,7 @@ const LastMessageCard = ({ chat }) => {
                 ? null
                 : chat.lastMessage.authorId === userObj.username
                 ? "You"
-                : otherUserName}
+                : otherUserName.split(" ", 1)[0]}
             </p>
             <p
               className={

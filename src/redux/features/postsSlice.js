@@ -20,7 +20,10 @@ const postsSlice = createSlice({
   reducers: {
     setAddToPosts: (state, action) => {
       state.posts = action.payload.sort((a, b) => {
-        return new Date(b.published) - new Date(a.published);
+        return (
+          new Date(b.published.seconds * 1000) -
+          new Date(a.published.seconds * 1000)
+        );
       });
     },
     setPosts: (state, action) => {

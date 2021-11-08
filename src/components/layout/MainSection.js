@@ -126,7 +126,7 @@ const MainSection = () => {
     return () => {
       setLoadingPosts(null);
       let followedUsers;
-      // dispatch(setPosts([]));
+      // dispatch(e([]));
       // let postsSample = [];
     };
   }, []);

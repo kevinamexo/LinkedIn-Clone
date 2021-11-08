@@ -29,6 +29,16 @@ const Notification = ({ notification, newNotification }) => {
         setNotificationUser(doc.data().profilePhotoURL);
         setNotificationUserObj(doc.data());
       });
+    } else if (notification.username) {
+      const userQ = query(
+        collection(db, "user"),
+        where("username", "==", notification.username)
+      );
+      const userSnap = await getDocs(userQ);
+      userSnap.forEach((doc) => {
+        setNotificationUser(doc.data().profilePhotoURL);
+        setNotificationUserObj(doc.data());
+      });
     }
     // console.log("FETCHED NOTIFICATION USER");
   };

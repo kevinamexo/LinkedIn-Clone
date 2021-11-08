@@ -40,6 +40,7 @@ const initialState = {
   loading: null,
   selectedUser: null,
   fullName: null,
+  pageViews: null,
 };
 const userSlice = createSlice({
   name: "user",
@@ -57,6 +58,9 @@ const userSlice = createSlice({
     },
     setLoading: (state, action) => {
       state.loading = action.payload;
+    },
+    setPageViews: (state, action) => {
+      state.pageViews = action.payload;
     },
     setActiveUserObj: (state, action) => {
       state.userObj = action.payload;
@@ -86,6 +90,7 @@ const userSlice = createSlice({
 
 export const {
   setActiveUser,
+  setPageViews,
   setActiveUserObj,
   setUserLogoutState,
   setLoading,

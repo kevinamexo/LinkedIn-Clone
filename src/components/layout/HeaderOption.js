@@ -34,10 +34,10 @@ const HeaderOption = ({
         <span className="headerOptions-icons">
           <Icon style={color && { color }} className="headerOption__icon" />
           {type === "notifications" &&
-            notifications &&
-            newNotificationsAmount > 0 && (
+            newNotifications &&
+            newNotifications.length > 0 && (
               <span className="headerOptionNotifications-noti">
-                {newNotificationsAmount}
+                {newNotifications.length}
               </span>
             )}
           {type === "connectionRequests" &&

@@ -324,36 +324,19 @@ const ProfilePage = () => {
 
   const fetchPageViews = async () => {
     console.log("FETCHING PAGE VIEWS");
-    const q = query(
-      collection(db, "follows"),
-      where("username", "==", profileObj.username)
-    );
-    const pageViewsSnap = await getDocs(q);
-    let profileNotificationsId;
-
     const notificationsQuery = query(
       collection(db, "notifications"),
       where("username", "==", profileObj.username)
     );
-    const notificationsDocSnap = await getDocs(notificationsQuery);
-    notificationsDocSnap.forEach((document) => {
-      profileNotificationsId = document.id;
-    });
-    const profileNotificationsDocRef = doc(
-      db,
-      "notifications",
-      profileNotificationsId
-    );
+    const pageViewsSnap = await getDocs(notificationsQuery);
+
     pageViewsSnap.forEach(async (document) => {
+      const profileNotificationsDocRef = doc(db, "notifications", document.id);
       let date = new Date();
       console.log(date);
       let timestamp = Timestamp.fromDate(date);
-      const newPageView = {
-        username: userObj.username,
-        viewed: timestamp,
-      };
+
       if (document.data()) {
-        const docRef = doc(db, "follows", document.id);
         const pageViews = document.data().pageViews;
         const userPageViews = document
           .data()
@@ -361,8 +344,8 @@ const ProfilePage = () => {
         if (userPageViews) {
           const mySortedPageViews = document.data().pageViews.sort((a, b) => {
             return (
-              new Date(b.viewed.seconds * 1000) -
-              new Date(a.viewed.seconds * 1000)
+              new Date(b.published.seconds * 1000) -
+              new Date(a.published.seconds * 1000)
             );
           });
           console.log("PAGE VIEWS");
@@ -370,20 +353,17 @@ const ProfilePage = () => {
           console.log("MY LATEST PAGE VIEW");
           console.log({
             ...mySortedPageViews[0],
-            viewed: new Date(mySortedPageViews[0].viewed.seconds * 1000),
+            viewed: new Date(mySortedPageViews[0].published.seconds * 1000),
           });
           console.log("SAME DAY?");
           const previouslyViewedToday = datesAreOnSameDay(
             date,
-            new Date(mySortedPageViews[0].viewed.seconds * 1000)
+            new Date(mySortedPageViews[0].published.seconds * 1000)
           );
           console.log(previouslyViewedToday);
           if (previouslyViewedToday === false) {
-            await updateDoc(docRef, {
-              pageViews: arrayUnion(newPageView),
-            });
             await updateDoc(profileNotificationsDocRef, {
-              notifications: arrayUnion({
+              pageViews: arrayUnion({
                 username: userObj.username,
                 published: timestamp,
                 postType: "pageView",
@@ -393,11 +373,8 @@ const ProfilePage = () => {
           }
         } else {
           console.log("NO PREVIOUS PAGE VIEWS");
-          await updateDoc(docRef, {
-            pageViews: arrayUnion(newPageView),
-          });
           await updateDoc(profileNotificationsDocRef, {
-            notifications: arrayUnion({
+            pageViews: arrayUnion({
               username: userObj.username,
               published: timestamp,
               postType: "pageView",
