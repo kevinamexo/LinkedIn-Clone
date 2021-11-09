@@ -18,11 +18,12 @@ Currently has the following features:
 5. Custom feed based on connections (Implemented with scalable, low cost firestore data model)
 6. Filter posts based on interactons and time published 
 7. User profile page - to view user activity and send connection requests
-8. Messaging/chat application- realtime messaging 
-9. Fully responsive layout, for different screen sizes
+8. Profile page views
+9. Messaging/chat application- realtime messaging 
+10. Fully responsive layout, for different screen sizes
 
 The following features are in the works:
 
-1. Profile views
+1. Event Posts
 2. User presence - using Firebase Realtime Database
 3. Post comments
