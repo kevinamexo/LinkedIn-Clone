@@ -1,7 +1,7 @@
 
 # Full Stack Linked In Clone
 
-A full stack clone of LinkedIn made with React and Firebase. 
+A full stack clone of LinkedIn made with React and Firebase.  
 
 - React JS
 - Complete Routing with React Router
@@ -24,6 +24,8 @@ Currently has the following features:
 
 The following features are in the works:
 
+
 1. Event Posts
-2. User presence - using Firebase Realtime Database
-3. Post comments
+2. Full Text search with Algolia
+3. User presence - using Firebase Realtime Database
+4. Post comments
