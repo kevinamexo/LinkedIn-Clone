@@ -173,6 +173,34 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     }
   };
 
+  const generateLikesSentence = (likesUsers) => {
+    //array length,  if youre in the array
+    if (
+      likesUsers.length === 1 &&
+      !likesUsers.some((u) => u === userObj.username)
+    ) {
+      return `${likesUsers[0]} likes this`;
+    } else if (
+      likesUsers.length === 1 &&
+      likesUsers.some((u) => u === userObj.username)
+    ) {
+      return `You like this`;
+    } else if (
+      likesUsers.length === 2 &&
+      likesUsers.some((u) => u === userObj.username)
+    ) {
+      return `You and ${
+        likesUsers.filter((u) => u !== userObj.username)[0]
+      } like this`;
+    } else if (
+      likesUsers.length > 2 &&
+      likesUsers.some((u) => u === userObj.username)
+    ) {
+      return `You and ${likesUsers.length - 1} others like this`;
+    } else {
+      return `users like this`;
+    }
+  };
   const handleDeletePost = async () => {
     try {
       setShowPostHeaderOptions(false);
@@ -333,6 +361,9 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
             <div className="feedPost__engagements">
               <AiTwotoneLike className="feedPost__likes" />
               <p>{postWithLikes.likes && postWithLikes.likes}</p>
+              {postWithLikes.users && postWithLikes.users.length > 0 && (
+                <p>{generateLikesSentence(postWithLikes.users)}</p>
+              )}
             </div>
             <div className="feedPost__actions">
               <button

@@ -354,7 +354,6 @@ const ProfilePage = () => {
       let date = new Date();
       console.log(date);
       let timestamp = Timestamp.fromDate(date);
-
       if (document.data() && document.data().pageViews) {
         const pageViews = document.data().pageViews;
         const userPageViews =

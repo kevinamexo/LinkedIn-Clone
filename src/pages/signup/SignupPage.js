@@ -115,7 +115,9 @@ const SignupPage = ({ isAuth }) => {
           lastNotification: null,
           notifications: [],
           pageViews: [],
+          users: [],
         });
+
         addDoc(collection(db, "connectionRequests"), {
           username: `${data.firstName}_${data.lastName}`,
           connectionRequests: [],

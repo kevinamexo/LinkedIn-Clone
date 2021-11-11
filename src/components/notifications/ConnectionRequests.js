@@ -59,7 +59,6 @@ const ConnectionRequests = ({ request, key, newConnectionRequest }) => {
 
   const acceptConnectionRequest = async (userOb, accept) => {
     dispatch(removeFromRequests(key));
-
     const connectionRequestsQuery = query(
       collection(db, "connectionRequests"),
       where("username", "==", userObj.username)
@@ -90,8 +89,22 @@ const ConnectionRequests = ({ request, key, newConnectionRequest }) => {
     await updateDoc(connectionRequestsDocRef, {
       connectionRequests: arrayRemove(request),
     });
+    const notificationsQuery = query(
+      collection(db, "follows"),
+      where("username", "==", userObj.username)
+    );
+    const notificationsDocSnap = await getDocs(notificationsQuery);
+    let notificationsDocId;
+    notificationsDocSnap.forEach((doc) => {
+      notificationsDocId = doc.id;
+    });
+    const notificationsDocRef = doc(db, "follows", notificationsDocId);
+
     if (accept === true) {
       await updateDoc(followDocRef, {
+        users: arrayUnion(userOb.username),
+      });
+      await updateDoc(notificationsDocRef, {
         users: arrayUnion(userOb.username),
       });
     } else if (accept === false) {
