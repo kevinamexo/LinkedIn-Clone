@@ -4,7 +4,72 @@
   left: 0;
   right: 0;
   top: 54px;
+  display: flex;
+  justify-content: center;
   bottom: 0;
   background-color: rgba(1, 2, 3, 0.5);
   z-index: 50;
+}
+
+.searchResults {
+  height: 300px;
+  width: 70%;
+  background-color: rgb(255, 255, 255);
+  margin-top: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.searchResult {
+  display: flex;
+  padding: 5px 20px;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 5px;
+  border-bottom: 1px solid lightgray;
+}
+
+.searchResult p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.searchResult:hover {
+  background-color: rgb(164, 184, 255);
+}
+
+.searchResult .dot {
+  font-size: 20px;
+  color: black;
+}
+
+.searchResult-name {
+  font-weight: 600;
+  margin-left: 10px;
+  color: rgb(41, 41, 41);
+}
+
+.searchResult-username {
+  font-size: 12px;
+  margin-left: 3px;
+}
+.searchResult-title {
+  font-size: 12px;
+  margin-left: 10px;
+  height: 100%;
+}
+
+.searchResultsModal-loading {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
+.search-profilePhoto {
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+  color: grey;
+  border-radius: 50%;
 }

@@ -216,7 +216,6 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       console.log(e);
     }
   };
-
   useEffect(() => {
     setLiked(post.users && post.users.some((v) => v === userObj.username));
     return () => {
@@ -224,130 +223,142 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
     };
   }, [post]);
 
-  return (
-    <>
-      {postUserObj.username && (
-        <div className="feedPost">
-          <div className="feedPost__header">
-            {userObj.username === post.authorId && (
-              <BsThreeDots
-                className="headerOptions-button"
-                onClick={() => setShowPostHeaderOptions(!showPostHeaderOptions)}
-              />
-            )}
-            {showPostHeaderOptions === true &&
-              userObj.username === post.authorId && (
-                <ul className="feedPost__headerOptions">
-                  <li onClick={handleDeletePost}>
-                    <FaTrashAlt className="feedPost__headerOptions-delete" />
-                    <p> Delete post</p>
-                  </li>
-                </ul>
-              )}
-            <img
-              src={
-                postUserObj.profilePhotoURL
-                  ? postUserObj.profilePhotoURL
-                  : "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-              }
-              alt={postUserObj.username}
-            />
-
-            <span className="feedPost__userDetails">
-              <Link to={`/in/${postUserObj.username}`}>
-                <p className="feedPost__userDetails-name ">
-                  {`${postUserObj.name.firstName} ${postUserObj.name.lastName}`}
-                </p>
-              </Link>
-              {postUserObj.title && (
-                <p className="feedPost__userDetails-userSummary">
-                  {postUserObj.title}
-                  {(postUserObj.organizationName &&
-                    ` at ${
-                      postUserObj.organizationName ||
-                      (organizationData.name && organizationData.name) ||
-                      null
-                    }`) ||
-                    null}
-                </p>
-              )}
-              <p className="feedPost__userDetails-postTime">
-                {/* {post.likes || 0} */}
-                <IoMdGlobe
-                  style={{
-                    marginLeft: "5px",
-                    color: "rgb(77, 77, 77)",
-                    fontSize: "1.7em",
-                  }}
-                />
-              </p>
-            </span>
-          </div>
-          <div className="feedPost__body">
-            {post.postText && (
-              <div className="feedPost__body-text">
-                <p
-                  className={
-                    showFullText
-                      ? "feedPost__body-text-contentFull"
-                      : "feedPost__body-text-content"
+  if (
+    (post.postType === "text" && post.postText.length > 0) ||
+    (post.postType === "images" && post.images.length > 0)
+  ) {
+    return (
+      <>
+        {postUserObj.username && (
+          <div className="feedPost">
+            <div className="feedPost__header">
+              {userObj.username === post.authorId && (
+                <BsThreeDots
+                  className="headerOptions-button"
+                  onClick={() =>
+                    setShowPostHeaderOptions(!showPostHeaderOptions)
                   }
-                >
-                  {post.postText}
-                </p>
-                <p
-                  className="feedPost__body-seeMore"
-                  onClick={() => setShowFullText(!showFullText)}
-                >
-                  {!showFullText ? "...see more" : "show less"}
-                </p>
-              </div>
-            )}
-            {post.images && (
-              <>
-                {post.images.length > 1 && (
-                  <p className="feedPost__media-summary">
-                    {post.images.length} {post.images && "images"}
-                    {post.type} in this post
+                />
+              )}
+              {showPostHeaderOptions === true &&
+                userObj.username === post.authorId && (
+                  <ul className="feedPost__headerOptions">
+                    <li onClick={handleDeletePost}>
+                      <FaTrashAlt className="feedPost__headerOptions-delete" />
+                      <p> Delete post</p>
+                    </li>
+                  </ul>
+                )}
+              <img
+                src={
+                  postUserObj.profilePhotoURL
+                    ? postUserObj.profilePhotoURL
+                    : "https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
+                }
+                alt={postUserObj.username}
+              />
+
+              <span className="feedPost__userDetails">
+                <Link to={`/in/${postUserObj.username}`}>
+                  <p className="feedPost__userDetails-name ">
+                    {`${postUserObj.name.firstName} ${postUserObj.name.lastName}`}
+                  </p>
+                </Link>
+                {postUserObj.title && (
+                  <p className="feedPost__userDetails-userSummary">
+                    {postUserObj.title}
+                    {(postUserObj.organizationName &&
+                      ` at ${
+                        postUserObj.organizationName ||
+                        (organizationData.name && organizationData.name) ||
+                        null
+                      }`) ||
+                      null}
                   </p>
                 )}
-                <div className="feedPost__body-media">
-                  {imgsLoaded ? (
-                    <Carousel>
-                      {post.images.map((image, key) => (
-                        <img src={image} alt="Post Media" key={key} />
-                      ))}
-                    </Carousel>
-                  ) : (
-                    <Skeleton width={400} height={150} />
-                  )}
+                <p className="feedPost__userDetails-postTime">
+                  {/* {post.likes || 0} */}
+                  <IoMdGlobe
+                    style={{
+                      marginLeft: "5px",
+                      color: "rgb(77, 77, 77)",
+                      fontSize: "1.7em",
+                    }}
+                  />
+                </p>
+              </span>
+            </div>
+            <div className="feedPost__body">
+              {post.postText && (
+                <div className="feedPost__body-text">
+                  <p
+                    className={
+                      showFullText
+                        ? "feedPost__body-text-contentFull"
+                        : "feedPost__body-text-content"
+                    }
+                  >
+                    {post.postText}
+                  </p>
+                  <p
+                    className="feedPost__body-seeMore"
+                    onClick={() => setShowFullText(!showFullText)}
+                  >
+                    {!showFullText ? "...see more" : "show less"}
+                  </p>
                 </div>
-              </>
-            )}
+              )}
+              {post.images && (
+                <>
+                  {post.images.length > 1 && (
+                    <p className="feedPost__media-summary">
+                      {post.images.length} {post.images && "images"}
+                      {post.type} in this post
+                    </p>
+                  )}
+                  <div className="feedPost__body-media">
+                    {imgsLoaded ? (
+                      <Carousel>
+                        {post.images.map((image, key) => (
+                          <img src={image} alt="Post Media" key={key} />
+                        ))}
+                      </Carousel>
+                    ) : (
+                      <Skeleton width={400} height={150} />
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="feedPost__engagements">
+              <AiTwotoneLike className="feedPost__likes" />
+              <p>{postWithLikes.likes && postWithLikes.likes}</p>
+            </div>
+            <div className="feedPost__actions">
+              <button
+                className={
+                  liked ? "feedPost__action-liked" : "feedPost__action"
+                }
+                onClick={async () => await likePost()}
+              >
+                <AiOutlineLike
+                  className={
+                    liked ? "feedPost__liked" : "feedPost__action-icon"
+                  }
+                />
+                <p>{liked ? "Liked" : "Like"}</p>
+              </button>
+              <button className="feedPost__action">
+                <AiOutlineComment className="feedPost__action-icon" />
+                <p>Comment</p>
+              </button>
+            </div>
           </div>
-          <div className="feedPost__engagements">
-            <AiTwotoneLike className="feedPost__likes" />
-            <p>{postWithLikes.likes && postWithLikes.likes}</p>
-          </div>
-          <div className="feedPost__actions">
-            <button
-              className={liked ? "feedPost__action-liked" : "feedPost__action"}
-              onClick={async () => await likePost()}
-            >
-              <AiOutlineLike
-                className={liked ? "feedPost__liked" : "feedPost__action-icon"}
-              />
-              <p>{liked ? "Liked" : "Like"}</p>
-            </button>
-            <button className="feedPost__action">
-              <AiOutlineComment className="feedPost__action-icon" />
-              <p>Comment</p>
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
+        )}
+      </>
+    );
+  } else {
+    return null;
+  }
 };
-
 export default FeedPost;

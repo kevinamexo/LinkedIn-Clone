@@ -292,7 +292,25 @@
     display: none;
   }
 
+  .notificationsMenu-container {
+    left: -250px;
+  }
+
   .header-signout svg {
     font-size: 30px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .notificationsMenu-container {
+    right: 20px;
+    left: 20px;
+    /* width: 300px; */
+    /* left: -300px; */
+  }
+  .notificationsMenu .oldNotification,
+  .notificationsMenu .newNotification {
+    height: 60px;
+    overflow: hidden;
   }
 }

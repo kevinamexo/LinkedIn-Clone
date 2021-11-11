@@ -35,28 +35,30 @@ const connectionRequestsSlice = createSlice({
       });
     },
     setLastViewedRequests: (state, action) => {
-      state.lastViewedRequests = action.payload.toDate();
-      state.prevLastViewedRequests = action.payload.toDate();
-      state.newConnectionRequests = state.connectionRequests.filter((n) => {
-        let date1 = new Date(n.published.seconds * 1000);
-        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
-        if (date1 >= date2) {
-          console.log(date1);
-          console.log("NEWER");
-          console.log(date2);
-          return n;
-        }
-      });
-      state.pastConnectionRequests = state.connectionRequests.filter((n) => {
-        let date1 = new Date(n.published.seconds * 1000);
-        let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
-        if (date1 < date2) {
-          console.log(date1);
-          console.log("OLDER");
-          console.log(date2);
-          return n;
-        }
-      });
+      if (action.payload) {
+        state.lastViewedRequests = action.payload.toDate();
+        state.prevLastViewedRequests = action.payload.toDate();
+        state.newConnectionRequests = state.connectionRequests.filter((n) => {
+          let date1 = new Date(n.published.seconds * 1000);
+          let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+          if (date1 >= date2) {
+            console.log(date1);
+            console.log("NEWER");
+            console.log(date2);
+            return n;
+          }
+        });
+        state.pastConnectionRequests = state.connectionRequests.filter((n) => {
+          let date1 = new Date(n.published.seconds * 1000);
+          let date2 = new Date(state.prevLastViewedRequests.seconds * 1000);
+          if (date1 < date2) {
+            console.log(date1);
+            console.log("OLDER");
+            console.log(date2);
+            return n;
+          }
+        });
+      }
     },
     setLastConnectionRequestTime: (state, action) => {
       state.prevPrevLastViewedRequests = state.prevLastViewedRequests;

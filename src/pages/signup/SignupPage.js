@@ -14,7 +14,13 @@ import { useHistory, Redirect } from "react-router-dom";
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase/firebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 const SignupPage = ({ isAuth }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -83,8 +89,8 @@ const SignupPage = ({ isAuth }) => {
   });
 
   const handleSignUpSubmit = async (data) => {
-    await createUserWithEmailAndPassword(auth, data.email, data.password)
-      .then((userCredential) => {
+    await createUserWithEmailAndPassword(auth, data.email, data.password).then(
+      (userCredential) => {
         console.log(userCredential.user);
         addDoc(collection(db, "user"), {
           email: data.email,
@@ -96,8 +102,35 @@ const SignupPage = ({ isAuth }) => {
           profilePhotoURL: null,
           organisation: { name: null, logo: null },
           verified: false,
+          username: `${data.firstName}_${data.lastName}`,
         });
+        addDoc(collection(db, "follows"), {
+          username: `${data.firstName}_${data.lastName}`,
+          users: [],
+          lastPost: [],
+          recentPosts: [],
+        });
+        addDoc(collection(db, "notifications"), {
+          username: `${data.firstName}_${data.lastName}`,
+          lastNotification: null,
+          notifications: [],
+          pageViews: [],
+        });
+        addDoc(collection(db, "connectionRequests"), {
+          username: `${data.firstName}_${data.lastName}`,
+          connectionRequests: [],
+          lastConnectionRequest: null,
+        });
+      }
+    );
+    const followsDocRef = doc(db, "follows", "A3HVmVFsgoimlIJueJHH");
+    await updateDoc(followsDocRef, {
+      users: arrayUnion(`${data.firstName}_${data.lastName}`),
+    })
+      .then(() => {
+        history.push("/");
       })
+
       .catch((e) => {
         console.log(e.code);
       });
@@ -140,7 +173,7 @@ const SignupPage = ({ isAuth }) => {
           <label className="signup-form-label" htmlFor="confirmPassword">
             Confirm Password
           </label>
-          <input type="text" {...register("confirmPassword")} />
+          <input type="password" {...register("confirmPassword")} />
           <label>{errors.confirmPassword?.message}</label>
         </div>
         <button type="submit" className="signup__submit">

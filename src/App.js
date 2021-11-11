@@ -87,13 +87,14 @@ function App() {
             });
             querySnapshot.docChanges().forEach((change) => {
               console.log(change.doc.data().connectionRequests);
-
-              dispatch(
-                setLastViewedRequests(change.doc.data().lastConnectionRequest)
-              );
-              fullConnectionRequestsSnap.push(
-                ...change.doc.data().connectionRequests
-              );
+              if (change.doc.data().lastConnectionRequest) {
+                dispatch(
+                  setLastViewedRequests(change.doc.data().lastConnectionRequest)
+                );
+                fullConnectionRequestsSnap.push(
+                  ...change.doc.data().connectionRequests
+                );
+              }
             });
 
             function comparer(otherArray) {
@@ -127,12 +128,18 @@ function App() {
   };
 
   const fetchUserDetails = async (db, userEmail) => {
-    const q = query(collection(db, "user"), where("email", "==", userEmail));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      dispatch(setActiveUserObj(doc.data()));
-      username = doc.data().username;
-    });
+    try {
+      console.log("FETCHING USER DETAILS");
+      const q = query(collection(db, "user"), where("email", "==", userEmail));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        console.log("doc data");
+        dispatch(setActiveUserObj(doc.data()));
+        username = doc.data().username;
+      });
+    } catch (e) {
+      handleLogout("/");
+    }
   };
 
   const start = async (user) => {
@@ -147,6 +154,7 @@ function App() {
       if (user) {
         start(user);
         console.log(user.uid);
+        console.log(user);
       } else if (!user) {
         handleLogout();
       }

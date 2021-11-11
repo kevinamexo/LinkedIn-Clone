@@ -76,7 +76,7 @@ const UploadModal = ({ type }) => {
         postText: null,
         authorId: userObj.username,
         postType: "images",
-        images: fileURLS,
+        images: fileURLS.filter((i) => i.length > 0),
         published: timestamp,
       }).then((docRef) => {
         console.log("new Post Id" + docRef.id);
@@ -98,7 +98,7 @@ const UploadModal = ({ type }) => {
       console.log(timestamp);
       const followRef = doc(db, "follows", y);
       console.log("Adding second");
-      const querySnapshot2 = await updateDoc(followRef, {
+      await updateDoc(followRef, {
         recentPosts: arrayUnion({
           postText: null,
           authorId: userObj.username,
@@ -109,16 +109,27 @@ const UploadModal = ({ type }) => {
         }),
         lastPost: timestamp,
       });
-      const updateFollows = await updateDoc(followRef, {
-        notifications: arrayUnion({
-          authorId: userObj.username,
-          name: name,
-          postType: "images",
-          published: timestamp,
-          postRefId: postDocId,
-          postText: "text",
-        }),
+      const notiQ = query(
+        collection(db, "follows"),
+        where("username", "==", userObj.username)
+      );
+      const notiSnap = await getDocs(followQ);
+      let v = null;
+      notiSnap.forEach((doc) => {
+        v = doc.id;
       });
+      const notiRef = doc(db, "notifications", v);
+      if (v != null) {
+        await updateDoc(notiRef, {
+          notifications: arrayUnion({
+            authorId: userObj.username,
+            name: name,
+            postType: "images",
+            published: timestamp,
+            postRefId: postDocId,
+          }),
+        });
+      }
 
       const likesRef = await addDoc(collection(db, "likes"), {
         postId: postDocId,
@@ -165,7 +176,6 @@ const UploadModal = ({ type }) => {
     }
   }, [downloadUrls, postAction]);
 
-  let filesArray = [];
   let fileCount = 0;
   const dispatch = useDispatch();
   const { showUploadImage } = useSelector((state) => state.modals);
@@ -177,13 +187,18 @@ const UploadModal = ({ type }) => {
         setError(null);
       }, 5000);
     } else if ((type === "video" && images.length === 0) || type === "images") {
+      let o = [];
       acceptedFiles.map((file) => {
+        console.log(typeof file);
         console.log(im.length);
-        setImages((prevImages) => [...prevImages, file]);
-        // im = [file];
+        console.log(file);
+        o.push(file);
+        console.log("SET DRAGGED IMAGES TO:");
+        console.log(o);
+        setImages(o);
       });
       fileCount += 1;
-      // console.log(images);
+      console.log(images);
     }
   }, []);
   let fileType = type === "video" ? "video/*" : "image/*";
@@ -197,6 +212,7 @@ const UploadModal = ({ type }) => {
 
   const handleFirebaseUpload = () => {
     const promises = [];
+    let filesArray = [];
     setUploading(true);
     images.map((file, idx) => {
       const fileRefPath = `${type === "video" ? "videos" : "images"}/${
@@ -227,7 +243,6 @@ const UploadModal = ({ type }) => {
               break;
 
             // ...
-
             case "storage/unknown":
               console.log(
                 "Unknown error occurred, inspect error.serverResponse"
@@ -239,11 +254,14 @@ const UploadModal = ({ type }) => {
           await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log("File available at", downloadURL);
             filesArray[idx] = downloadURL;
+            console.log(filesArray);
             setDownloadUrls(filesArray);
           });
         }
       );
     });
+    console.log("SETTING FILE UPLOADS TO :");
+    console.log(filesArray);
     Promise.all(promises)
       .then(() => {
         console.log("PROMISES RESOLVED");
@@ -261,15 +279,11 @@ const UploadModal = ({ type }) => {
     let i = [...images];
     if (i.length === 1) {
       setImages([]);
-
       im = [];
-
       i = [];
     } else {
       i.splice(idx, 1);
-
       setImages([...i]);
-
       im = [...i];
 
       // console.log("after splice");
@@ -282,12 +296,6 @@ const UploadModal = ({ type }) => {
       <div className="uploadImageModal-form">
         <header>
           <p>Upload your {type}</p>
-          {/* {images !== [] && (
-            <BsCloudUpload
-              {...getRootProps()}
-              className="uploadImageModal-form__headerUpload"
-            />
-          )} */}
           <AiOutlineClose
             className="uploadImageModal__header-close"
             onClick={() => dispatch(setCloseModal())}
@@ -312,9 +320,7 @@ const UploadModal = ({ type }) => {
               accept={type === "video" ? "video/*" : "images/*"}
               className="uploadImageModal-input"
             />
-            <p className="uploadImageModal-choose">
-              Select or drag {type} to upload
-            </p>
+            <p className="uploadImageModal-choose">Select to upload files</p>
           </div>
         ) : uploading === true ? (
           <div className="uploadingState">

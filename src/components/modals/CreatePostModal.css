@@ -53,7 +53,7 @@
 }
 
 .createPost__authorSection span p {
-  margin: 0 0 0 0px;
+  margin: 0 0 0 5px;
   height: 25px;
   font-weight: 600;
 
@@ -83,8 +83,8 @@
 
 .createPost__visibleTo:hover {
   /* border: 2px solid rgb(46, 46, 46); */
-  color:black;
-  background-color:lightgray;
+  color: black;
+  background-color: lightgray;
 }
 .createPost__authorPic {
   font-size: 48px;

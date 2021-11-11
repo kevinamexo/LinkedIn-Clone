@@ -50,6 +50,8 @@ import {
   setFilterConnectionRequests,
 } from "../../redux/features/connectionRequestsSlice";
 import useOutsideClick from "../../customHooks";
+import useFetch from "../../firebase/hooks/useFetch";
+
 const Header = () => {
   const [headerSearch, setHeaderSearch] = useState("");
   const [searchResuts, setSearchResults] = useState([]);
@@ -58,6 +60,7 @@ const Header = () => {
   const [connectionRequestsActive, setConnectionRequestsActive] =
     useState(false);
   const [connectionsMenuActive, setConnectionsMenuActive] = useState(false);
+  const [loadingSearchResults, setLoadingSearchResults] = useState(null);
   const connectionRequestsMenuRef = useRef();
   const navbarSearchRef = useRef();
   const connectionsIconRef = useRef();
@@ -79,10 +82,11 @@ const Header = () => {
     pastNotifications,
   } = useSelector((state) => state.notifications);
   const { searchActive } = useSelector((state) => state.modals);
-
+  const [data, setData] = useState([]);
   // const [newNotis, setNewNotis] = useState(newNotifications.length>0);
   //Event handlers
   const history = useHistory();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const sendNotificationsClick = async () => {
     const q = query(
@@ -225,6 +229,42 @@ const Header = () => {
       dispatch(setCloseSearchModal());
     }
   };
+  const fetchUser = async (username) => {
+    console.log("SEARCHING FOR");
+    try {
+      setLoadingSearchResults(true);
+      const usersQuery = query(
+        collection(db, "user"),
+        where("username", ">=", username)
+      );
+      const userSnap = await getDocs(usersQuery);
+      let usersArr = [];
+      console.log("GETTING THE QUERY SNAPSHOT");
+      userSnap.forEach((doc) => {
+        console.log(doc.data());
+        usersArr.push(doc.data());
+      });
+      console.log(usersArr);
+      setData([...usersArr]);
+    } catch (err) {
+      console.log(err);
+    }
+    setLoadingSearchResults(false);
+  };
+
+  const handleSearchClick = () => {
+    setSearchTerm(headerSearch);
+  };
+
+  useEffect(() => {
+    console.log(headerSearch);
+    if (headerSearch) {
+      fetchUser(headerSearch);
+    }
+  }, [headerSearch]);
+  useEffect(() => {
+    console.log(headerSearch);
+  }, [data]);
 
   useEffect(() => {
     document.addEventListener("click", handleSearchActive);
@@ -252,7 +292,10 @@ const Header = () => {
             className={searchActive ? "header__search full" : "header__search"}
             onClick={() => dispatch(setSearchActive())}
           >
-            <AiOutlineSearch className="header__searchIcon" />
+            <AiOutlineSearch
+              className="header__searchIcon"
+              onClick={handleSearchClick}
+            />
             <input
               className={
                 searchActive ? "header__fullSearchInput" : "header__SearchInput"
@@ -441,7 +484,9 @@ const Header = () => {
           </div>
         )}
       </div>
-      {searchActive === true ? <SearchResultsModal /> : null}
+      {searchActive === true ? (
+        <SearchResultsModal data={data} loading={loadingSearchResults} />
+      ) : null}
     </>
   );
 };
