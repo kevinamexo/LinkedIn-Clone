@@ -78,6 +78,7 @@ const UploadModal = ({ type }) => {
         postType: "images",
         images: fileURLS.filter((i) => i.length > 0),
         published: timestamp,
+        comments: [],
       }).then((docRef) => {
         console.log("new Post Id" + docRef.id);
         postDocId = docRef.id;

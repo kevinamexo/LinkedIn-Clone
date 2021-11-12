@@ -6,6 +6,7 @@ import notificationsSlice from "../features/notificationsSlice";
 import connectionRequestsSlice from "../features/connectionRequestsSlice";
 import chatsSlice from "../features/chatsSlice";
 import otherUsersSlice from "../features/otherUsersSlice";
+import postPageSlice from "../features/postPage";
 const store = configureStore({
   reducer: {
     user: userSlice.reducer,
@@ -15,6 +16,7 @@ const store = configureStore({
     connectionRequests: connectionRequestsSlice.reducer,
     chats: chatsSlice.reducer,
     otherUsers: otherUsersSlice.reducer,
+    postPage: postPageSlice.reducer,
   },
 });
 

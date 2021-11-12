@@ -1,0 +1,305 @@
+.postPage {
+  margin-top: 55px;
+  min-height: calc(100vh - 55px);
+  width: 100%;
+  overflow-y: auto;
+}
+.postPageSections {
+  height: calc(100vh - 55px);
+  margin-top: 0;
+  background: rgb(237, 237, 238);
+  display: grid;
+  grid-template-columns: 20% 55% 25%;
+}
+
+.loading-spinner-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  padding-top: 50px;
+  justify-content: center;
+}
+
+.loading-spinner-container .spinner {
+  padding-top: 100px;
+}
+
+.postPage__section1 {
+  display: flex;
+  justify-content: right;
+  position: relative;
+}
+
+.postPage__section2 {
+  padding: 0 25px;
+}
+
+.postPage__section3 {
+  /* padding: 0 25px; */
+
+  height: 100%;
+}
+
+.post__profileSummary {
+  width: 80%;
+  position: fixed;
+  max-width: 200px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
+  background-color: #fff;
+  height: 220px;
+  margin-top: 50px;
+  padding-bottom: 20px;
+}
+.post__profileSummary-header {
+  position: relative;
+}
+.profileSummary__ProfilePhoto {
+  position: absolute;
+  top: 0;
+  object-fit: cover;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  min-height: 90px;
+  border-radius: 50%;
+  background-color: rgb(193, 193, 193);
+}
+
+.profileSummary__ProfilePhoto-none {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  object-fit: cover;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  min-height: 90px;
+  border-radius: 50%;
+  color: rgb(193, 193, 193);
+  font-size: 90px;
+  background-color: #fff;
+}
+
+.post__profileSummary-main {
+  width: 100%;
+  height: 200px;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.post__profileSummary-name {
+  margin-top: 80px;
+  font-weight: 600;
+}
+
+.profileSummary__coverPhoto,
+.post__profileSummary-header {
+  height: 50px;
+  background-color: rgb(94, 94, 94);
+  width: 100%;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.profileSummary__coverPhoto {
+  object-fit: cover;
+}
+.post__profileProfileSummary-profileLink {
+  font-size: 16px;
+  color: #0a66c2;
+  background-color: #fff;
+  outline: none;
+  border: 1px solid #0a66c2;
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: 10px;
+  width: 80%;
+}
+
+.post__profileProfileSummary-profileLink:hover {
+  background-color: #a5cbf0;
+  font-weight: 500;
+}
+
+.postItem {
+  min-height: 150px;
+  border-radius: 15px;
+  border: 1px solid lightgray;
+  margin-top: 50px;
+  background-color: #fff;
+  border-bottom: none;
+}
+
+.postPage__section2 .feedPost {
+  margin-top: 50px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+.postPage__section2 .feedPost .feedPost__actions {
+  border-top: none;
+}
+
+.postComments .span {
+  text-align: left;
+  position: relative;
+  height: 20px;
+  width: fit-content;
+}
+
+.commentFilterValue {
+  margin: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.commentFilterLabel {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0 5px;
+  border-radius: 15px;
+  /* color: grey; */
+}
+
+.commentFilterIcon {
+  color: grey;
+}
+
+.commentFilters {
+  background-color: #fff;
+  border: 1px solid lightgray;
+  width: 100px;
+  position: absolute;
+  top: 5px;
+  border-radius: 5px;
+  left: 5px;
+  list-style-type: none;
+  font-size: 14px;
+}
+.postPage__section2 .postPage-comments {
+  border-bottom-left-radius: 10px;
+  background-color: #fff;
+  border-bottom-right-radius: 10px;
+  border: 1px solid lightgray;
+  border-top: none;
+  padding: 10px;
+}
+
+.postPage-comments .addComment {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.addComment .addCommentModal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 15px;
+  background-color: rgba(1, 2, 3, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.addComment-form {
+  min-height: 60px;
+  border-radius: 15px;
+  display: flex;
+  width: calc(100% - 40px);
+  align-items: center;
+  margin-left: 5px;
+  /* border: 2px solid lightgray; */
+}
+
+.addComment-form input {
+  line-height: 40px;
+  border-radius: 20px;
+  padding: 0 8px;
+  width: 100%;
+  border: 1px solid lightgray;
+}
+.addComment-pfp {
+  color: rgb(174, 174, 174);
+  height: 40px;
+  width: 40px;
+  border-radius: 50px;
+  object-fit: cover;
+}
+
+/* SECTION2 */
+
+.postPage__section3 .jobs-ad {
+  position: fixed;
+  width: 80%;
+  max-width: 250px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
+  background-color: #fff;
+  height: 220px;
+  margin-top: 50px;
+  padding-bottom: 20px;
+}
+
+.postPage__section3 .jobs-ad img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.post-comments {
+  background-color: #fff;
+  width: 100%;
+  margin-top: 10px;
+}
+@media screen and (max-width: 1095px) {
+  .postPageSections {
+    display: flex;
+    height: calc(100vh - 55px);
+  }
+  .postPage__section1 {
+    width: 30%;
+  }
+  .postPage__section2 {
+    width: 60%;
+  }
+
+  .postPage__section3 {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .postPageSections {
+    display: flex;
+    justify-content: center;
+  }
+  .postPage__section1 {
+    display: none;
+  }
+  .postPage__section2 {
+    width: 80%;
+    padding: 0 5px;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .postPage__section2 {
+    width: 100%;
+  }
+}

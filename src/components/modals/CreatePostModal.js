@@ -58,11 +58,12 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
       let date = new Date();
       console.log(date);
       let timestamp = Timestamp.fromDate(date);
-      const postRef = await addDoc(collection(db, "posts"), {
+      await addDoc(collection(db, "posts"), {
         postText: postInput,
         authorId: userObj.username,
         postType: "text",
         published: timestamp,
+        comments: [],
       }).then((docRef) => {
         console.log("new Post Id" + docRef.id);
         postDocId = docRef.id;
@@ -167,11 +168,11 @@ const CreatePostModal = ({ feedPosts, setFeedPosts }) => {
           )}
           <span className="createPost__authorSection-span">
             <p styles={{ marginLeft: "10px" }}>{name}</p>
-            {/* <button className="createPost__visibleTo">
+            <div type="" className="createPost__visibleTo">
               <IoMdGlobe />
               Everyone
               <AiFillCaretDown />
-            </button> */}
+            </div>
           </span>
         </div>
         <div className="createPost__contentSection">

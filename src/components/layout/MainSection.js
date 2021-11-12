@@ -95,42 +95,6 @@ const MainSection = () => {
     }
   };
 
-  const getPosts = () => {
-    setLoadingPosts(true);
-    const postsQuery = query(
-      collection(db, "follows"),
-      where("users", "array-contains", userObj.username)
-    );
-    const postsSnapshot = onSnapshot(postsQuery, (querySnapshot) => {
-      let postsArr = [];
-      querySnapshot.docChanges().forEach((change) => {
-        if (change.type !== "removed" && change.doc.data()) {
-          postsArr.push(...change.doc.data().recentPosts);
-        }
-      });
-      console.log("New items are:");
-      console.log(postsArr);
-      const postsArr2 = postsArr.sort((a, b) => {
-        return new Date(b.published) - new Date(a.published);
-      });
-      console.log(postsArr2[0]);
-      console.log(posts);
-
-      dispatch(setAddToPosts(postsArr));
-    });
-    setLoadingPosts(false);
-  };
-
-  useEffect(() => {
-    getPosts();
-    return () => {
-      setLoadingPosts(null);
-      let followedUsers;
-      // dispatch(e([]));
-      // let postsSample = [];
-    };
-  }, []);
-
   useEffect(() => {
     if (sortPosts) {
       dispatch(setSortPostsOrder(sortPosts));

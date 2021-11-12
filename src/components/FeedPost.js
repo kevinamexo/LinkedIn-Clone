@@ -5,30 +5,34 @@ import {
   setRemoveFromPosts,
   setAddPostLikes,
 } from "../redux/features/postsSlice";
-import { Link } from "react-router-dom";
+import { BsDot } from "react-icons/bs";
+import { Link, useHistory } from "react-router-dom";
 import { IoMdGlobe } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
 import { AiOutlineLike, AiOutlineComment, AiTwotoneLike } from "react-icons/ai";
-
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en.json";
 import { db } from "../firebase/firebaseConfig";
 import {
   collection,
   query,
   where,
   doc,
+  addDoc,
   onSnapshot,
   updateDoc,
   deleteDoc,
   arrayRemove,
   arrayUnion,
   getDocs,
+  Timestamp,
 } from "firebase/firestore";
 import { BsThreeDots } from "react-icons/bs";
 import Skeleton from "react-loading-skeleton";
 import moment from "moment";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
-import { set } from "react-hook-form";
+
 const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(null);
@@ -44,12 +48,14 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
   const { posts } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
   const postProps = { ...post };
-
+  TimeAgo.addDefaultLocale(en);
+  const timeAgo = new TimeAgo("en-US");
+  const history = useHistory();
   useEffect(() => {
     // setLoading(true);
 
     const fetchProfileDetails = async () => {
-      if (profileObj || post.authorId) {
+      if (post.authorId) {
         // setLoading(true);
         const userQ = query(
           collection(db, "user"),
@@ -152,8 +158,9 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       likesQuerySnap.forEach((doc) => {
         postLikeColID = doc.id;
       });
-      const checkForUserLike = post.users.some((v) => v === userObj.username);
-      console.log(checkForUserLike);
+
+      // const checkForUserLike = post.users.some((v) => v === userObj.username);
+      // console.log(checkForUserLike);
       if (liked) {
         console.log("ABout to remove like");
         const unlikeAction = await updateDoc(doc(db, "likes", postLikeColID), {
@@ -221,11 +228,12 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
       console.log(pdi);
 
       const postDocRef = doc(db, "follows", pdi);
-      const querySnapshot2 = await updateDoc(postDocRef, {
+      await updateDoc(postDocRef, {
         recentPosts: arrayRemove(post),
+      }).then(() => {
+        console.log("deleted from follows");
+        console.log(post.postRefId);
       });
-      console.log("deleted from follows");
-      console.log(post.postRefId);
 
       const postDel = await deleteDoc(doc(db, "posts", post.postRefId));
       const likesDoc = query(
@@ -239,12 +247,22 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
           await deleteDoc(doc, "likes", doc.id);
         });
       };
-      dispatch(setRemoveFromPosts(idx));
+      // dispatch(setRemoveFromPosts(idx));
     } catch (e) {
       console.log(e);
+      console.log("ERROR DELETING");
     }
   };
+  const addCommentsArray = async (pID) => {
+    const documentReference = doc(db, "posts", pID);
+    await updateDoc(documentReference, {
+      comments: [],
+    });
+  };
+
   useEffect(() => {
+    console.log("POST USERS ARE:");
+    console.log(post);
     setLiked(post.users && post.users.some((v) => v === userObj.username));
     return () => {
       setLiked(null);
@@ -305,10 +323,15 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
                   </p>
                 )}
                 <p className="feedPost__userDetails-postTime">
-                  {/* {post.likes || 0} */}
+                  {timeAgo.format(
+                    new Date(post.published.seconds * 1000),
+                    "mini"
+                  )}
+                  <BsDot className="postTime-dot" />
                   <IoMdGlobe
+                    className="postTime-globe"
                     style={{
-                      marginLeft: "5px",
+                      marginLeft: "0px",
                       color: "rgb(77, 77, 77)",
                       fontSize: "1.7em",
                     }}
@@ -330,7 +353,7 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
                   </p>
                   <p
                     className="feedPost__body-seeMore"
-                    onClick={() => setShowFullText(!showFullText)}
+                    onClick={() => history.push(`/posts/${post.postRefId}`)}
                   >
                     {!showFullText ? "...see more" : "show less"}
                   </p>
@@ -368,7 +391,11 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
             <div className="feedPost__actions">
               <button
                 className={
-                  liked ? "feedPost__action-liked" : "feedPost__action"
+                  postWithLikes &&
+                  postWithLikes.users &&
+                  postWithLikes.users.some((u) => u === userObj.username)
+                    ? "feedPost__action-liked"
+                    : "feedPost__action"
                 }
                 onClick={async () => await likePost()}
               >
@@ -377,7 +404,13 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
                     liked ? "feedPost__liked" : "feedPost__action-icon"
                   }
                 />
-                <p>{liked ? "Liked" : "Like"}</p>
+                <p>
+                  {postWithLikes &&
+                  postWithLikes.users &&
+                  postWithLikes.users.some((u) => u === userObj.username)
+                    ? "Liked"
+                    : "Like"}
+                </p>
               </button>
               <button className="feedPost__action">
                 <AiOutlineComment className="feedPost__action-icon" />

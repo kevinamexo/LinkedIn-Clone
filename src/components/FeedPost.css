@@ -53,6 +53,13 @@
   display: flex;
   align-items: center;
 }
+.postTime-dot {
+  font-size: 22px;
+  margin-left: -5px;
+}
+.postTime-globe {
+  margin-left: -5px !important;
+}
 
 .feedPost__body {
   position: relative;
@@ -246,20 +253,15 @@
   border-radius: 50%;
 }
 
-
-
- .feedPost__body-media .control-arrow .control-next::before{
-   color:#0a66c2;
-
-}
-
-.feedPost__media-summary{
-  margin-bottom:-10px;
+.feedPost__body-media .control-arrow .control-next::before {
   color: #0a66c2;
-  
 }
 
+.feedPost__media-summary {
+  margin-bottom: -10px;
+  color: #0a66c2;
+}
 
-.feedPost__userDetails a{
+.feedPost__userDetails a {
   text-decoration: none;
 }

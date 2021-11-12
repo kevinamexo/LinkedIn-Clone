@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-
+import React, { useState, useEffect } from "react";
+import PostPage from "../postPage/PostPage";
 import "./Main.css";
 import Header from "../../components/layout/Header";
 import MainSection from "../../components/layout/MainSection";
@@ -13,6 +13,7 @@ import {
   addNewNotifications,
   setInitialNotificationTime,
 } from "../../redux/features/notificationsSlice";
+import { setAddToPosts } from "../../redux/features/postsSlice";
 import { setPageViews, setFollowers } from "../../redux/features/userSlice";
 import ProfilePage from "../profilepage/ProfilePage";
 import TestPage from "../TestPage";
@@ -28,7 +29,9 @@ import {
 const Main = () => {
   const { path } = useRouteMatch();
   const { userObj } = useSelector((state) => state.user);
+  const [loadingPosts, setLoadingPosts] = useState(null);
   const { lastNotification } = useSelector((state) => state.notifications);
+  const { posts, lastPost, sortedPosts } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
 
   const notificationsListener = () => {
@@ -125,6 +128,41 @@ const Main = () => {
       intialNotifications();
     }
   }, [userObj]);
+  const getPosts = () => {
+    setLoadingPosts(true);
+    const postsQuery = query(
+      collection(db, "follows"),
+      where("users", "array-contains", userObj.username)
+    );
+    const postsSnapshot = onSnapshot(postsQuery, (querySnapshot) => {
+      let postsArr = [];
+      querySnapshot.docChanges().forEach((change) => {
+        if (change.type !== "removed" && change.doc.data()) {
+          postsArr.push(...change.doc.data().recentPosts);
+        }
+      });
+      console.log("New items are:");
+      console.log(postsArr);
+      const postsArr2 = postsArr.sort((a, b) => {
+        return new Date(b.published) - new Date(a.published);
+      });
+      console.log(postsArr2[0]);
+      console.log(posts);
+
+      dispatch(setAddToPosts(postsArr));
+    });
+    setLoadingPosts(false);
+  };
+
+  useEffect(() => {
+    getPosts();
+    return () => {
+      setLoadingPosts(null);
+      let followedUsers;
+      // dispatch(e([]));
+      // let postsSample = [];
+    };
+  }, []);
 
   return (
     <>
@@ -132,6 +170,9 @@ const Main = () => {
       <Switch>
         <Route exact path="/messaging/users/:username">
           <Messaging />
+        </Route>
+        <Route exact path="/posts/:postId">
+          <PostPage />
         </Route>
         <Route exact path="/in/:username/">
           <ProfilePage />

@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 0 4px;
   /* margin-right: 20px; */
   color: rgb(99, 99, 99);
   /* padding: 0 5px; */
@@ -10,8 +12,14 @@
 
   cursor: pointer;
 }
+.headerOption,
+.connnectionRequestsSection,
+.header__right .notificationsSection {
+  height: 100%;
+}
 .headerOption:hover {
   color: rgb(45, 45, 45);
+  background-color: lightgray;
 }
 
 .headerOption__icon {
@@ -26,6 +34,10 @@
 
 .headerOptions-icons {
   position: relative;
+}
+
+.activeHeaderOption {
+  border-bottom: 3px solid rgb(91, 91, 91);
 }
 /* .headerOptionNotifications {
   color: #fff;

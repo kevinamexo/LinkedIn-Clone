@@ -13,6 +13,7 @@
   display: flex;
   /* justify-content: center; */
   margin-top: 40px;
+  position: relative;
 }
 
 .notifications__section1,
@@ -175,3 +176,45 @@ P.notifications__section3 {
   left: 15px;
 }
 /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,000000+100&0.65+53,0+100 */
+
+@media screen and (max-width: 1110px) {
+  .notificationSections {
+    display: flex;
+  }
+  .notifications__section1 {
+    width: 300px;
+  }
+
+  .notifications__section3 .notifications__section3-ad,
+  .notifications__section3-ad img {
+    min-width: 200px;
+    max-width: 240px;
+  }
+
+  .seeJobs {
+    top: 200px;
+  }
+}
+
+@media screen and (max-width: 1010px) {
+  .notifications__section3 {
+    display: none;
+  }
+  .notifications__section2 {
+    width: 60%;
+  }
+}
+@media screen and (max-width: 660px) {
+  .notifications__section3,
+  .notifications__section1 {
+    display: none;
+  }
+  .notifications__section2 {
+    width: 60%;
+  }
+
+  .notificationSections {
+    display: flex;
+    justify-content: center;
+  }
+}

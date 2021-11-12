@@ -6,12 +6,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
-
 import { useDispatch } from "react-redux";
 import { signUp } from "../../redux/features/userSlice";
-
 import { useHistory, Redirect } from "react-router-dom";
-
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase/firebaseConfig";
 import {

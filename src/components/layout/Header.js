@@ -33,6 +33,7 @@ import {
   setActiveUser,
   setUserLogoutState,
 } from "../../redux/features/userSlice";
+import { useGetScreenWidth } from "../../customHooks";
 
 import {
   setSearchActive,
@@ -49,7 +50,7 @@ import {
   setLastConnectionRequestTime,
   setFilterConnectionRequests,
 } from "../../redux/features/connectionRequestsSlice";
-import useOutsideClick from "../../customHooks";
+import useOutsideClick, { usePathname } from "../../customHooks";
 import useFetch from "../../firebase/hooks/useFetch";
 
 const Header = () => {
@@ -135,7 +136,11 @@ const Header = () => {
   };
   const handleClickNotification = async () => {
     setLoadingNotifications(true);
-    setNotificationsActive(!notificationsActive);
+    if (screenWidth >= 660) {
+      setNotificationsActive(!notificationsActive);
+    } else {
+      history.push("/myNotifications");
+    }
     let state = !notificationsActive;
     let date = new Date();
     console.log(date);
@@ -205,11 +210,12 @@ const Header = () => {
         console.log(error);
       });
   };
+  const currentPath = usePathname();
 
   useEffect(() => {
     console.log(connectionRequestsMenuRef.current);
   }, [connectionRequestsMenuRef.current]);
-
+  const screenWidth = useGetScreenWidth();
   useOutsideClick(connectionRequestsMenuRef, connectionsIconRef, (e) => {
     setConnectionsMenuActive(false);
     console.log("CONNECTIONS NOT ACTIVE");
@@ -272,6 +278,10 @@ const Header = () => {
       document.removeEventListener("click", handleSearchActive);
     };
   }, []);
+  useEffect(() => {
+    console.log("CURRENT PATH IS NOW");
+    console.log(currentPath);
+  }, [currentPath]);
 
   return (
     <>
@@ -316,6 +326,7 @@ const Header = () => {
               onClick={() => {
                 history.push("/");
               }}
+              active={currentPath === "/" ? true : false}
             />
             <span
               className="connnectionRequestsSection"
@@ -380,6 +391,9 @@ const Header = () => {
               title="Messaging"
               Icon={BsChatDotsFill}
               onClick={() => history.push("/messaging/users/all")}
+              active={
+                currentPath.startsWith("/messaging/users/") ? true : false
+              }
             />
             <HeaderOption
               title="Jobs"
@@ -389,7 +403,6 @@ const Header = () => {
             <span
               className="notificationsSection"
               // onClick={handleNotificationsClick}
-
               ref={notificationsIconRef}
             >
               <HeaderOption
@@ -398,6 +411,7 @@ const Header = () => {
                 notifications={notifications}
                 onClick={handleClickNotification}
                 type="notifications"
+                active={currentPath === "/myNotifications" ? true : false}
               />
               {notificationsActive && loadingNotifications === false ? (
                 <div

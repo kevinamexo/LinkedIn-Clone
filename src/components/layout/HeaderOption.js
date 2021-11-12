@@ -7,7 +7,7 @@ const HeaderOption = ({
   title,
   color,
   onClick,
-  notifications,
+  active,
   length,
   type,
 }) => {
@@ -29,7 +29,13 @@ const HeaderOption = ({
   }, [length]);
 
   return (
-    <div className="headerOption" role="button" onClick={onClick}>
+    <div
+      className={`headerOption ${
+        active === true ? "activeHeaderOption" : null
+      }`}
+      role="button"
+      onClick={onClick}
+    >
       {Icon && (
         <span className="headerOptions-icons">
           <Icon style={color && { color }} className="headerOption__icon" />

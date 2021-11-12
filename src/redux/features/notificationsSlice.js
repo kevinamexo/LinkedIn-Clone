@@ -51,10 +51,9 @@ const notificationsSlice = createSlice({
       action.payload.forEach((n) => {
         state.notifications = [n, ...state.notifications];
       });
-      phe;
+
       let i = [...state.notifications];
       console.log(i);
-
       state.newNotifications = i.filter(
         (x) => x.published >= state.prevLastNotification
       );

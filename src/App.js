@@ -70,7 +70,7 @@ function App() {
       connectionRequestQuery,
       (querySnapshot) => {
         querySnapshot.docChanges().forEach((change) => {
-          if (change.type !== "remeeoved" && change.doc.data()) {
+          if (change.type !== "removed" && change.doc.data()) {
             console.log("added or modified");
             let fullConnectionRequestsSnap = [];
             let fullConnectionRequestsSnapWithDate = [];
