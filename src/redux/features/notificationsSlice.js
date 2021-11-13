@@ -124,6 +124,7 @@ const notificationsSlice = createSlice({
       });
     },
     addNewNotifications: (state, action) => {
+      console.log("ADDING NEW NOTIFICATIONS");
       if (action.payload) {
         const newNotifications = _.difference(
           action.payload,

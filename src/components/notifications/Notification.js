@@ -91,7 +91,10 @@ const Notification = ({ notification, newNotification }) => {
         return (
           <p className="notificationSummary">
             {/* <Link to={`/in/${notification.authorId}`}> */}
-            <b onClick={() => history.push(`/in/${notification.authorId}`)}>
+            <b
+              className="notificationUserName"
+              onClick={() => history.push(`/in/${notification.username}`)}
+            >
               {notification.name}
             </b>{" "}
             {/* </Link> */}
@@ -102,7 +105,10 @@ const Notification = ({ notification, newNotification }) => {
         return (
           <p className="notificationSummary">
             {/* <Link to={`/in/${notification.authorId}`}> */}
-            <b onClick={() => history.push(`/in/${notification.authorId}`)}>
+            <b
+              className="notificationUserName"
+              onClick={() => history.push(`/in/${notification.username}`)}
+            >
               {notification.name}
             </b>{" "}
             {/* </Link> */}

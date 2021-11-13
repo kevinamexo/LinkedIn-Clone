@@ -208,7 +208,10 @@ const PostPage = () => {
       <div className="postPage">
         <div className="loading-spinner-container">
           <FadeLoader
-            size={20}
+            height={7}
+            width={2}
+            radius={1}
+            margin={2}
             color={"#0a66c2"}
             loading={true}
             className="spinner"

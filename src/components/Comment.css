@@ -115,6 +115,7 @@
   display: flex;
   align-items: flex-end;
   margin-left: 52px;
+  position: relative;
 }
 .commentReactions p {
   margin: 4px 0 0 0;
@@ -168,4 +169,11 @@
 .viewCommentReplies:hover {
   color: #0d59a5;
   background-color: #c8d2db;
+}
+
+.commentReplies {
+  font-size: 12px;
+  color: grey;
+  position: absolute;
+  right: 10px;
 }

@@ -97,7 +97,7 @@ P.notifications__section3 {
   background-color: #70b4f95a;
   z-index: 10;
   height: 90px !important;
-  width: 100%;
+  /* width: 100%; */
   /* display: flex; */
   align-items: center;
   padding: 0 20px;

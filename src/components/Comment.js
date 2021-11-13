@@ -29,6 +29,7 @@ const Comment = ({ comment }) => {
   const { userObj } = useSelector((state) => state.user);
   const [userSent, setUserSent] = useState(false);
   const [openCommentMenu, setOpenCommentMenu] = useState(false);
+  const [commentReply, setCommentReply] = useState("");
   const [currentCommentUser, setCurrentCommentUser] = useState({});
   const [viewReplies, setViewReplies] = useState(false);
   const timeAgo = new TimeAgo("en-US");
@@ -143,6 +144,7 @@ const Comment = ({ comment }) => {
         <p className="commentLikesAmount">{comment.likes || 0}</p>
         <BiDotsVertical className="commentSeperator" />
         <p className="commentReply">Reply</p>
+        <p className="commentReplies">3 replies</p>
       </div>
       {viewReplies === true && (
         <div style={{ marginLeft: "20px" }}>{nestedComments}</div>
@@ -153,9 +155,29 @@ const Comment = ({ comment }) => {
           className="viewCommentReplies"
           onClick={() => setViewReplies(!viewReplies)}
         >
-          {viewReplies === true ? "Hide All Replies" : "View replies"}
+          {viewReplies === true && comment.parentComment === null
+            ? "Hide All Replies"
+            : viewReplies === true && comment.parentComment !== null
+            ? "Hide replies"
+            : viewReplies === false
+            ? "View replies"
+            : null}
         </p>
       )}
+      <div className="commentReplySection">
+        <form className="commentReplySection-form">
+          <input
+            type="text"
+            name="commentReply"
+            value={commentReply}
+            onChange={(e) => {
+              setCommentReply(e.target.value);
+            }}
+            className="commentReplySection-input"
+            placeholder="Type your reply"
+          />
+        </form>
+      </div>
     </>
   );
 };
