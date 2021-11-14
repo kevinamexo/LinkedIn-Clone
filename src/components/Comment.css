@@ -143,6 +143,7 @@
   border-radius: 50%;
   color: #fff;
   margin-right: 5px;
+  cursor: pointer;
 }
 .commentReply,
 .commentLikesIcon {
@@ -170,7 +171,14 @@
   color: #0d59a5;
   background-color: #c8d2db;
 }
+.commentReplySection {
+  /* background-color: red; */
+}
 
+.commentReplySection-form {
+  display: flex;
+  justify-content: left;
+}
 .commentReplies {
   font-size: 12px;
   color: grey;

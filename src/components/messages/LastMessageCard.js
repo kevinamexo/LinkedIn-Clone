@@ -75,6 +75,7 @@ const LastMessageCard = ({ chat }) => {
     setNameSet(true);
     console.log(userFullName);
     setOtherUserName(userFullName);
+    console.log("OTHER USER NAME IS:" + userFullName);
     setOtherUserObj(nameObj);
   }, [userFullNames]);
 
@@ -130,7 +131,7 @@ const LastMessageCard = ({ chat }) => {
                 ? null
                 : chat.lastMessage.authorId === userObj.username
                 ? "You"
-                : otherUserName.split(" ", 1)[0]}
+                : otherUserName && otherUserName.split(" ", 1)[0]}
             </p>
             <p
               className={

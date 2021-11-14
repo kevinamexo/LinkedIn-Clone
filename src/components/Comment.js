@@ -30,8 +30,10 @@ const Comment = ({ comment }) => {
   const [userSent, setUserSent] = useState(false);
   const [openCommentMenu, setOpenCommentMenu] = useState(false);
   const [commentReply, setCommentReply] = useState("");
+  const [replyActive, setReplyActive] = useState(false);
   const [currentCommentUser, setCurrentCommentUser] = useState({});
   const [viewReplies, setViewReplies] = useState(false);
+  const [commentLikes, setCommentLikes] = useState(0);
   const timeAgo = new TimeAgo("en-US");
   const storeProfileDetails = () => {
     const authorId = comment.authorId;
@@ -139,11 +141,16 @@ const Comment = ({ comment }) => {
         </div>
       </div>
       <div className="commentReactions">
-        <p className="commentLikes">Like</p>
-        <AiOutlineLike className="commentLikesIcon" />
-        <p className="commentLikesAmount">{comment.likes || 0}</p>
+        <p className="commentLikes">Likes</p>
+        <AiOutlineLike
+          className="commentLikesIcon"
+          onClick={() => setCommentLikes((prevAmount) => prevAmount + 1)}
+        />
+        <p className="commentLikesAmount">{commentLikes}</p>
         <BiDotsVertical className="commentSeperator" />
-        <p className="commentReply">Reply</p>
+        <p className="commentReply" onClick={() => setReplyActive(true)}>
+          Reply
+        </p>
         <p className="commentReplies">3 replies</p>
       </div>
       {viewReplies === true && (
@@ -164,20 +171,22 @@ const Comment = ({ comment }) => {
             : null}
         </p>
       )}
-      <div className="commentReplySection">
-        <form className="commentReplySection-form">
-          <input
-            type="text"
-            name="commentReply"
-            value={commentReply}
-            onChange={(e) => {
-              setCommentReply(e.target.value);
-            }}
-            className="commentReplySection-input"
-            placeholder="Type your reply"
-          />
-        </form>
-      </div>
+      {replyActive === true && (
+        <div className="commentReplySection">
+          <form className="commentReplySection-form">
+            <input
+              type="text"
+              name="commentReply"
+              value={commentReply}
+              onChange={(e) => {
+                setCommentReply(e.target.value);
+              }}
+              className="commentReplySection-input"
+              placeholder="Type your reply"
+            />
+          </form>
+        </div>
+      )}
     </>
   );
 };
