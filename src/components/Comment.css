@@ -165,6 +165,8 @@
   color: #0a66c2;
   font-size: 12px;
   cursor: pointer;
+  margin-left: 50px;
+  padding: 2px 0;
 }
 
 .viewCommentReplies:hover {

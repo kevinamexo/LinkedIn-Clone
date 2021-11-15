@@ -156,13 +156,19 @@ const PostPage = () => {
   const getBaseCommentsWithChildren = (commentsArr) => {
     const commentMap = {};
     commentsArr.forEach((comment) => {
-      commentMap[comment.commentId] = comment;
+      commentMap[comment.commentId] = {
+        path: `${comment.parentComment}/${comment.commentId}`,
+        ...comment,
+      };
     });
     commentsArr.forEach((comment) => {
       if (comment.parentComment !== null) {
         // commentMap[comment.parentComment]["children"].push(comment);
         const parent = commentMap[comment.parentComment];
-        (parent.children = parent.children || []).push(comment);
+        (parent.children = parent.children || []).push({
+          ...comment,
+          path: `${parent.path}/${comment.commentId}`,
+        });
       }
     });
     console.log("COMMENT MAP CREATED");
@@ -173,6 +179,7 @@ const PostPage = () => {
         nestedComments.push({
           ...commentItem,
           children: commentMap[commentItem.commentId].children,
+          path: commentMap[commentItem.commentId].path,
         });
       }
     });

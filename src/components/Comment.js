@@ -5,6 +5,8 @@ import {
   where,
   deleteDoc,
   doc,
+  addDoc,
+  collectionGroup,
   getDocs,
   onSnapshot,
 } from "firebase/firestore";
@@ -52,9 +54,35 @@ const Comment = ({ comment }) => {
     });
   };
 
-  const handleSendReply = () => {
-    console.log("SENDING REPLY");
+  const handleSendReply = async () => {
+    if (commentReply.length > 0) {
+      console.log("SENDING REPLY");
+      const commentQuery = query(
+        collectionGroup(db, "comments"),
+        where("parentComment", "==", comment.parentComment),
+        where("published", "==", comment.published),
+        where("text", "==", comment.text)
+      );
+      const commentSnap = await getDocs(commentQuery);
+      commentSnap.forEach(async (document) => {
+        console.log(document.data());
+        const { children, ...commentCopy } = comment;
+        console.log(commentCopy);
+        console.log({ ...document.data(), commentId: document.id });
+        if (
+          JSON.stringify({ ...document.data(), commentId: document.id }) ===
+          JSON.stringify(commentCopy)
+        ) {
+          console.log("COMMENT FOUND");
+          const docRef = doc(db, "posts", "comments", document.id);
+          await addDoc(docRef, {
+            name: "Kevin",
+          });
+        }
+      });
+    }
   };
+
   const handleDeleteComment = async () => {
     await deleteDoc(doc(db, "comments", comment.commentId));
     dispatch(setDeleteComment(comment));
@@ -92,6 +120,7 @@ const Comment = ({ comment }) => {
   const nestedComments = (comment.children || []).map((comment) => {
     return <Comment comment={comment} />;
   });
+
   return (
     <>
       <div className="commentContainer">
@@ -183,7 +212,10 @@ const Comment = ({ comment }) => {
               >
                 Cancel
               </p>
-              <RiSendPlaneFill className="commentReplySection-sendIcon" />
+              <RiSendPlaneFill
+                className="commentReplySection-sendIcon"
+                onClick={handleSendReply}
+              />
             </div>
           </form>
         </div>
