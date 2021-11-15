@@ -17,6 +17,7 @@ import { FaUserCircle, FaTrashAlt } from "react-icons/fa";
 import { AiOutlineLike, AiOutlineLine } from "react-icons/ai";
 import { BsThreeDots } from "react-icons/bs";
 import { BiDotsVertical } from "react-icons/bi";
+import { RiSendPlaneFill } from "react-icons/ri";
 import Skeleton from "react-loading-skeleton";
 import { nameFromObject } from "../customHooks";
 import TimeAgo from "javascript-time-ago";
@@ -51,6 +52,9 @@ const Comment = ({ comment }) => {
     });
   };
 
+  const handleSendReply = () => {
+    console.log("SENDING REPLY");
+  };
   const handleDeleteComment = async () => {
     await deleteDoc(doc(db, "comments", comment.commentId));
     dispatch(setDeleteComment(comment));
@@ -156,6 +160,34 @@ const Comment = ({ comment }) => {
       {viewReplies === true && (
         <div style={{ marginLeft: "20px" }}>{nestedComments}</div>
       )}
+      {replyActive === true && (
+        <div className="commentReplySection">
+          <form className="commentReplySection-form">
+            <input
+              type="text"
+              name="commentReply"
+              value={commentReply}
+              onChange={(e) => {
+                setCommentReply(e.target.value);
+              }}
+              className="commentReplySection-input"
+              placeholder="Type your reply"
+            />
+            <div className="commentReplySection-actions">
+              <p
+                className="cancelReply"
+                onClick={() => {
+                  setCommentReply("");
+                  setReplyActive(false);
+                }}
+              >
+                Cancel
+              </p>
+              <RiSendPlaneFill className="commentReplySection-sendIcon" />
+            </div>
+          </form>
+        </div>
+      )}
 
       {comment.children && comment.children.length > 0 && (
         <p
@@ -170,22 +202,6 @@ const Comment = ({ comment }) => {
             ? "View replies"
             : null}
         </p>
-      )}
-      {replyActive === true && (
-        <div className="commentReplySection">
-          <form className="commentReplySection-form">
-            <input
-              type="text"
-              name="commentReply"
-              value={commentReply}
-              onChange={(e) => {
-                setCommentReply(e.target.value);
-              }}
-              className="commentReplySection-input"
-              placeholder="Type your reply"
-            />
-          </form>
-        </div>
       )}
     </>
   );

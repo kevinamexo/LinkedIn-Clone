@@ -184,11 +184,21 @@
   border: 1px solid lightgray;
   width: 100px;
   position: absolute;
-  top: 5px;
+  top: 15px;
   border-radius: 5px;
   left: 5px;
   list-style-type: none;
   font-size: 14px;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.commentFilters li {
+  padding: 5px;
+}
+
+.commentFilters li:hover {
+  background-color: lightgray;
 }
 .postPage__section2 .postPage-comments {
   border-bottom-left-radius: 10px;

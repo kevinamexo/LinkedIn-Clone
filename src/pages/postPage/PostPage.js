@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FeedPost from "../../components/FeedPost";
 import { FaUserCircle, FaCaretDown } from "react-icons/fa";
 import { HiUserCircle } from "react-icons/hi";
@@ -31,6 +31,7 @@ import {
 import { db } from "../../firebase/firebaseConfig";
 import "./PostPage.css";
 import FadeLoader from "react-spinners/FadeLoader";
+import useOutsideClick from "../../customHooks";
 const PostPage = () => {
   const { postId } = useParams();
   const dispatch = useDispatch();
@@ -43,6 +44,8 @@ const PostPage = () => {
   const [addingComment, setAddingComment] = useState(null);
   const [loadingProfileDetails, setLoadingProfileDetails] = useState(null);
   const history = useHistory();
+  const commentFilterMenuRef = useRef();
+  const commentFilterLabel = useRef();
   const [openCommentFilterMenu, setOpenCommentFilterMenu] = useState(false);
   const [loading, setLoading] = useState(true);
   const [fullyNestedComments, setFullyNestedComments] = useState([]);
@@ -203,6 +206,10 @@ const PostPage = () => {
   useEffect(() => {
     console.log(postProfileObject);
   }, [postProfileObject]);
+
+  useOutsideClick(commentFilterMenuRef, commentFilterLabel, (e) => {
+    setOpenCommentFilterMenu(false);
+  });
   if (loading === true) {
     return (
       <div className="postPage">
@@ -320,17 +327,21 @@ const PostPage = () => {
                         onClick={() =>
                           setOpenCommentFilterMenu(!openCommentFilterMenu)
                         }
+                        ref={commentFilterLabel}
                       >
                         Most relevant
                       </p>
                       <FaCaretDown className="commentFilterIcon" />
                     </span>
                     {openCommentFilterMenu === true && (
-                      <ul className="commentFilters">
+                      <span
+                        className="commentFilters"
+                        ref={commentFilterMenuRef}
+                      >
                         <li className="commentFilter">Most Likes</li>
                         <li className="commentFilter">Latest</li>
                         <li className="commentFilter">Oldest</li>
-                      </ul>
+                      </span>
                     )}
                   </div>
                   {initCommentFetch === true && (
