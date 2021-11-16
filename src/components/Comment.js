@@ -8,6 +8,7 @@ import {
   addDoc,
   collectionGroup,
   getDocs,
+  Timestamp,
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
@@ -36,6 +37,7 @@ const Comment = ({ comment }) => {
   const [replyActive, setReplyActive] = useState(false);
   const [currentCommentUser, setCurrentCommentUser] = useState({});
   const [viewReplies, setViewReplies] = useState(false);
+  const [commentReplyError, setCommentReplyError] = useState(false);
   const [commentLikes, setCommentLikes] = useState(0);
   const timeAgo = new TimeAgo("en-US");
   const storeProfileDetails = () => {
@@ -55,31 +57,33 @@ const Comment = ({ comment }) => {
   };
 
   const handleSendReply = async () => {
+    let pathIds = comment.path.split("/").filter((c) => c !== "null");
+    let parents = `posts/${comment.parentPost}/comments/`;
+    let fullPathIds = pathIds.join("/comments/");
+    let pathIdArray = (parents + fullPathIds).split("/");
+    pathIdArray = [...pathIdArray, "comments"];
+    console.log(pathIdArray);
+    const date = new Date();
+    const timestamp = Timestamp.fromDate(date);
     if (commentReply.length > 0) {
-      console.log("SENDING REPLY");
-      const commentQuery = query(
-        collectionGroup(db, "comments"),
-        where("parentComment", "==", comment.parentComment),
-        where("published", "==", comment.published),
-        where("text", "==", comment.text)
-      );
-      const commentSnap = await getDocs(commentQuery);
-      commentSnap.forEach(async (document) => {
-        console.log(document.data());
-        const { children, ...commentCopy } = comment;
-        console.log(commentCopy);
-        console.log({ ...document.data(), commentId: document.id });
-        if (
-          JSON.stringify({ ...document.data(), commentId: document.id }) ===
-          JSON.stringify(commentCopy)
-        ) {
-          console.log("COMMENT FOUND");
-          const docRef = doc(db, "posts", "comments", document.id);
-          await addDoc(docRef, {
-            name: "Kevin",
-          });
-        }
-      });
+      try {
+        const commentReplyRef = collection(db, ...pathIdArray);
+        await addDoc(commentReplyRef, {
+          text: commentReply,
+          published: timestamp,
+          authorId: userObj.username,
+          parentComment: comment.commentId,
+          parentPost: comment.parentPost,
+        }).then(() => {
+          setCommentReply("");
+          setReplyActive(false);
+        });
+      } catch (e) {
+        console.log(e);
+        setTimeout(() => {
+          setCommentReplyError(true);
+        }, 5000);
+      }
     }
   };
 
