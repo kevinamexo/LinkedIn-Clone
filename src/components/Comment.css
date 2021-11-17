@@ -193,10 +193,9 @@
   display: flex;
 }
 
-.commentReplySection-input {
-  width: 100%;
+.commentReplySection-input:focus {
+  border-radius: 15px;
 }
-
 .cancelReply {
   margin: auto 2px;
   cursor: pointer;

@@ -25,8 +25,8 @@
 }
 
 .postPage__section1 {
-  display: flex;
-  justify-content: right;
+  /* display: flex;
+  justify-content: right*/
   position: relative;
 }
 
@@ -41,14 +41,16 @@
 }
 
 .post__profileSummary {
-  width: 80%;
   position: fixed;
-  max-width: 200px;
+  width: 220px;
+  right: 80%;
   border-radius: 10px;
   border: 1px solid lightgray;
   background-color: #fff;
   height: 220px;
   margin-top: 50px;
+
+  /* margin-left: 20%; */
   padding-bottom: 20px;
 }
 .post__profileSummary-header {
@@ -285,6 +287,10 @@
   .postPage__section1 {
     width: 30%;
   }
+  .post__profileSummary {
+    right: 70%;
+  }
+
   .postPage__section2 {
     width: 60%;
   }

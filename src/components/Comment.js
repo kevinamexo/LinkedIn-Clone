@@ -87,6 +87,32 @@ const Comment = ({ comment }) => {
     }
   };
 
+  const handleLikeComment = async () => {
+    let pathIds = comment.path.split("/").filter((c) => c !== "null");
+    let parents = `posts/${comment.parentPost}/comments/`;
+    let fullPathIds = pathIds.join("/likes/");
+    let pathIdArray = (parents + fullPathIds).split("/");
+    pathIdArray = [...pathIdArray, "likes"];
+    console.log(pathIdArray);
+    const date = new Date();
+    const timestamp = Timestamp.fromDate(date);
+
+    try {
+      const commentLikesRef = collection(db, ...pathIdArray);
+      await addDoc(commentLikesRef, {
+        published: timestamp,
+        username: userObj.username,
+        parentComment: comment.commentId,
+        parentPost: comment.parentPost,
+      });
+    } catch (e) {
+      console.log(e);
+      setTimeout(() => {
+        setCommentReplyError(true);
+      }, 5000);
+    }
+  };
+
   const handleDeleteComment = async () => {
     await deleteDoc(doc(db, "comments", comment.commentId));
     dispatch(setDeleteComment(comment));
@@ -181,7 +207,7 @@ const Comment = ({ comment }) => {
         <p className="commentLikes">Likes</p>
         <AiOutlineLike
           className="commentLikesIcon"
-          onClick={() => setCommentLikes((prevAmount) => prevAmount + 1)}
+          onClick={handleLikeComment}
         />
         <p className="commentLikesAmount">{commentLikes}</p>
         <BiDotsVertical className="commentSeperator" />
