@@ -200,6 +200,8 @@ const PostPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log("POST OBJECT");
+    console.log(postObject);
     if (postObject.authorId) {
       fetchPostUser();
     }
@@ -299,7 +301,7 @@ const PostPage = () => {
             </div>
           </div>
           <div className="postPage__section2">
-            <FeedPost post={postObject} />
+            <FeedPost post={postObject} reactions={true} />
 
             {initCommentFetch === true && (
               <div className="postPage-comments">

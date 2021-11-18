@@ -41,17 +41,20 @@ const Comment = ({ comment }) => {
   const [commentLikes, setCommentLikes] = useState(0);
   const timeAgo = new TimeAgo("en-US");
   const storeProfileDetails = () => {
+    console.log(comment.authorId);
+    console.log(commentUsers);
     const authorId = comment.authorId;
+    console.log();
+
     const userQuery = query(
       collection(db, "user"),
       where("username", "==", authorId)
     );
-
+    console.log("COMMENT USERS");
+    console.log(commentUsers);
     const userSnap = onSnapshot(userQuery, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        dispatch(addUserDetails(doc.data()));
-        console.log(doc.data());
-        setUserSent(true);
+        setCurrentCommentUser(doc.data());
       });
     });
   };
@@ -118,30 +121,20 @@ const Comment = ({ comment }) => {
     dispatch(setDeleteComment(comment));
   };
   useEffect(() => {
-    console.log("COMMENT SECONDS");
-    console.log(comment.published.seconds);
-    const commentObj = { ...comment };
-    console.log(commentObj);
-    const userExists = commentUsers.some(
-      (u) => u.authorId === commentObj.authorId
-    );
-    console.log(userExists);
-    if (userExists === false) {
-      storeProfileDetails();
-    }
+    storeProfileDetails();
   }, [comment]);
-  useEffect(() => {
-    if (userSent === true) {
-      console.log(
-        commentUsers.find((user) => user.username === comment.authorId)
-      );
-      if (commentUsers.find((user) => user.username === comment.authorId)) {
-        setCurrentCommentUser(
-          commentUsers.find((user) => user.username === comment.authorId)
-        );
-      }
-    }
-  }, [commentUsers, userSent, comment]);
+  // useEffect(() => {
+  //   if (userSent === true) {
+  //     console.log(
+  //       commentUsers.find((user) => user.username === comment.authorId)
+  //     );
+  //     if (commentUsers.find((user) => user.username === comment.authorId)) {
+  //       setCurrentCommentUser(
+  //         commentUsers.find((user) => user.username === comment.authorId)
+  //       );
+  //     }
+  //   }
+  // }, [commentUsers, userSent, comment]);
 
   useOutsideClick(commentMenuRef, commentMenuIconRef, (e) => {
     console.log(e.target);

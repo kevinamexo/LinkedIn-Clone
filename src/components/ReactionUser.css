@@ -1,0 +1,32 @@
+.reactionUser {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+
+.reactionUser img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+}
+
+.reactionUser .reaction-userName {
+  margin: 0;
+  display: none;
+  position: absolute;
+  background-color: rgb(49, 49, 49);
+  color: #fff;
+  font-size: 12px;
+  width: max-content;
+  padding: 5px;
+  border-radius: 10px;
+  top: 0px;
+  left: 20px;
+}
+
+.reactionUser img:hover + .reaction-userName {
+  display: block;
+}

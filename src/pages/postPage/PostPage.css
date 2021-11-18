@@ -279,6 +279,16 @@
   width: 100%;
   margin-top: 10px;
 }
+
+.postPage .feedPost {
+  border-bottom: 1px solid lightgray;
+}
+
+.reactions-title {
+  margin-top: 0;
+  text-align: left;
+  font-size: 16px;
+}
 @media screen and (max-width: 1095px) {
   .postPageSections {
     display: flex;

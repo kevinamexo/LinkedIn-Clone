@@ -29,14 +29,16 @@ import {
 } from "firebase/firestore";
 import { BsThreeDots } from "react-icons/bs";
 import Skeleton from "react-loading-skeleton";
+import ReactionUser from "./ReactionUser";
 import moment from "moment";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 
-const FeedPost = ({ post, idx, profileObj, organizationData }) => {
+const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(null);
   const [postUserObj, setPostUserObj] = useState({});
+  const [showReactions, setShowReactions] = useState(true);
   const [postWithLikes, setPostWithLikes] = useState({});
   const [likes, setLikes] = useState(0);
   const [likesUsers, setLikesUsers] = useState([]);
@@ -388,6 +390,15 @@ const FeedPost = ({ post, idx, profileObj, organizationData }) => {
                 <p>{generateLikesSentence(postWithLikes.users)}</p>
               )}
             </div>
+            {reactions === true && (
+              <div className="feedPost-postReactions">
+                <p className="reactions-title">Reactions</p>
+                <div className="reactions-container">
+                  {postWithLikes.users &&
+                    postWithLikes.users.map((l) => <ReactionUser user={l} />)}
+                </div>
+              </div>
+            )}
             <div className="feedPost__actions">
               <button
                 className={

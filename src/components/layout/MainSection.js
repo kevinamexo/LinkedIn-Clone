@@ -202,7 +202,7 @@ const MainSection = () => {
         {posts &&
           posts.length >= 1 &&
           posts.map((post, idx) => (
-            <FeedPost post={post} key={idx} idx={idx} />
+            <FeedPost post={post} key={idx} idx={idx} reactions={false} />
           ))}
         {posts.length === 0 && loadingPosts === false && (
           <p className="no-posts">No posts in your feed</p>

@@ -82,6 +82,10 @@
   overflow: hidden;
 }
 
+.postPage .feedPost__engagements {
+  padding-bottom: 10px;
+  border-bottom: 1px solid lightgray;
+}
 .feedPost__body-text-contentFull {
   font-size: 14px;
   text-align: left;
@@ -264,4 +268,12 @@
 
 .feedPost__userDetails a {
   text-decoration: none;
+}
+
+.feedPost-postReactions {
+  /* background-color: rgb(171, 114, 114); */
+  background-color: #fff;
+
+  /* border-bottom: 1px solid lightgray; */
+  padding: 15px 2px;
 }
