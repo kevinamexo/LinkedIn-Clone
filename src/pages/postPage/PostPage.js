@@ -135,6 +135,8 @@ const PostPage = () => {
             })
           );
         } else if (change.type === "removed") {
+          console.log("DELETED COMMENT");
+          console.log(change.doc.data());
           dispatch(setDeleteComment(change.doc.data()));
         }
       });

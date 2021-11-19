@@ -176,7 +176,6 @@
 .commentReplySection {
   background-color: rgb(255, 255, 255);
   padding: 10px;
-  display: flex;
   justify-content: right;
   min-height: 20px;
   align-items: flex-end;
@@ -186,18 +185,27 @@
   display: flex;
   margin-left: 42px;
   display: flex;
-  justify-content: flex-end;
+  /* justify-content: space-evenly; */
 }
 
 .commentReplySection-actions {
   display: flex;
+  align-items: center;
+  width: 100px;
+  justify-content: center;
 }
+.commentReplySection-input {
+  width: calc(100% - 140px);
+  line-height: 16px;
+  margin-left: 0;
 
+  /* width: valc0%; */
+}
 .commentReplySection-input:focus {
   border-radius: 15px;
 }
 .cancelReply {
-  margin: auto 2px;
+  margin-left: 5px;
   cursor: pointer;
   font-size: 12px;
 }
@@ -207,8 +215,8 @@
 .commentReplySection-sendIcon {
   color: #fff;
   background-color: #0a66c2;
-  height: 100%;
-  padding: 0px 15px;
+  font-size: 16px;
+  padding: 5px 15px;
   margin-left: 5px;
   border-radius: 15px;
   display: flex;

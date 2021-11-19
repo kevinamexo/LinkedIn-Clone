@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "./ReactionUser.css";
 import { db } from "../firebase/firebaseConfig";
 import { query, collection, where, getDocs } from "firebase/firestore";
@@ -8,6 +9,7 @@ import { FaUserCircle } from "react-icons/fa";
 const ReactionUser = ({ user }) => {
   const [userObject, setUserObject] = useState({});
   const [showNameTag, setShowNameTag] = useState(false);
+  const { userObj } = useSelector((state) => state.user);
   const history = useHistory();
   const getUser = async () => {
     const userQuery = query(
@@ -26,16 +28,21 @@ const ReactionUser = ({ user }) => {
   useEffect(() => {}, [userObject]);
   return (
     <div className="reactionUser">
-      {userObject.profilePhotoURL ? (
+      {userObject && userObject.profilePhotoURL ? (
         <img
           src={userObject.profilePhotoURL}
           alt=""
           onClick={() => history.push(`/in/${userObject.username}`)}
+          className="reaction-userIcon"
         />
-      ) : (
+      ) : userObject && !userObject.profilePhotoURL ? (
         <FaUserCircle className="reaction-userIcon" />
-      )}
-      <p className="reaction-userName ">{nameFromObject(userObject)}</p>
+      ) : null}
+      <p className="reaction-userName ">
+        {userObject && userObject.username === userObj.username
+          ? "You"
+          : nameFromObject(userObject)}
+      </p>
     </div>
   );
 };

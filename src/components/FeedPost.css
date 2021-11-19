@@ -270,10 +270,16 @@
   text-decoration: none;
 }
 
+/* REACTIONS SECTION */
+
 .feedPost-postReactions {
   /* background-color: rgb(171, 114, 114); */
   background-color: #fff;
 
   /* border-bottom: 1px solid lightgray; */
   padding: 15px 2px;
+}
+
+.reactions-container {
+  display: flex;
 }

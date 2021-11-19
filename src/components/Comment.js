@@ -44,8 +44,6 @@ const Comment = ({ comment }) => {
     console.log(comment.authorId);
     console.log(commentUsers);
     const authorId = comment.authorId;
-    console.log();
-
     const userQuery = query(
       collection(db, "user"),
       where("username", "==", authorId)
@@ -117,24 +115,20 @@ const Comment = ({ comment }) => {
   };
 
   const handleDeleteComment = async () => {
-    await deleteDoc(doc(db, "comments", comment.commentId));
-    dispatch(setDeleteComment(comment));
+    console.log();
+    let pathIds = comment.path.split("/").filter((c) => c !== "null");
+    let parents = `posts/${comment.parentPost}/comments/`;
+    let fullPathIds = pathIds.join("/comments/");
+    let pathIdArray = (parents + fullPathIds).split("/");
+    console.log(pathIdArray);
+    await deleteDoc(doc(db, ...pathIdArray)).then(() => {
+      console.log("DELETED COMMENT");
+      // dispatch(setDeleteComment(comment));
+    });
   };
   useEffect(() => {
     storeProfileDetails();
   }, [comment]);
-  // useEffect(() => {
-  //   if (userSent === true) {
-  //     console.log(
-  //       commentUsers.find((user) => user.username === comment.authorId)
-  //     );
-  //     if (commentUsers.find((user) => user.username === comment.authorId)) {
-  //       setCurrentCommentUser(
-  //         commentUsers.find((user) => user.username === comment.authorId)
-  //       );
-  //     }
-  //   }
-  // }, [commentUsers, userSent, comment]);
 
   useOutsideClick(commentMenuRef, commentMenuIconRef, (e) => {
     console.log(e.target);
@@ -177,9 +171,9 @@ const Comment = ({ comment }) => {
               <span className="postPage__commentMenu" ref={commentMenuRef}>
                 <li
                   className="postPage__commentMenu-item"
-                  onClick={() => {
+                  onClick={async () => {
                     setOpenCommentMenu(false);
-                    dispatch(setDeleteComment(comment));
+                    await handleDeleteComment();
                   }}
                 >
                   Delete Comment

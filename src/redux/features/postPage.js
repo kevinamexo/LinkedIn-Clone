@@ -37,14 +37,19 @@ const postPage = createSlice({
       }
     },
     setDeleteComment: (state, action) => {
-      const tmpItemToDelete = action.payload;
+      const tmpItemToDelete = { ...action.payload };
       console.log("RECEIVED");
-      console.log(console.log(action.payload));
+      console.log(action.payload);
       const tmpComments = [...state.comments];
       console.log("COMMENTS");
-      state.comments = tmpComments.filter(
-        (obj) => JSON.stringify(obj) !== JSON.stringify(tmpItemToDelete)
-      );
+      state.comments = state.comments.filter((obj) => {
+        const { commentId, children, path, ...x } = obj;
+        console.log(JSON.stringify(action.payload));
+        console.log(JSON.stringify(x));
+
+        return _.isEqual(x, action.payload) === false;
+      });
+      console.log(state.comments);
     },
   },
 });

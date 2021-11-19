@@ -1,6 +1,6 @@
 .main-page {
   display: grid;
-  grid-template-columns: auto 40% auto;
+  grid-template-columns: auto 45% auto;
   padding: 45px 0;
   width: 90%;
   min-height: calc(100vh - 55px);
@@ -25,7 +25,7 @@
 @media screen and (max-width: 1000px) {
   .main-page {
     display: grid;
-    grid-template-columns: 350px auto;
+    grid-template-columns: 250px auto;
     width: 100%;
   }
   .main-page .LSidebar {
