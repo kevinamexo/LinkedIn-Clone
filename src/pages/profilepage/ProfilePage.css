@@ -1,8 +1,8 @@
 .profilePage {
   height: 100vh;
   width: 100%;
-  display: grid;
-  grid-template-columns: 70% 30%;
+  display: flex;
+  justify-content: center;
   background-color: #fff;
 }
 
@@ -10,8 +10,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 60%;
+  margin-top: 90px;
 }
-
+.profilePage__RSidebar {
+  width: 20%;
+}
 .profilePage__header,
 .profilePage__About,
 .profilePage__featured {
@@ -349,6 +353,9 @@
   }
   .profilePage .RSidebar {
     display: none;
+  }
+  .profilePage__main {
+    width: 90%;
   }
 }
 

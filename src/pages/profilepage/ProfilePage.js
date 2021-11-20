@@ -541,7 +541,7 @@ const ProfilePage = () => {
                     myProfile ? "Your profile " : profileObj.name.firstName
                   } has no profile summary*`}
               </p>
-              {!profileObj.summary && (
+              {myProfile && !profileObj.summary && (
                 <p
                   className="profilePage__About-addSummary"
                   onClick={() => dispatch(setShowEditSummaryModal())}
