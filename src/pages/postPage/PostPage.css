@@ -208,7 +208,8 @@
   border-bottom-right-radius: 10px;
   border: 1px solid lightgray;
   border-top: none;
-  padding: 10px;
+  padding: 0 20px;
+  width: 90%;
 }
 
 .postPage-comments .addComment {
@@ -282,8 +283,8 @@
 
 .postPage .feedPost {
   border-bottom: 1px solid lightgray;
+  width: 90%;
 }
-
 .reactions-title {
   margin-top: 0;
   text-align: left;

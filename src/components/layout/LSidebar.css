@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: flex-end;
   margin-left: 0;
-  /* padding-right: 10px; */
+  margin-right: 5px;
 }
 
 .LSidebar-widget1 {
@@ -12,7 +12,7 @@
   left: 55px;
   right: 0;
   top: 100px;
-  width: 250px;
+  width: 220px;
   /* max-width: 250px !important; */
   background-color: #fff;
 
@@ -136,7 +136,7 @@
   font-size: 14px;
   /* height: 18px; */
   cursor: pointer;
-  width: 250px;
+  width: 220px;
   border-radius: 5px;
   justify-content: center;
   margin: 20px 0 0 0;
@@ -159,7 +159,7 @@
 
 @media (max-width: 889px), (min-width: 764px) {
   .LSidebar-widget1 {
-    right: 0 !important;
+    right: 0px !important;
   }
 }
 

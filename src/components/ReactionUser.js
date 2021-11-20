@@ -4,6 +4,7 @@ import "./ReactionUser.css";
 import { db } from "../firebase/firebaseConfig";
 import { query, collection, where, getDocs } from "firebase/firestore";
 import { nameFromObject } from "../customHooks";
+import { FaUserCircle } from "react-icons/fa";
 const ReactionUser = ({ user }) => {
   const [userObject, setUserObject] = useState({});
   const [showNameTag, setShowNameTag] = useState(false);
@@ -25,11 +26,15 @@ const ReactionUser = ({ user }) => {
   useEffect(() => {}, [userObject]);
   return (
     <div className="reactionUser">
-      <img
-        src={userObject.profilePhotoURL}
-        alt=""
-        onClick={() => history.push(`/in/${userObject.username}`)}
-      />
+      {userObject.profilePhotoURL ? (
+        <img
+          src={userObject.profilePhotoURL}
+          alt=""
+          onClick={() => history.push(`/in/${userObject.username}`)}
+        />
+      ) : (
+        <FaUserCircle className="reaction-userIcon" />
+      )}
       <p className="reaction-userName ">{nameFromObject(userObject)}</p>
     </div>
   );
