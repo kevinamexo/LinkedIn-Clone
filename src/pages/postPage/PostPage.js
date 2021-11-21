@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   setAddPostComment,
   setDeleteComment,
+  handleModifiedComment,
 } from "../../redux/features/postPage";
 import {
   doc,
@@ -128,6 +129,7 @@ const PostPage = () => {
     const postCommentSnap = onSnapshot(postCommentQuery, (querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
+          console.log("ADDED");
           dispatch(
             setAddPostComment({
               ...change.doc.data(),
@@ -138,6 +140,15 @@ const PostPage = () => {
           console.log("DELETED COMMENT");
           console.log(change.doc.data());
           dispatch(setDeleteComment(change.doc.data()));
+        } else if (change.type === "modified") {
+          console.log(comments);
+
+          dispatch(
+            handleModifiedComment({
+              ...change.doc.data(),
+              commentId: change.doc.id,
+            })
+          );
         }
       });
       setInitCommentFetch(true);

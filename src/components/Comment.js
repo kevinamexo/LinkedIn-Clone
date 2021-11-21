@@ -8,6 +8,9 @@ import {
   addDoc,
   collectionGroup,
   getDocs,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
   Timestamp,
   onSnapshot,
 } from "firebase/firestore";
@@ -38,7 +41,7 @@ const Comment = ({ comment }) => {
   const [currentCommentUser, setCurrentCommentUser] = useState({});
   const [viewReplies, setViewReplies] = useState(false);
   const [commentReplyError, setCommentReplyError] = useState(false);
-  const [commentLikes, setCommentLikes] = useState(0);
+  const [likedComment, setLikedComment] = useState(null);
   const timeAgo = new TimeAgo("en-US");
   const storeProfileDetails = () => {
     console.log(comment.authorId);
@@ -89,23 +92,34 @@ const Comment = ({ comment }) => {
   };
 
   const handleLikeComment = async () => {
+    console.log(comment.likes.length);
+
     let pathIds = comment.path.split("/").filter((c) => c !== "null");
     let parents = `posts/${comment.parentPost}/comments/`;
-    let fullPathIds = pathIds.join("/likes/");
+    let fullPathIds = pathIds.join("/comments/");
     let pathIdArray = (parents + fullPathIds).split("/");
-    pathIdArray = [...pathIdArray, "likes"];
+
     console.log(pathIdArray);
     const date = new Date();
     const timestamp = Timestamp.fromDate(date);
 
     try {
-      const commentLikesRef = collection(db, ...pathIdArray);
-      await addDoc(commentLikesRef, {
-        published: timestamp,
-        username: userObj.username,
-        parentComment: comment.commentId,
-        parentPost: comment.parentPost,
-      });
+      const commentDocRef = doc(db, ...pathIdArray);
+      const like = comment.likes.find(
+        (user) => user.username === userObj.username
+      );
+      if (like) {
+        await updateDoc(commentDocRef, {
+          likes: arrayRemove(like),
+        });
+      } else {
+        await updateDoc(commentDocRef, {
+          likes: arrayUnion({
+            username: userObj.username,
+            published: timestamp,
+          }),
+        });
+      }
     } catch (e) {
       console.log(e);
       setTimeout(() => {
@@ -128,6 +142,16 @@ const Comment = ({ comment }) => {
   };
   useEffect(() => {
     storeProfileDetails();
+  }, [comment]);
+  useEffect(() => {
+    if (comment) {
+      console.log(
+        comment.likes.some((user) => user.username === userObj.username)
+      );
+      setLikedComment(
+        comment.likes.some((user) => user.username === userObj.username)
+      );
+    }
   }, [comment]);
 
   useOutsideClick(commentMenuRef, commentMenuIconRef, (e) => {
@@ -191,12 +215,26 @@ const Comment = ({ comment }) => {
         </div>
       </div>
       <div className="commentReactions">
-        <p className="commentLikes">Likes</p>
-        <AiOutlineLike
-          className="commentLikesIcon"
+        <div
+          className={`${
+            likedComment
+              ? "commentReactionsLikes-liked"
+              : "commentReactionsLikes"
+          }`}
           onClick={handleLikeComment}
-        />
-        <p className="commentLikesAmount">{commentLikes}</p>
+        >
+          <p
+            className={` ${
+              likedComment ? "commentLikes-liked" : "commentLikes"
+            }`}
+          >
+            {likedComment ? "Liked" : "Like"}
+          </p>
+          <AiOutlineLike className="commentLikesIcon" />
+          <p className="commentLikesAmount">
+            {comment.likes ? comment.likes.length : 0}
+          </p>
+        </div>
         <BiDotsVertical className="commentSeperator" />
         <p className="commentReply" onClick={() => setReplyActive(true)}>
           Reply

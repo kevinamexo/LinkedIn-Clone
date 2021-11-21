@@ -115,6 +115,7 @@
   display: flex;
   align-items: flex-end;
   margin-left: 52px;
+  margin-top: 5px;
   position: relative;
 }
 .commentReactions p {
@@ -127,6 +128,30 @@
   font-size: 14px;
 }
 
+.commentReactionsLikes,
+.commentReactionsLikes-liked {
+  display: flex;
+  align-items: flex-end;
+  padding: 5px 5px 0 5px;
+}
+
+.commentReactionsLikes p,
+.commentReactionsLikes-liked p {
+  padding: 0;
+}
+.commentReactionsLikes:hover {
+  background-color: #e0f0ff;
+}
+
+.commentReactionsLikes-liked {
+  background-color: #e0f0ff;
+  cursor: pointer;
+}
+
+.commentLikes-liked,
+.commentLikes {
+  padding: 5px;
+}
 .commentLikes,
 .commentReply {
   cursor: pointer;
