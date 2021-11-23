@@ -26,6 +26,7 @@ import {
   arrayUnion,
   getDocs,
   Timestamp,
+  collectionGroup,
 } from "firebase/firestore";
 import { BsThreeDots } from "react-icons/bs";
 import Skeleton from "react-loading-skeleton";
@@ -37,6 +38,7 @@ import { Carousel } from "react-responsive-carousel";
 const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
   const [showFullText, setShowFullText] = useState(false);
   const [loading, setLoading] = useState(null);
+  const [comments, setComments] = useState(null);
   const [postUserObj, setPostUserObj] = useState({});
   const [showReactions, setShowReactions] = useState(true);
   const [postWithLikes, setPostWithLikes] = useState({});
@@ -53,6 +55,22 @@ const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
   TimeAgo.addDefaultLocale(en);
   const timeAgo = new TimeAgo("en-US");
   const history = useHistory();
+
+  const commentsListener = () => {
+    console.log("LISTENING FOR COMMENTS");
+    const commentsQuery = query(
+      collectionGroup(db, "comments"),
+      where("parentPost", "==", post.postRefId)
+    );
+    const commentsSnap = onSnapshot(commentsQuery, (querySnapshot) => {
+      let noComments = 0;
+      querySnapshot.forEach((doc) => {
+        noComments = noComments + 1;
+      });
+      console.log(noComments);
+      setComments(noComments);
+    });
+  };
   useEffect(() => {
     // setLoading(true);
 
@@ -143,6 +161,10 @@ const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
     };
   }, [post]);
 
+  useEffect(() => {
+    commentsListener();
+  }, [post]);
+
   const likePost = async () => {
     try {
       console.log("liking post");
@@ -230,11 +252,13 @@ const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
       console.log(pdi);
 
       const postDocRef = doc(db, "follows", pdi);
+      const { likes, users, ...x } = post;
       await updateDoc(postDocRef, {
-        recentPosts: arrayRemove(post),
+        recentPosts: arrayRemove(x),
       }).then(() => {
         console.log("deleted from follows");
         console.log(post.postRefId);
+        dispatch(setRemoveFromPosts(post));
       });
 
       const postDel = await deleteDoc(doc(db, "posts", post.postRefId));
@@ -384,11 +408,18 @@ const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
               )}
             </div>
             <div className="feedPost__engagements">
-              <AiTwotoneLike className="feedPost__likes" />
-              <p>{postWithLikes.likes && postWithLikes.likes}</p>
-              {postWithLikes.users && postWithLikes.users.length > 0 && (
-                <p>{generateLikesSentence(postWithLikes.users)}</p>
-              )}
+              <div className="feedPost__engagements-likes">
+                <AiTwotoneLike className="feedPost__likes" />
+                <p className="feedPost__engagements-summary">
+                  {postWithLikes.likes && postWithLikes.likes}
+                </p>
+                {postWithLikes.users && postWithLikes.users.length > 0 && (
+                  <p className="feedPost__engagements-summary">
+                    {generateLikesSentence(postWithLikes.users)}
+                  </p>
+                )}
+              </div>
+              <p className="postCommentsAmount">{comments ?? 0} comments</p>
             </div>
             {reactions === true && (
               <div className="feedPost-postReactions">

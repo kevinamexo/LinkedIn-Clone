@@ -13,7 +13,10 @@ import {
   addNewNotifications,
   setInitialNotificationTime,
 } from "../../redux/features/notificationsSlice";
-import { setAddToPosts } from "../../redux/features/postsSlice";
+import {
+  setAddToPosts,
+  setRemoveFromPosts,
+} from "../../redux/features/postsSlice";
 import { setPageViews, setFollowers } from "../../redux/features/userSlice";
 import ProfilePage from "../profilepage/ProfilePage";
 import TestPage from "../TestPage";
@@ -25,6 +28,7 @@ import {
   onSnapshot,
   getDocs,
 } from "firebase/firestore";
+import { remove } from "@firebase/database";
 
 const Main = () => {
   const { path } = useRouteMatch();
@@ -136,20 +140,33 @@ const Main = () => {
     );
     const postsSnapshot = onSnapshot(postsQuery, (querySnapshot) => {
       let postsArr = [];
+      let removedPosts = [];
       querySnapshot.docChanges().forEach((change) => {
         if (change.type !== "removed" && change.doc.data()) {
+          console.log("ADDING POST");
           postsArr.push(...change.doc.data().recentPosts);
+        }
+        if (change.type === "removed") {
+          console.log("REMOVED POST");
+          removedPosts.push(...change.doc.data().recentPosts);
         }
       });
       console.log("New items are:");
       console.log(postsArr);
-      const postsArr2 = postsArr.sort((a, b) => {
-        return new Date(b.published) - new Date(a.published);
-      });
-      console.log(postsArr2[0]);
       console.log(posts);
 
-      dispatch(setAddToPosts(postsArr));
+      console.log("DELETED ITEMS ARE:");
+      console.log(removedPosts);
+      const postsArr2 = postsArr.sort((a, b) => {
+        return (
+          new Date(b.published.seconds * 1000) -
+          new Date(a.published.seconds * 1000)
+        );
+      });
+
+      if (postsArr.length > 0) {
+        dispatch(setAddToPosts(postsArr2));
+      }
     });
     setLoadingPosts(false);
   };

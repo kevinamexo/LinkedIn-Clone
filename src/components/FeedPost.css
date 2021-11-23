@@ -94,9 +94,10 @@
 
 .feedPost__engagements {
   /* background-color: rgb(244, 142, 142); */
+  padding-top: 10px;
   display: flex;
   align-items: center;
-  justify-content: left;
+  justify-content: space-between;
   margin-top: 10px;
 }
 
@@ -200,7 +201,12 @@
   color: black;
 }
 
-.feedPost__engagements p {
+.feedPost__engagements-likes {
+  display: flex;
+  justify-content: space-between;
+}
+
+.feedPost__engagements-summary {
   margin: 0;
   font-size: 12px;
   margin-left: 3px;
@@ -208,6 +214,11 @@
   font-weight: bold;
 }
 
+.postCommentsAmount {
+  color: #6f6f6f;
+  margin: 0;
+  font-size: 12px;
+}
 .headerOptions-button,
 .feedPost__headerOptions {
   position: absolute;

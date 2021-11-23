@@ -19,7 +19,15 @@ const postsSlice = createSlice({
   initialState,
   reducers: {
     setAddToPosts: (state, action) => {
-      state.posts = action.payload.sort((a, b) => {
+      console.log(action.payload);
+      console.log("DIFFERENCE IS");
+      const tmpPosts = [...state.posts];
+      const results = action.payload.filter(
+        ({ postRefId: id1 }) =>
+          !tmpPosts.some(({ postRefId: id2 }) => id2 === id1)
+      );
+      console.log(results);
+      state.posts = [...results, ...state.posts].sort((a, b) => {
         return (
           new Date(b.published.seconds * 1000) -
           new Date(a.published.seconds * 1000)
@@ -54,10 +62,9 @@ const postsSlice = createSlice({
       }
     },
     setRemoveFromPosts: (state, action) => {
-      console.log(
-        "removed" + JSON.stringify(state.posts.slice(action.payload, 1))
+      state.posts = state.posts.filter(
+        (p) => p.postRefId !== action.payload.postRefId
       );
-      state.posts = removeItem(state.posts, action.payload);
     },
     setLastPost: (state, action) => {
       state.lastPost = [...state.lastPost, action.payload];
