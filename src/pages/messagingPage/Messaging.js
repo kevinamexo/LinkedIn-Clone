@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { IoChevronBackOutline } from "react-icons/io5";
 import ClipLoader from "react-spinners/ClipLoader";
+import { AiOutlineSearch } from "react-icons/ai";
+import { IoOptionsSharp } from "react-icons/io5";
+
 import _ from "lodash";
 import {
   query,
@@ -18,6 +21,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+import useOutsideClick from "../../customHooks";
 import "./MessagesPage.css";
 import { useParams, Route, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -40,6 +44,7 @@ import LastMessageCard from "../../components/messages/LastMessageCard";
 
 function useWindowSize() {
   const [size, setSize] = useState([window.innerHeight, window.innerWidth]);
+
   useEffect(() => {
     const handleResize = () => {
       setSize([window.innerHeight, window.innerWidth]);
@@ -70,12 +75,15 @@ const Messaging = () => {
   const messageEl = useRef(null);
   const [messageText, setMessageText] = useState("");
   const messagesContainerRef = useRef(null);
+  const [messageSearchInput, setMessageSearchInput] = useState("");
+  const [openSearchOptions, setOpenSearchOptions] = useState(false);
   const [otherUserObj, setOtherUserObj] = useState({});
   const [chatRoomExisted, setChatRoomExisted] = useState(null);
   const [fetchedAllChatRooms, setFetchedAllChatRooms] = useState(false);
   const [fetchedMessages, setFetchedMessages] = useState(false);
   const [showCurrentMessages, setShowCurrentMessages] = useState(null);
-
+  const searchOptionsIconRef = useRef();
+  const searchOptionsMenuRef = useRef();
   const history = useHistory();
 
   // CHECK WHETHER A CHAR WITH THE USER ALREADY EXISTS
@@ -502,6 +510,10 @@ const Messaging = () => {
     return strTime;
   }
 
+  useOutsideClick(searchOptionsMenuRef, searchOptionsIconRef, (e) => {
+    setOpenSearchOptions(false);
+  });
+
   if (userObj) {
     return (
       <div className="messagesPage">
@@ -516,6 +528,31 @@ const Messaging = () => {
             <div className="allChats-header">
               Messaging
               {showCurrentMessages}
+            </div>
+            <div className="messagesSearch">
+              <AiOutlineSearch className="messagesSearch-searchIcon" />
+              <input
+                type="text"
+                value={messageSearchInput}
+                onChange={(e) => setMessageSearchInput(e.target.value)}
+                className="searchUserInput"
+                placeholder="Search Messages"
+              />
+              <IoOptionsSharp
+                className="messagesSearch-settings"
+                ref={searchOptionsIconRef}
+                onClick={() => setOpenSearchOptions(!openSearchOptions)}
+              />
+              {openSearchOptions === true && (
+                <ul
+                  className="searchMessages-settings"
+                  ref={searchOptionsMenuRef}
+                >
+                  <li>Unread</li>
+                  <li>All messages</li>
+                  <li>My Connections</li>
+                </ul>
+              )}
             </div>
             {fetchedAllChatRooms === false ? (
               <div className="no-chats">
