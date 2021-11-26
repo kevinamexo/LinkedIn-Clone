@@ -421,15 +421,18 @@ const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
               </div>
               <p className="postCommentsAmount">{comments ?? 0} comments</p>
             </div>
-            {reactions === true && (
+            {reactions === true && postWithLikes.users.length > 0 && (
               <div className="feedPost-postReactions">
-                <p className="reactions-title">Reactions</p>
-                <div className="reactions-container">
-                  {postWithLikes.users &&
-                    postWithLikes.users.map((l) => <ReactionUser user={l} />)}
-                </div>
+                <>
+                  <p className="reactions-title">Reactions</p>
+                  <div className="reactions-container">
+                    {postWithLikes.users &&
+                      postWithLikes.users.map((l) => <ReactionUser user={l} />)}
+                  </div>
+                </>
               </div>
             )}
+
             <div className="feedPost__actions">
               <button
                 className={

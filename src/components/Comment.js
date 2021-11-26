@@ -92,8 +92,6 @@ const Comment = ({ comment }) => {
   };
 
   const handleLikeComment = async () => {
-    console.log(comment.likes.length);
-
     let pathIds = comment.path.split("/").filter((c) => c !== "null");
     let parents = `posts/${comment.parentPost}/comments/`;
     let fullPathIds = pathIds.join("/comments/");
@@ -144,12 +142,12 @@ const Comment = ({ comment }) => {
     storeProfileDetails();
   }, [comment]);
   useEffect(() => {
-    if (comment) {
+    if (comment && comment.users) {
       console.log(
-        comment.likes.some((user) => user.username === userObj.username)
+        comment.users.some((user) => user.username === userObj.username)
       );
       setLikedComment(
-        comment.likes.some((user) => user.username === userObj.username)
+        comment.users.some((user) => user.username === userObj.username)
       );
     }
   }, [comment]);
