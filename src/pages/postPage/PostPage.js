@@ -13,6 +13,7 @@ import {
   setAddPostComment,
   setDeleteComment,
   handleModifiedComment,
+  setCommentMap,
 } from "../../redux/features/postPage";
 import {
   doc,
@@ -108,6 +109,7 @@ const PostPage = () => {
             authorId: userObj.username,
             parentComment: null,
             parentPost: postId,
+            likes: [],
           }
         ).then(() => {
           setCommentInput("");
@@ -163,6 +165,8 @@ const PostPage = () => {
         children: [],
       });
     });
+    console.log("COMMENTS WITH CHILDREN ARE :");
+    console.log(commentsWithChildren);
     return commentsWithChildren;
   };
 
@@ -199,12 +203,17 @@ const PostPage = () => {
     return nestedComments;
   };
 
+  // const addPathsToComments=  (comMap)=>{
+  //   c
+  // }
+
   useEffect(() => {
     const g = getCommentsWithChildren(comments);
     const fullNestComments = getBaseCommentsWithChildren(g);
     setFullyNestedComments(fullNestComments);
     console.log("FULLY NESTED COMMENTS  ");
     console.log(fullNestComments);
+    dispatch(setCommentMap({ allComments: fullNestComments }));
   }, [comments]);
 
   useEffect(() => {

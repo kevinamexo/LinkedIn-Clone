@@ -142,12 +142,12 @@ const Comment = ({ comment }) => {
     storeProfileDetails();
   }, [comment]);
   useEffect(() => {
-    if (comment && comment.users) {
+    if (comment && comment.likes) {
       console.log(
-        comment.users.some((user) => user.username === userObj.username)
+        comment.likes.some((likes) => likes.username === userObj.username)
       );
       setLikedComment(
-        comment.users.some((user) => user.username === userObj.username)
+        comment.likes.some((likes) => likes.username === userObj.username)
       );
     }
   }, [comment]);
@@ -159,6 +159,8 @@ const Comment = ({ comment }) => {
   const nestedComments = (comment.children || []).map((comment) => {
     return <Comment comment={comment} />;
   });
+
+  ///count comment comment replies
 
   return (
     <>

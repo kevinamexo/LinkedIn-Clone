@@ -206,6 +206,9 @@ const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
 
   const generateLikesSentence = (likesUsers) => {
     //array length,  if youre in the array
+    console.log("LIKES USERS");
+    console.log(likesUsers);
+
     if (
       likesUsers.length === 1 &&
       !likesUsers.some((u) => u === userObj.username)
@@ -421,17 +424,21 @@ const FeedPost = ({ post, idx, profileObj, organizationData, reactions }) => {
               </div>
               <p className="postCommentsAmount">{comments ?? 0} comments</p>
             </div>
-            {reactions === true && postWithLikes.users.length > 0 && (
-              <div className="feedPost-postReactions">
-                <>
-                  <p className="reactions-title">Reactions</p>
-                  <div className="reactions-container">
-                    {postWithLikes.users &&
-                      postWithLikes.users.map((l) => <ReactionUser user={l} />)}
-                  </div>
-                </>
-              </div>
-            )}
+            {reactions === true &&
+              postWithLikes.users &&
+              postWithLikes.users.length > 0 && (
+                <div className="feedPost-postReactions">
+                  <>
+                    <p className="reactions-title">Reactions</p>
+                    <div className="reactions-container">
+                      {postWithLikes.users &&
+                        postWithLikes.users.map((l) => (
+                          <ReactionUser user={l} />
+                        ))}
+                    </div>
+                  </>
+                </div>
+              )}
 
             <div className="feedPost__actions">
               <button

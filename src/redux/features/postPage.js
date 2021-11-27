@@ -5,6 +5,7 @@ const initialState = {
   comments: [],
   commentUsers: [],
   loadedComments: null,
+  commentsMap: [],
 };
 
 const postPage = createSlice({
@@ -25,6 +26,9 @@ const postPage = createSlice({
       state.comments = [...state.comments, action.payload];
       state.loadedComments = true;
     },
+    setCommentMap: (state, action) => {
+      state.commentsMap = action.payload.allComments;
+    },
     handleModifiedComment: (state, action) => {
       console.log("MODIFIED COMMENT");
       console.log(action.payload);
@@ -42,33 +46,6 @@ const postPage = createSlice({
         state.comments[modifiedCommentIdx] = action.payload;
         console.log(state.comments);
       }
-      // console.log(modfiedComment);
-      // console.log(current(modfiedComment));
-      // console.log(Object.keys(modfiedComment));
-
-      // const modfiedComment = tmpComments.find(
-      //   (comment) => comment.commentId === action.payload.commentId
-      // );
-      // console.log(modfiedComment);
-      // console.log(current(modfiedComment));
-      // console.log(Object.keys(modfiedComment));
-      // const changedProperties = Object.keys(action.payload).filter(
-      //   (k) => action.payload[k] !== current(modfiedComment)[k]
-      // );
-      // changedProperties.forEach((key) => {
-      //   if (key !== "published") {
-      //     state.comments = state.comments.map((comm) => {
-      //       if (comm.commentId !== action.payload.commentId) {
-      //         return comm;
-      //       } else {
-
-      //           comm[key] = action.payload.key;
-
-      //         return comm;
-      //       }
-      //     });
-      //   }
-      // });
     },
     addUserDetails: (state, action) => {
       const tmpUser = action.payload;
@@ -101,6 +78,7 @@ const postPage = createSlice({
 export const {
   setPostCommentChanges,
   addUserDetails,
+  setCommentMap,
   setAddPostComment,
   setDeleteComment,
   handleModifiedComment,
