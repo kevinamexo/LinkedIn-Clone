@@ -32,7 +32,9 @@ const Comment = ({ comment }) => {
   const dispatch = useDispatch();
   const commentMenuIconRef = useRef();
   const commentMenuRef = useRef();
-  const { commentUsers } = useSelector((state) => state.postPage);
+  const { commentUsers, commentsWithPath, addedPaths } = useSelector(
+    (state) => state.postPage
+  );
   const { userObj } = useSelector((state) => state.user);
   const [userSent, setUserSent] = useState(false);
   const [openCommentMenu, setOpenCommentMenu] = useState(false);
@@ -40,6 +42,7 @@ const Comment = ({ comment }) => {
   const [replyActive, setReplyActive] = useState(false);
   const [currentCommentUser, setCurrentCommentUser] = useState({});
   const [viewReplies, setViewReplies] = useState(false);
+  const [repliesAmount, setRepliesAmount] = useState(0);
   const [commentReplyError, setCommentReplyError] = useState(false);
   const [likedComment, setLikedComment] = useState(null);
   const timeAgo = new TimeAgo("en-US");
@@ -160,8 +163,47 @@ const Comment = ({ comment }) => {
     return <Comment comment={comment} />;
   });
 
-  ///count comment comment replies
-
+  function countReplies(commentObj) {
+    console.log(commentsWithPath);
+    const commentWithPath = commentsWithPath.find(
+      ({ commentId }) => commentId === comment.commentId
+    );
+    console.log("FOUND");
+    console.log(commentWithPath);
+    if (commentWithPath) {
+      console.log(commentsWithPath);
+      console.log("COMMENT WITH PATH  PATH IS");
+      console.log(commentWithPath);
+      console.log(typeof commentWithPath);
+      console.log(commentWithPath.path);
+      const amount = commentsWithPath.filter(
+        (c) =>
+          c.commentId !== commentWithPath.commentId &&
+          c.path.includes(commentWithPath.path)
+      );
+      console.log(amount);
+      setRepliesAmount(amount.length);
+    } else {
+      setRepliesAmount(0);
+    }
+    // return amount.length;
+  }
+  function generateRepliesText(amount) {
+    if (amount === 0) {
+      return "No replies";
+    } else if (amount === 1) {
+      return `1 reply`;
+    } else if (amount > 1) {
+      return `${amount} replies`;
+    }
+  }
+  useEffect(() => {
+    console.log("COUNTING REPLIES");
+    if (addedPaths === true) {
+      countReplies(comment);
+    }
+  }, [comment.commentId, addedPaths, commentsWithPath]);
+  useEffect(() => {}, [comment]);
   return (
     <>
       <div className="commentContainer">
@@ -239,7 +281,7 @@ const Comment = ({ comment }) => {
         <p className="commentReply" onClick={() => setReplyActive(true)}>
           Reply
         </p>
-        <p className="commentReplies">3 replies</p>
+        <p className="commentReplies">{generateRepliesText(repliesAmount)}</p>
       </div>
       {viewReplies === true && (
         <div style={{ marginLeft: "20px" }}>{nestedComments}</div>

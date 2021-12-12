@@ -6,6 +6,8 @@ const initialState = {
   commentUsers: [],
   loadedComments: null,
   commentsMap: [],
+  commentsWithPath: [],
+  addedPaths: null,
 };
 
 const postPage = createSlice({
@@ -72,6 +74,14 @@ const postPage = createSlice({
         return _.isEqual(x, action.payload) === false;
       });
     },
+    addCommentWithPath: (state, action) => {
+      if (action.payload !== null) {
+        state.commentsWithPath = action.payload;
+      }
+    },
+    setAddedPaths: (state, action) => {
+      state.addedPaths = action.payload;
+    },
   },
 });
 
@@ -82,5 +92,8 @@ export const {
   setAddPostComment,
   setDeleteComment,
   handleModifiedComment,
+  addPathToComment,
+  setAddedPaths,
+  addCommentWithPath,
 } = postPage.actions;
 export default postPage;

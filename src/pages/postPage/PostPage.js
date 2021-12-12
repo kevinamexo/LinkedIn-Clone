@@ -14,6 +14,9 @@ import {
   setDeleteComment,
   handleModifiedComment,
   setCommentMap,
+  addCommentWithPath,
+  addPathToComment,
+  setAddedPaths,
 } from "../../redux/features/postPage";
 import {
   doc,
@@ -38,7 +41,9 @@ const PostPage = () => {
   const { postId } = useParams();
   const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
-  const { comments, loadedComments } = useSelector((state) => state.postPage);
+  const { comments, loadedComments, commentsMap } = useSelector(
+    (state) => state.postPage
+  );
   const [initCommentFetch, setInitCommentFetch] = useState(null);
   const [postObject, setPostObject] = useState({});
   const [postProfileObject, setPostProfileObject] = useState({});
@@ -193,19 +198,27 @@ const PostPage = () => {
     const nestedComments = [];
     commentsArr.forEach((commentItem) => {
       if (commentItem.parentComment === null) {
+        const path = commentMap[commentItem.commentId].path;
         nestedComments.push({
           ...commentItem,
           children: commentMap[commentItem.commentId].children,
-          path: commentMap[commentItem.commentId].path,
+          path: path,
         });
       }
     });
     return nestedComments;
   };
 
-  // const addPathsToComments=  (comMap)=>{
-  //   c
-  // }
+  let tmpComments = [];
+  const returnChildren = (object) => {
+    console.log("ADDING COMMENT");
+    tmpComments = [object, ...tmpComments];
+    if (object.children && object.children.length > 0) {
+      object.children.forEach((c) => returnChildren(c));
+    } else {
+      console.log("DOES NOT HAVE CHILDREN");
+    }
+  };
 
   useEffect(() => {
     const g = getCommentsWithChildren(comments);
@@ -217,10 +230,20 @@ const PostPage = () => {
   }, [comments]);
 
   useEffect(() => {
+    tmpComments = [];
+    if (commentsMap.length > 0) {
+      commentsMap.forEach((c) => {
+        returnChildren(c);
+      });
+      dispatch(addCommentWithPath(tmpComments));
+      dispatch(setAddedPaths(true));
+    }
+  }, [commentsMap]);
+
+  useEffect(() => {
     console.log("LOADING POST");
     fetchPostObject();
   }, []);
-
   useEffect(() => {
     console.log("POST OBJECT");
     console.log(postObject);
@@ -233,14 +256,13 @@ const PostPage = () => {
       postCommentsListener();
     }
   }, [postObject.text, postProfileObject]);
-
   useEffect(() => {
     console.log(postProfileObject);
   }, [postProfileObject]);
-
   useOutsideClick(commentFilterMenuRef, commentFilterLabel, (e) => {
     setOpenCommentFilterMenu(false);
   });
+
   if (loading === true) {
     return (
       <div className="postPage">
