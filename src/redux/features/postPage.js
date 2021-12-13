@@ -5,6 +5,8 @@ const initialState = {
   comments: [],
   commentUsers: [],
   loadedComments: null,
+  loadingPaths: [],
+  commentsWithFullPath: [],
   commentsMap: [],
   commentsWithPath: [],
   addedPaths: null,
@@ -82,6 +84,12 @@ const postPage = createSlice({
     setAddedPaths: (state, action) => {
       state.addedPaths = action.payload;
     },
+    setLoadingPaths: (state, action) => {
+      state.loadingPaths = action.payload;
+      if (action.payload) {
+        state.commentsWithFullPath = [];
+      }
+    },
     resetPostPageSlice: (state, action) => {
       state.comments = [];
       state.commentUsers = [];
@@ -89,18 +97,20 @@ const postPage = createSlice({
       state.commentsMap = [];
       state.commentsWithPath = [];
       state.addedPaths = null;
+      state.commentsWithFullPath = [];
     },
     addPathToComment: (state, action) => {
-      console.log(
-        state.commentsWithPath.find(
-          (c) => c.commentId === action.payload.comment.commentId
-        )
-      );
+      state.commentsWithFullPath = [
+        ...state.commentsWithFullPath,
+        action.payload,
+      ];
     },
   },
 });
 
 export const {
+  setLoadingPaths,
+
   setPostCommentChanges,
   addUserDetails,
   setCommentMap,

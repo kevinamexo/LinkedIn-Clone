@@ -32,7 +32,7 @@ const Comment = ({ comment }) => {
   const dispatch = useDispatch();
   const commentMenuIconRef = useRef();
   const commentMenuRef = useRef();
-  const { commentUsers, commentsWithPath, addedPaths } = useSelector(
+  const { commentUsers, commentsWithFullPath, loadingPaths } = useSelector(
     (state) => state.postPage
   );
   const { userObj } = useSelector((state) => state.user);
@@ -46,10 +46,6 @@ const Comment = ({ comment }) => {
   const [commentReplyError, setCommentReplyError] = useState(false);
   const [likedComment, setLikedComment] = useState(null);
   const timeAgo = new TimeAgo("en-US");
-
-  useEffect(() => {
-    console.log("RENDERING COMMENT");
-  }, []);
   const storeProfileDetails = () => {
     console.log(comment.authorId);
     console.log(commentUsers);
@@ -167,31 +163,22 @@ const Comment = ({ comment }) => {
     return <Comment comment={comment} />;
   });
 
-  useEffect(() => {}, [commentsWithPath]);
   function countReplies(commentObj) {
-    console.log(commentsWithPath);
-    const commentWithPath = commentsWithPath.find(
-      ({ commentId }) => commentId === commentObj.commentId
+    const commentWithPath = commentsWithFullPath.find(
+      ({ commentId }) => commentId === comment.commentId
     );
-    console.log("FOUND");
-    console.log(commentWithPath);
+
     if (commentWithPath) {
-      let commentPath = commentWithPath.path.includes("null/")
-        ? commentWithPath.path.replace("null/", "")
-        : commentWithPath.path;
-
-      console.log(commentPath);
-
-      const amount = commentsWithPath.filter(
+      console.log(commentWithPath.path);
+      const amount = commentsWithFullPath.filter(
         (c) =>
           c.commentId !== commentWithPath.commentId &&
-          c.path.includes(commentObj.commentId)
+          c.path.includes(commentWithPath.path)
       );
       console.log(amount);
       setRepliesAmount(amount.length);
-      // dispatch(addReplies([commentObj, amount.length]));
-      console.log(` ${commentObj.text} HAS ${amount.length} replies`);
-      return amount.length;
+    } else {
+      setRepliesAmount(0);
     }
     // return amount.length;
   }
@@ -206,11 +193,10 @@ const Comment = ({ comment }) => {
   }
   useEffect(() => {
     console.log("COUNTING REPLIES");
-    console.log(comment.commentId);
-    if (addedPaths === true) {
+    if (loadingPaths === false) {
       countReplies(comment);
     }
-  }, [comment.commentId, commentsWithPath]);
+  }, [comment.commentId, loadingPaths, commentsWithFullPath]);
   useEffect(() => {}, [comment]);
   return (
     <>

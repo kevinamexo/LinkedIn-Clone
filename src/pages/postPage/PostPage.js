@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import FeedPost from "../../components/FeedPost";
 import { FaUserCircle, FaCaretDown } from "react-icons/fa";
 import { HiUserCircle } from "react-icons/hi";
-
 import { useHistory, useParams } from "react-router-dom";
 import { nameFromObject } from "../../customHooks";
 import Skeleton from "react-loading-skeleton";
@@ -16,6 +15,7 @@ import {
   setCommentMap,
   addCommentWithPath,
   addPathToComment,
+  setLoadingPaths,
   setAddedPaths,
   resetPostPageSlice,
 } from "../../redux/features/postPage";
@@ -58,6 +58,23 @@ const PostPage = () => {
   const [openCommentFilterMenu, setOpenCommentFilterMenu] = useState(false);
   const [loading, setLoading] = useState(true);
   const [fullyNestedComments, setFullyNestedComments] = useState([]);
+
+  function getPath(commentObj, pp = "") {
+    let newPath;
+    if (pp.length > 0) {
+      newPath = pp + "/" + commentObj.commentId;
+    } else {
+      newPath = commentObj.commentId;
+    }
+    commentObj = { ...commentObj, path: newPath };
+    dispatch(addPathToComment(commentObj));
+    if (commentObj.children.length > 0) {
+      commentObj.children.forEach((gc) => {
+        getPath(gc, newPath);
+      });
+    }
+  }
+
   const fetchPostObject = async () => {
     setLoading(true);
     try {
@@ -256,6 +273,18 @@ const PostPage = () => {
 
     return () => postCommentSnap();
   }, []);
+
+  useEffect(() => {
+    const empty = "";
+    dispatch(setLoadingPaths(true));
+    let commentsMapCopy = [...commentsMap];
+    commentsMapCopy.forEach((c) => {
+      getPath(c, empty);
+    });
+    console.log("COMMENTS WITH PATH ");
+    console.log(commentsMapCopy);
+    dispatch(setLoadingPaths(false));
+  }, [commentsMap]);
 
   useOutsideClick(commentFilterMenuRef, commentFilterLabel, (e) => {
     setOpenCommentFilterMenu(false);
