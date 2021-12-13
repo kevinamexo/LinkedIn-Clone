@@ -182,9 +182,7 @@ const Comment = ({ comment }) => {
           c.path.includes(commentWithPath.path)
       );
       console.log(amount);
-      setRepliesAmount(amount.length);
-    } else {
-      setRepliesAmount(0);
+      return amount.length;
     }
     // return amount.length;
   }
@@ -197,12 +195,12 @@ const Comment = ({ comment }) => {
       return `${amount} replies`;
     }
   }
-  useEffect(() => {
-    console.log("COUNTING REPLIES");
-    if (addedPaths === true) {
-      countReplies(comment);
-    }
-  }, [comment.commentId, addedPaths, commentsWithPath]);
+  // useEffect(() => {
+  //   console.log("COUNTING REPLIES");
+  //   if (addedPaths === true) {
+  //     countReplies(comment);
+  //   }
+  // }, [comment.commentId, addedPaths, commentsWithPath]);
   useEffect(() => {}, [comment]);
   return (
     <>
@@ -281,7 +279,9 @@ const Comment = ({ comment }) => {
         <p className="commentReply" onClick={() => setReplyActive(true)}>
           Reply
         </p>
-        <p className="commentReplies">{generateRepliesText(repliesAmount)}</p>
+        <p className="commentReplies">
+          {generateRepliesText(countReplies(comment))}
+        </p>
       </div>
       {viewReplies === true && (
         <div style={{ marginLeft: "20px" }}>{nestedComments}</div>

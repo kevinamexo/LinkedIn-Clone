@@ -82,6 +82,14 @@ const postPage = createSlice({
     setAddedPaths: (state, action) => {
       state.addedPaths = action.payload;
     },
+    resetPostPageSlice: (state, action) => {
+      state.comments = [];
+      state.commentUsers = [];
+      state.loadedComments = null;
+      state.commentsMap = [];
+      state.commentsWithPath = [];
+      state.addedPaths = null;
+    },
   },
 });
 
@@ -95,5 +103,6 @@ export const {
   addPathToComment,
   setAddedPaths,
   addCommentWithPath,
+  resetPostPageSlice,
 } = postPage.actions;
 export default postPage;

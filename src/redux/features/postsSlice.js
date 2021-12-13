@@ -125,6 +125,7 @@ export const {
   setPostsChange,
   setAddToPosts,
   setLastPost,
+  resetPostPageSlice,
   setSortPostsOrder,
 } = postsSlice.actions;
 export default postsSlice;

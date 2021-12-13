@@ -17,6 +17,7 @@ import {
   addCommentWithPath,
   addPathToComment,
   setAddedPaths,
+  resetPostPageSlice,
 } from "../../redux/features/postPage";
 import {
   doc,
@@ -211,12 +212,9 @@ const PostPage = () => {
 
   let tmpComments = [];
   const returnChildren = (object) => {
-    console.log("ADDING COMMENT");
     tmpComments = [object, ...tmpComments];
-    if (object.children && object.children.length > 0) {
+    if (object.children) {
       object.children.forEach((c) => returnChildren(c));
-    } else {
-      console.log("DOES NOT HAVE CHILDREN");
     }
   };
 
@@ -228,6 +226,12 @@ const PostPage = () => {
     console.log(fullNestComments);
     dispatch(setCommentMap({ allComments: fullNestComments }));
   }, [comments]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetPostPageSlice());
+    };
+  }, []);
 
   useEffect(() => {
     tmpComments = [];
