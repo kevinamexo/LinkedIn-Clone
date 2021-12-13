@@ -113,6 +113,14 @@ const postsSlice = createSlice({
       state.posts = r;
       // state.posts= state.posts.sort
     },
+    addReplies: (state, action) => {
+      const tmpComment = action.payload[0];
+      let tmpComments = current(state.comments);
+
+      console.log(
+        tmpComments.findIndex((c) => c.commentId === tmpComment.commentId)
+      );
+    },
   },
 });
 
@@ -125,7 +133,7 @@ export const {
   setPostsChange,
   setAddToPosts,
   setLastPost,
-  resetPostPageSlice,
+
   setSortPostsOrder,
 } = postsSlice.actions;
 export default postsSlice;

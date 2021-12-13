@@ -90,6 +90,13 @@ const postPage = createSlice({
       state.commentsWithPath = [];
       state.addedPaths = null;
     },
+    addPathToComment: (state, action) => {
+      console.log(
+        state.commentsWithPath.find(
+          (c) => c.commentId === action.payload.comment.commentId
+        )
+      );
+    },
   },
 });
 

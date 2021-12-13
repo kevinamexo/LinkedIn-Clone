@@ -38,13 +38,14 @@ import { db } from "../../firebase/firebaseConfig";
 import "./PostPage.css";
 import FadeLoader from "react-spinners/FadeLoader";
 import useOutsideClick from "../../customHooks";
+
+let activeListeners = 0;
 const PostPage = () => {
   const { postId } = useParams();
   const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
-  const { comments, loadedComments, commentsMap } = useSelector(
-    (state) => state.postPage
-  );
+  const { comments, loadedComments, commentsMap, commentsWithPath } =
+    useSelector((state) => state.postPage);
   const [initCommentFetch, setInitCommentFetch] = useState(null);
   const [postObject, setPostObject] = useState({});
   const [postProfileObject, setPostProfileObject] = useState({});
@@ -128,41 +129,6 @@ const PostPage = () => {
     }
   };
 
-  const postCommentsListener = () => {
-    console.log("listening for comments");
-    const postCommentQuery = query(
-      collectionGroup(db, "comments"),
-      where("parentPost", "==", postId)
-    );
-    const postCommentSnap = onSnapshot(postCommentQuery, (querySnapshot) => {
-      querySnapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          console.log("ADDED");
-          dispatch(
-            setAddPostComment({
-              ...change.doc.data(),
-              commentId: change.doc.id,
-            })
-          );
-        } else if (change.type === "removed") {
-          console.log("DELETED COMMENT");
-          console.log(change.doc.data());
-          dispatch(setDeleteComment(change.doc.data()));
-        } else if (change.type === "modified") {
-          console.log(comments);
-
-          dispatch(
-            handleModifiedComment({
-              ...change.doc.data(),
-              commentId: change.doc.id,
-            })
-          );
-        }
-      });
-      setInitCommentFetch(true);
-    });
-  };
-
   const getCommentsWithChildren = (commentArr) => {
     const commentsWithChildren = [];
     commentArr.forEach((comment) => {
@@ -225,7 +191,7 @@ const PostPage = () => {
     console.log("FULLY NESTED COMMENTS  ");
     console.log(fullNestComments);
     dispatch(setCommentMap({ allComments: fullNestComments }));
-  }, [comments]);
+  }, [comments, dispatch]);
 
   useEffect(() => {
     return () => {
@@ -247,22 +213,50 @@ const PostPage = () => {
   useEffect(() => {
     console.log("LOADING POST");
     fetchPostObject();
-  }, []);
+  }, [postId]);
   useEffect(() => {
     console.log("POST OBJECT");
     console.log(postObject);
     if (postObject.authorId) {
       fetchPostUser();
     }
-  }, [postObject]);
+  }, [postObject.postRefId]);
   useEffect(() => {
-    if (postObject.postRefId && postProfileObject.username) {
-      postCommentsListener();
-    }
-  }, [postObject.text, postProfileObject]);
-  useEffect(() => {
-    console.log(postProfileObject);
-  }, [postProfileObject]);
+    const postCommentQuery = query(
+      collectionGroup(db, "comments"),
+      where("parentPost", "==", postId)
+    );
+    const postCommentSnap = onSnapshot(postCommentQuery, (querySnapshot) => {
+      querySnapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          console.log("ADDED");
+          dispatch(
+            setAddPostComment({
+              ...change.doc.data(),
+              commentId: change.doc.id,
+            })
+          );
+        } else if (change.type === "removed") {
+          console.log("DELETED COMMENT");
+          console.log(change.doc.data());
+          dispatch(setDeleteComment(change.doc.data()));
+        } else if (change.type === "modified") {
+          console.log(comments);
+
+          dispatch(
+            handleModifiedComment({
+              ...change.doc.data(),
+              commentId: change.doc.id,
+            })
+          );
+        }
+      });
+      setInitCommentFetch(true);
+    });
+
+    return () => postCommentSnap();
+  }, []);
+
   useOutsideClick(commentFilterMenuRef, commentFilterLabel, (e) => {
     setOpenCommentFilterMenu(false);
   });
