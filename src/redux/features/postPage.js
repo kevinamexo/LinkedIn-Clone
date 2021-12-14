@@ -10,6 +10,7 @@ const initialState = {
   commentsMap: [],
   commentsWithPath: [],
   addedPaths: null,
+  fullyNestedComments: [],
 };
 
 const postPage = createSlice({
@@ -105,12 +106,36 @@ const postPage = createSlice({
         action.payload,
       ];
     },
+    setFullyNestedComments: (state, action) => {
+      state.fullyNestedComments = action.payload;
+    },
+    sortComments: (state, action) => {
+      console.log(action.payload);
+      switch (action.payload) {
+        case "oldest":
+          state.fullyNestedComments = state.fullyNestedComments.sort((a, b) => {
+            return (
+              new Date(a.published.seconds * 1000) -
+              new Date(b.published.seconds * 1000)
+            );
+          });
+          break;
+        case "latest":
+          state.fullyNestedComments = state.fullyNestedComments.sort((a, b) => {
+            return (
+              new Date(b.published.seconds * 1000) -
+              new Date(a.published.seconds * 1000)
+            );
+          });
+      }
+    },
   },
 });
 
 export const {
   setLoadingPaths,
-
+  setFullyNestedComments,
+  sortComments,
   setPostCommentChanges,
   addUserDetails,
   setCommentMap,

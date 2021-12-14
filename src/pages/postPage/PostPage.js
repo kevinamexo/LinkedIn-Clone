@@ -18,6 +18,8 @@ import {
   setLoadingPaths,
   setAddedPaths,
   resetPostPageSlice,
+  setFullyNestedComments,
+  sortComments,
 } from "../../redux/features/postPage";
 import {
   doc,
@@ -44,8 +46,13 @@ const PostPage = () => {
   const { postId } = useParams();
   const dispatch = useDispatch();
   const { userObj } = useSelector((state) => state.user);
-  const { comments, loadedComments, commentsMap, commentsWithPath } =
-    useSelector((state) => state.postPage);
+  const {
+    comments,
+    loadedComments,
+    commentsMap,
+    commentsWithPath,
+    fullyNestedComments,
+  } = useSelector((state) => state.postPage);
   const [initCommentFetch, setInitCommentFetch] = useState(null);
   const [postObject, setPostObject] = useState({});
   const [postProfileObject, setPostProfileObject] = useState({});
@@ -57,7 +64,8 @@ const PostPage = () => {
   const commentFilterLabel = useRef();
   const [openCommentFilterMenu, setOpenCommentFilterMenu] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [fullyNestedComments, setFullyNestedComments] = useState([]);
+
+  const [sortValue, setSortVal] = useState("");
 
   function getPath(commentObj, pp = "") {
     let newPath;
@@ -204,7 +212,7 @@ const PostPage = () => {
   useEffect(() => {
     const g = getCommentsWithChildren(comments);
     const fullNestComments = getBaseCommentsWithChildren(g);
-    setFullyNestedComments(fullNestComments);
+    dispatch(setFullyNestedComments(fullNestComments));
     console.log("FULLY NESTED COMMENTS  ");
     console.log(fullNestComments);
     dispatch(setCommentMap({ allComments: fullNestComments }));
@@ -418,9 +426,24 @@ const PostPage = () => {
                         className="commentFilters"
                         ref={commentFilterMenuRef}
                       >
-                        <li className="commentFilter">Most Likes</li>
-                        <li className="commentFilter">Latest</li>
-                        <li className="commentFilter">Oldest</li>
+                        <li
+                          className="commentFilter"
+                          onClick={() => dispatch(sortComments("most_likes"))}
+                        >
+                          Most Likes
+                        </li>
+                        <li
+                          className="commentFilter"
+                          onClick={() => dispatch(sortComments("latest"))}
+                        >
+                          Latest
+                        </li>
+                        <li
+                          className="commentFilter"
+                          onClick={() => dispatch(sortComments("oldest"))}
+                        >
+                          Oldest
+                        </li>
                       </span>
                     )}
                   </div>

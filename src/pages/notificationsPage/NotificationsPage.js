@@ -1,8 +1,11 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "./NotificationsPage.css";
 import Notification from "../../components/notifications/Notification";
+import { resetNewNotifications } from "../../redux/features/notificationsSlice";
+import { Timestamp } from "firebase/firestore";
 const NotificationsPage = () => {
+  const dispatch = useDispatch();
   const {
     newNotifications,
     pastNotifications,
@@ -13,6 +16,14 @@ const NotificationsPage = () => {
     newNotifications.length < 1
       ? `You're all caught up! Check back later for new Notifications`
       : `You have ${newNotifications.length} new notifications`;
+  useEffect(() => {
+    return () => {
+      let date = new Date();
+      let timestamp = Timestamp.fromDate(date);
+      dispatch(resetNewNotifications());
+    };
+  }, []);
+
   return (
     <div className="notificationsPage">
       <div className="notificationSections">
@@ -25,7 +36,7 @@ const NotificationsPage = () => {
         <div className="notifications__section2">
           <div className="NotificationsList">
             {prevNewNotifications &&
-              newNotifications.map((n, key) => (
+              prevNewNotifications.map((n, key) => (
                 <Notification
                   key={key}
                   newNotification={true}
@@ -33,7 +44,7 @@ const NotificationsPage = () => {
                 />
               ))}
             {prevPastNotifications &&
-              pastNotifications
+              prevPastNotifications
                 .slice(0, 10)
                 .map((n, key) => (
                   <Notification
