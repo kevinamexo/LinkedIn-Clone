@@ -4,6 +4,7 @@ import _ from "lodash";
 const initialState = {
   lastNotification: null,
   prevLastNotification: null,
+  prevPrevLastNotification: null,
   notifications: [],
   newNotifications: [],
   prevNewNotifications: [],
@@ -21,51 +22,14 @@ const notificationsSlice = createSlice({
   name: "notifications",
   initialState,
   reducers: {
-    setNotifications: (state, action) => {
-      const unsortedNotifications = action.payload;
-
-      state.notifications = unsortedNotifications.sort(function (a, b) {
-        return new Date(b.published) - new Date(a.published);
-      });
-      state.newNotifications = state.notifications.filter((n) => {
-        let date = new Date(n.published.seconds * 1000);
-        if (date >= state.prevLastNotification) {
-          return n;
-        }
-      });
-      state.newNotificationsAmount = state.newNotifications.length;
-      let i = [...state.notifications];
-      state.prevPastNotifications = i;
-
-      state.pastNotifications = state.notifications.filter((n) => {
-        let date = new Date(n.published.seconds * 1000);
-        if (date < state.prevLastNotification) {
-          return n;
-        }
-      });
-    },
-    setNotificationChanges: (state, action) => {
-      console.log(action.payload);
-      console.log("Adding new notifications");
-
-      action.payload.forEach((n) => {
-        state.notifications = [n, ...state.notifications];
-      });
-
-      let i = [...state.notifications];
-      console.log(i);
-      state.newNotifications = i.filter(
-        (x) => x.published >= state.prevLastNotification
-      );
-      state.newNotificationsAmount = state.newNotifications.length;
-      state.pastNotifications = i.filter(
-        (x) => x.published < state.prevLastNotification
-      );
-    },
     setInitialNotificationTime: (state, action) => {
       if (action.payload && action.payload.seconds) {
         state.lastNotification = new Date(action.payload.seconds * 1000);
         state.prevLastNotification = new Date(action.payload.seconds * 1000);
+        state.prevPrevLastNotification = new Date(
+          action.payload.seconds * 1000
+        );
+        console.log("LAST NOTIFICATIONS" + action.payload);
       }
     },
     setLastNotificationTime: (state, action) => {
@@ -73,7 +37,7 @@ const notificationsSlice = createSlice({
       if (action.payload) {
         state.prevPrevLastNotification = state.prevLastNotification;
         state.prevLastNotification = state.lastNotification;
-        state.lastNotification = action.payload;
+        state.lastNotification = new Date(action.payload.seconds * 1000);
         state.newNotificationsAmount = 0;
         let i = [...state.notifications];
         console.log(i);
@@ -95,70 +59,134 @@ const notificationsSlice = createSlice({
         }
       }
     },
-    setFilterNotifications: (state, action) => {
-      state.notifications = state.notifications.sort(function (a, b) {
-        return new Date(b.published) - new Date(a.published);
-      });
-      state.newNotifications = state.notifications.filter((n) => {
-        let date = new Date(n.published.seconds * 1000);
-        if (date >= state.prevLastNotification) {
-          return n;
-        }
-      });
-      state.prevNewNotifications = state.notifications.filter((n) => {
-        let date = new Date(n.published.seconds * 1000);
-        if (date >= state.prevPrevLastNotification) {
-          return n;
-        }
-      });
+    setNotificationAndPageViews: (state, action) => {
+      console.log(action.payload.notifications);
 
-      state.newNotificationsAmount = state.newNotifications.length;
-      let i = [...state.notifications];
-      state.prevPastNotifications = i;
-
-      state.pastNotifications = state.notifications.filter((n) => {
-        let date = new Date(n.published.seconds * 1000);
-        if (date < state.prevPrevLastNotification) {
-          return n;
-        }
-      });
-    },
-    addNewNotifications: (state, action) => {
-      console.log("ADDING NEW NOTIFICATIONS");
-      if (action.payload) {
-        const newNotifications = _.difference(
-          action.payload,
-          state.notifications
+      state.notifications = [...action.payload.notifications].sort((a, b) => {
+        return (
+          new Date(b.published.seconds * 1000) -
+          new Date(a.published.seconds * 1000)
         );
+      });
 
-        const unsortedNotifications = action.payload;
-        state.notifications = unsortedNotifications.sort(function (a, b) {
-          return new Date(b.published) - new Date(a.published);
-        });
-        state.newNotifications = state.notifications.filter((n) => {
+      state.newNotifications = state.notifications
+        .filter((n) => {
           let date = new Date(n.published.seconds * 1000);
           if (date >= state.prevLastNotification) {
             return n;
           }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
         });
-        state.prevNewNotifications = state.notifications.filter((n) => {
+
+      state.prevNewNotifications = state.notifications
+        .filter((n) => {
           let date = new Date(n.published.seconds * 1000);
           if (date >= state.prevPrevLastNotification) {
             return n;
           }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
         });
 
-        state.newNotificationsAmount = state.newNotifications.length;
-        let i = [...state.notifications];
-        state.prevPastNotifications = i;
-
-        state.pastNotifications = state.notifications.filter((n) => {
+      state.prevPastNotifications = state.notifications
+        .filter((n) => {
           let date = new Date(n.published.seconds * 1000);
           if (date < state.prevPrevLastNotification) {
             return n;
           }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
         });
-      }
+      // .sort((a, b) => {
+      //   return (
+      //     new Date(a.published.seconds * 1000) -
+      //     new Date(b.published.seconds * 1000)
+      //   );
+      // });
+    },
+    modifyNotificationsChange: (state, action) => {
+      // const received = [...action.payload];
+
+      // const currentPosts = [...state.posts];
+      // console.log(received);
+      // console.log(currentPosts);
+      // const results = received.filter(
+      //   ({ postRefId: id1 }) =>
+      //     !currentPosts.some(({ postRefId: id2 }) => id2 === id1)
+      // );
+      // console.log("NEW POSTS ARE");
+
+      console.log("RECEIVED MODIFIED CHANGES");
+      let x = [...action.payload];
+      console.log(x);
+      let tmpNotifications = [...current(state.notifications)];
+      const newNotis = x.filter(
+        ({ postRefId: id1 }) =>
+          !tmpNotifications.some(({ postRefId: id2 }) => id2 === id1)
+      );
+      const deleted = tmpNotifications.filter(
+        ({ postRefId: id1 }) => !x.some(({ postRefId: id2 }) => id2 === id1)
+      );
+
+      state.notifications = [...newNotis, ...state.notifications];
+      state.newNotifications = state.notifications
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date >= state.prevLastNotification) {
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+
+      state.prevNewNotifications = state.notifications
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date >= state.prevPrevLastNotification) {
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+
+      state.prevPastNotifications = state.notifications
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date < state.prevPrevLastNotification) {
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+      console.log("NEW NOTIFICATIONS ARE");
+      console.log(newNotis);
+      console.log("DELETED NOTIFICATIONS ARE");
+      console.log(deleted);
     },
   },
 });
@@ -170,5 +198,7 @@ export const {
   setLastNotificationTime,
   setInitialNotificationTime,
   setFilterNotifications,
+  setNotificationAndPageViews,
+  modifyNotificationsChange,
 } = notificationsSlice.actions;
 export default notificationsSlice;

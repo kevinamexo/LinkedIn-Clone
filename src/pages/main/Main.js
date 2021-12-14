@@ -10,8 +10,10 @@ import Messaging from "../messagingPage/Messaging";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  addNewNotifications,
+  setNotificationAndPageViews,
   setInitialNotificationTime,
+  setLastNotificationTime,
+  modifyNotificationsChange,
 } from "../../redux/features/notificationsSlice";
 import {
   setAddToPosts,
@@ -38,69 +40,92 @@ const Main = () => {
   const { posts, lastPost, sortedPosts } = useSelector((state) => state.posts);
   const dispatch = useDispatch();
 
-  const notificationsListener = () => {
-    if (userObj.username) {
-      const notificationsQuery = query(
-        collection(db, "notifications"),
-        where("users", "array-contains", userObj.username)
-      );
-      const notificationsSnap = onSnapshot(
-        notificationsQuery,
-        (querySnapshot) => {
-          let notifications = [];
-          let pageViews = 0;
-          querySnapshot.docChanges().forEach((change) => {
-            if (change.type !== "removed" && change.doc.data().notifications) {
-              notifications.push(
-                ...change.doc.data().notifications.filter((n) => {
-                  //FOR POSTS
-                  if (n.authorId) {
-                    return n.authorId !== userObj.username;
-                  } else if (n.username) {
-                    //FOR PAGE VIEWS
-                    return n.username !== userObj.username;
-                  }
-                })
-              );
-            }
-            if (change.type !== "removed" && change.doc.data().pageViews) {
-              notifications.push(
-                ...change.doc.data().pageViews.filter((n) => {
-                  //FOR POSTS
-                  if (n.authorId) {
-                    return n.authorId !== userObj.username;
-                  } else if (n.username) {
-                    //FOR PAGE VIEWS
-                    return n.username !== userObj.username;
-                  }
-                })
-              );
-              pageViews += change.doc.data().pageViews.length;
-            }
+  let tmpNotifications, modifiedNotifications;
 
-            console.log("NOTIFICATIONS WITHOUT MINE");
-            console.log(notifications);
-          });
-          if (lastNotification !== null) {
-            if (notifications.length > 0) {
-              dispatch(addNewNotifications(notifications));
-            }
-          }
-          dispatch(setPageViews(pageViews));
-        }
-      );
-    }
-  };
-  const intialNotifications = async () => {
-    const notificationsQuery = query(
-      collection(db, "notifications"),
-      where("username", "==", userObj.username)
-    );
-    const notificationTimeSnap = await getDocs(notificationsQuery);
-    notificationTimeSnap.forEach((doc) => {
+  const userNotificationsDocQuery = query(
+    collection(db, "notifications"),
+    where("username", "==", userObj.username)
+  );
+  const initNotifications = async () => {
+    console.log("ADDDING INITIAL NOTIFICATIONS");
+    const userNotificationSnap = await getDocs(userNotificationsDocQuery);
+    userNotificationSnap.forEach((doc) => {
       dispatch(setInitialNotificationTime(doc.data().lastNotification));
     });
   };
+
+  useEffect(() => {
+    const notificationsQuery = query(
+      collection(db, "notifications"),
+      where("users", "array-contains", userObj.username)
+    );
+    initNotifications();
+
+    ///setInitialNotificationTime
+    const lastNotificationTimeSnap = onSnapshot(
+      userNotificationsDocQuery,
+      (querySnapshot) => {
+        console.log("NOTIFICATION TIME SNAPSHOT");
+        querySnapshot.docChanges().forEach((change) => {
+          if (change.type !== "removed") {
+            dispatch(
+              setLastNotificationTime(change.doc.data().lastNotification)
+            );
+          }
+        });
+      }
+    );
+
+    let type;
+    const notificationsSnap = onSnapshot(
+      notificationsQuery,
+      (querySnapshot) => {
+        console.log("NOTIFICATION SNAPSHT CAPTURED");
+        tmpNotifications = [];
+        modifiedNotifications = [];
+
+        querySnapshot.docChanges().forEach((change) => {
+          console.log(change.type);
+          console.log(change.doc.data().notifications);
+          if (change.type === "added") {
+            type = "initial";
+            tmpNotifications = [
+              ...tmpNotifications,
+              ...change.doc
+                .data()
+                .notifications.filter((n) => n.authorId !== userObj.username),
+            ];
+            console.log("tmpNotifications is now");
+            console.log(tmpNotifications);
+          } else if (change.type === "modified") {
+            type = "modify";
+            modifiedNotifications = [
+              ...modifiedNotifications,
+              ...change.doc
+                .data()
+                .notifications.filter((n) => n.authorId !== userObj.username),
+            ];
+          }
+        });
+        if (type === "initial") {
+          type = dispatch(
+            setNotificationAndPageViews({
+              notifications: tmpNotifications,
+            })
+          );
+        } else if (type === "modify") {
+          dispatch(modifyNotificationsChange(modifiedNotifications));
+        }
+        type = "";
+      }
+    );
+
+    return () => {
+      lastNotificationTimeSnap();
+      notificationsSnap();
+    };
+  }, [userObj.username]);
+
   const followersListener = () => {
     const followersQuery = query(
       collection(db, "follows"),
@@ -118,20 +143,9 @@ const Main = () => {
   };
 
   useEffect(() => {
-    if (userObj) {
-      notificationsListener();
-    }
-  }, [userObj, lastNotification]);
-
-  useEffect(() => {
     followersListener();
   }, [userObj]);
 
-  useEffect(() => {
-    if (lastNotification === null) {
-      intialNotifications();
-    }
-  }, [userObj]);
   const getPosts = () => {
     setLoadingPosts(true);
     const postsQuery = query(

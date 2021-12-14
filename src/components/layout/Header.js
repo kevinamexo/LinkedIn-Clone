@@ -136,17 +136,12 @@ const Header = () => {
   };
   const handleClickNotification = async () => {
     setLoadingNotifications(true);
-    if (screenWidth >= 660) {
-      setNotificationsActive(!notificationsActive);
-    } else {
-      history.push("/myNotifications");
-    }
+
+    history.push("/myNotifications");
+
     let state = !notificationsActive;
     let date = new Date();
     console.log(date);
-    let timestamp = Timestamp.fromDate(date);
-    timestamp = new Date(timestamp.seconds * 1000);
-    dispatch(setLastNotificationTime(timestamp));
     if (state === true) {
       console.log("NOTIFICATIONS ACTIVE");
       await sendNotificationsClick();
@@ -268,9 +263,6 @@ const Header = () => {
       fetchUser(headerSearch);
     }
   }, [headerSearch]);
-  useEffect(() => {
-    console.log(headerSearch);
-  }, [data]);
 
   useEffect(() => {
     document.addEventListener("click", handleSearchActive);

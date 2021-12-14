@@ -3,8 +3,12 @@ import { useSelector } from "react-redux";
 import "./NotificationsPage.css";
 import Notification from "../../components/notifications/Notification";
 const NotificationsPage = () => {
-  const { newNotifications, pastNotifications, newNotificationsAmount } =
-    useSelector((state) => state.notifications);
+  const {
+    newNotifications,
+    pastNotifications,
+    prevNewNotifications,
+    prevPastNotifications,
+  } = useSelector((state) => state.notifications);
   const notificationsMessage =
     newNotifications.length < 1
       ? `You're all caught up! Check back later for new Notifications`
@@ -20,7 +24,7 @@ const NotificationsPage = () => {
         </div>
         <div className="notifications__section2">
           <div className="NotificationsList">
-            {newNotifications &&
+            {prevNewNotifications &&
               newNotifications.map((n, key) => (
                 <Notification
                   key={key}
@@ -28,7 +32,7 @@ const NotificationsPage = () => {
                   notification={n}
                 />
               ))}
-            {pastNotifications &&
+            {prevPastNotifications &&
               pastNotifications
                 .slice(0, 10)
                 .map((n, key) => (
