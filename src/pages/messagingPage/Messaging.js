@@ -561,7 +561,13 @@ const Messaging = () => {
             ) : fetchedAllChatRooms === true &&
               userChats &&
               userChats.length > 0 ? (
-              userChats.map((chat) => <LastMessageCard chat={chat} />)
+              [...userChats]
+                .sort(
+                  (a, b) =>
+                    new Date(b.lastMessage.published) -
+                    new Date(a.lastMessage.published)
+                )
+                .map((chat) => <LastMessageCard chat={chat} />)
             ) : fetchedAllChatRooms === true &&
               userChats &&
               userChats.length === 0 ? (

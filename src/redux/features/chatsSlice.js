@@ -57,6 +57,12 @@ const chatsSlice = createSlice({
     },
     setGroupedMessages: (state, action) => {
       state.groupedMessages = [...action.payload];
+      console.log("SORTING USER CHATS");
+      state.userChats = [...state.userChats].sort((a, b) => {
+        return (
+          new Date(b.lastMessage.published) - new Date(a.lastMessage.published)
+        );
+      });
     },
     setChatIdsSet: (state, action) => {
       state.chatIdsSet = action.payload;
@@ -85,6 +91,7 @@ const chatsSlice = createSlice({
           state.userChats = [chat, ...state.userChats];
         }
       });
+
       state.loadingChats = false;
     },
     setCurrentChatUserName: (state, action) => {
@@ -141,6 +148,9 @@ const chatsSlice = createSlice({
       console.log(newValue);
 
       state.userChats[index] = newValue;
+      // state.userChats=[...state.userChats].sort((a,b)=>(
+      //   new Date(b.lastMessage.p)
+      // ))
     },
     setChatRoomSnapshot: (state, action) => {
       console.log("RECEIVED");
@@ -161,11 +171,9 @@ const chatsSlice = createSlice({
         console.log(chatIndex);
         if (chatIndex !== -1) {
           state.userChats[chatIndex] = action.payload;
-          // state.userChats.sort((a, b) => {
-          //   return new Date(b.lastMessage) - new Date(a.lastMessage);
-          // });
         }
       }
+      console.log("SORTING USER CHATS");
     },
     setResetChats: (state) => {
       state.currentChatUser = null;
@@ -203,4 +211,5 @@ export const {
   setUserFullNames,
   setResetChats,
 } = chatsSlice.actions;
+
 export default chatsSlice;

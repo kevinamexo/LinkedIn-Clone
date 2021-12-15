@@ -13,6 +13,7 @@ const LastMessageCard = ({ chat }) => {
     initialMessageFetch,
     loadingChats,
     currentChatName,
+    userChats,
   } = useSelector((state) => state.chats);
   const { userObj, fullName } = useSelector((state) => state.user);
   const [nameSet, setNameSet] = useState(null);
@@ -77,7 +78,7 @@ const LastMessageCard = ({ chat }) => {
     setOtherUserName(userFullName);
     console.log("OTHER USER NAME IS:" + userFullName);
     setOtherUserObj(nameObj);
-  }, [userFullNames]);
+  }, [userFullNames, userChats]);
 
   //CHECK WHETHER MESSAGE IS NEW OR NOT
   useEffect(() => {
