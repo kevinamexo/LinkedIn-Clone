@@ -198,20 +198,17 @@ const Main = () => {
       let postsArr = [];
       let removedPosts = [];
       querySnapshot.docChanges().forEach((change) => {
+        console.log(change.type);
         if (change.type !== "removed" && change.doc.data()) {
           console.log("ADDING POST");
-          postsArr.push(...change.doc.data().recentPosts);
+          postsArr = [...postsArr, ...change.doc.data().recentPosts];
         }
         if (change.type === "removed") {
           console.log("REMOVED POST");
           removedPosts.push(...change.doc.data().recentPosts);
         }
       });
-      console.log("New items are:");
-      console.log(postsArr);
-      console.log(posts);
 
-      console.log("DELETED ITEMS ARE:");
       console.log(removedPosts);
       const postsArr2 = postsArr.sort((a, b) => {
         return (

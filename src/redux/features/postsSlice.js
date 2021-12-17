@@ -5,6 +5,8 @@ const initialState = {
   posts: [],
   lastPost: null,
   sortedPosts: [],
+  postsToPaginate: [],
+  newPosts: [],
 };
 
 const removeItem = (arr, index) => {
@@ -26,7 +28,28 @@ const postsSlice = createSlice({
         ({ postRefId: id1 }) =>
           !tmpPosts.some(({ postRefId: id2 }) => id2 === id1)
       );
+      const deleted = tmpPosts.filter(
+        ({ postRefId: id1 }) =>
+          !action.payload.some(({ postRefId: id2 }) => id2 === id1)
+      );
+      console.log("NEW");
       console.log(results);
+      console.log("DELETED");
+      console.log(deleted);
+      if (state.posts.length === 0) {
+        state.postsToPaginate = [...results];
+        //THIS IS WHAT THEU WILL SEE
+      } else {
+        state.newPosts = [...results, ...state.newPosts];
+      }
+      if (deleted.length > 0) {
+        state.posts = state.posts.filter(
+          (p) => !deleted.some((c) => c.postRefId === p.postRefId)
+        );
+        state.postsToPaginate = state.postsToPaginate.filter(
+          (p) => !deleted.some((c) => c.postRefId === p.postRefId)
+        );
+      }
       state.posts = [...results, ...state.posts].sort((a, b) => {
         return (
           new Date(b.published.seconds * 1000) -
@@ -63,6 +86,9 @@ const postsSlice = createSlice({
     },
     setRemoveFromPosts: (state, action) => {
       state.posts = state.posts.filter(
+        (p) => p.postRefId !== action.payload.postRefId
+      );
+      state.postsToPaginate = state.postsToPaginate.filter(
         (p) => p.postRefId !== action.payload.postRefId
       );
     },

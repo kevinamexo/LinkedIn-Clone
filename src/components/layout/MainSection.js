@@ -45,9 +45,11 @@ import _ from "lodash";
 const MainSection = () => {
   const [postInput, setPostInput] = useState("");
   const [loadingPosts, setLoadingPosts] = useState(null);
-  const [postsToShows, setPostsToShow] = useState([]);
+
   const dispatch = useDispatch();
-  const { posts, lastPost, sortedPosts } = useSelector((state) => state.posts);
+  const { posts, postsToPaginate, lastPost, sortedPosts } = useSelector(
+    (state) => state.posts
+  );
   const { userObj } = useSelector((state) => state.user);
   const { notifications, lastNotification, prevLastNotification } = useSelector(
     (state) => state.notifications
@@ -62,8 +64,9 @@ const MainSection = () => {
   const [uploadType, setUploadType] = useState(null);
   const [sortPosts, setSortPosts] = useState("latest");
   const [showSort, setShowSort] = useState(false);
+
+  const setPaginationPosts = useRef(0);
   const sortMenuRef = useRef();
-  //GET USER FEED, LIMIT TO 5 POSTS
   let lastPublished = null;
 
   const getFeed = async () => {
@@ -109,23 +112,12 @@ const MainSection = () => {
     }
   });
 
+  //LOADING NEW POSTS
+
   const [page, setPage] = useState(1);
   const [loadElement, setLoadElement] = useState(1);
   const [loading, setLoading] = useState();
-  const element = useRef(
-    new IntersectionObserver((entries) => {
-      const first = entries[0];
-      if (first.isIntersecting) {
-        setPage((no) => no + 1);
-        console.log(`adding new Posts from index  ${posts.length}`);
-      }
-    })
-  );
 
-  useEffect(() => {
-    ///IF THERE ARE NO POSTS LOAD STRAIGHT AWAY
-    ///ELSE ADD TO QUEUE
-  }, [posts]);
   return (
     <div className="mainSection">
       <div className="mainSection__post">
@@ -217,9 +209,9 @@ const MainSection = () => {
         )}
       </section>
       <div className="mainSection__feed">
-        {posts &&
-          posts.length >= 1 &&
-          posts.map((post, idx) => (
+        {postsToPaginate &&
+          postsToPaginate.length >= 1 &&
+          postsToPaginate.map((post, idx) => (
             <FeedPost post={post} key={idx} idx={idx} reactions={false} />
           ))}
         {posts.length === 0 && loadingPosts === false && (
