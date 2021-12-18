@@ -8,9 +8,10 @@ import { VscChevronDown } from "react-icons/vsc";
 import "./LSidebar.css";
 
 const LSidebar = () => {
-  const { user, userObj, pageViews, followers } = useSelector(
+  const { user, userObj, pageVews, followers } = useSelector(
     (state) => state.user
   );
+  const { pageViews } = useSelector((state) => state.notifications);
 
   const userRef = collection(db, "user");
   const [userHeader, setUserHeader] = useState({
@@ -62,7 +63,7 @@ const LSidebar = () => {
           </span>
           <span>
             <p>Who viewed your profile</p>
-            <p className="amount">{pageViews}</p>
+            <p className="amount">{pageViews && pageViews.length}</p>
           </span>
         </div>
         <span className="LSidebar__myItems">

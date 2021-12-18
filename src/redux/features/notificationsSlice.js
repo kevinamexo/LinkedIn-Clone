@@ -10,6 +10,9 @@ const initialState = {
   prevNewNotifications: [],
   pastNotifications: [],
   newNotificationsAmount: null,
+  newPageViews: [],
+  prevNewPageViews: [],
+  prevPastPageViews: [],
 };
 const removeItem = (arr, index) => {
   let newArray = [...arr];
@@ -110,12 +113,15 @@ const notificationsSlice = createSlice({
             new Date(a.published.seconds * 1000)
           );
         });
-      // .sort((a, b) => {
-      //   return (
-      //     new Date(a.published.seconds * 1000) -
-      //     new Date(b.published.seconds * 1000)
-      //   );
-      // });
+      state.allNewNotifications = [
+        ...state.prevNewNotifications,
+        ...state.prevNewPageViews,
+      ].sort((a, b) => {
+        return (
+          new Date(b.published.seconds * 1000) -
+          new Date(a.published.seconds * 1000)
+        );
+      });
     },
     modifyNotificationsChange: (state, action) => {
       console.log("RECEIVED MODIFIED CHANGES");
@@ -178,10 +184,147 @@ const notificationsSlice = createSlice({
       console.log(newNotis);
       console.log("DELETED NOTIFICATIONS ARE");
       console.log(deleted);
+      state.allNewNotifications = [
+        ...state.prevNewNotifications,
+        ...state.prevNewPageViews,
+      ].sort((a, b) => {
+        return (
+          new Date(b.published.seconds * 1000) -
+          new Date(a.published.seconds * 1000)
+        );
+      });
     },
-    resetNewNotifications: (state, action) => {
+    setInitialPageViews: (state, action) => {
+      state.pageViews = [...action.payload.notifications];
+      state.newPageViews = [...state.pageViews]
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date >= state.lastNotification) {
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+
+      state.prevNewPageViews = state.pageViews
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date >= state.prevLastNotification) {
+            console.log(date);
+            console.log(state.prevLastNotification);
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+
+      state.prevPastPageViews = state.pageViews
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date < state.prevLastNotification) {
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+      state.allNewNotifications = [
+        ...state.prevNewNotifications,
+        ...state.prevNewPageViews,
+      ].sort((a, b) => {
+        return (
+          new Date(b.published.seconds * 1000) -
+          new Date(a.published.seconds * 1000)
+        );
+      });
+    },
+    modifyPageViewsChange: (state, action) => {
+      console.log("RECEIVED MODIFIED CHANGES");
+      let x = [...action.payload];
+      console.log(x);
+      let tmpPageViews = [...current(state.pageViews)];
+      const newPageViews = x.filter(
+        ({ published: id1, username: id3 }) =>
+          !tmpPageViews.some(
+            ({ published: id2, username: id4 }) =>
+              id2.seconds === id1.seconds && id3 === id4
+          )
+      );
+      console.log("NEW PAGE VIEWS ARE");
+      console.log(newPageViews);
+      state.pageViews = [...newPageViews, ...state.pageViews];
+      state.newPageViews = [...state.pageViews]
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date >= state.lastNotification) {
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+
+      state.prevNewPageViews = state.pageViews
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date >= state.prevLastNotification) {
+            console.log(date);
+            console.log(state.prevLastNotification);
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+
+      state.prevPastPageViews = state.pageViews
+        .filter((n) => {
+          let date = new Date(n.published.seconds * 1000);
+          if (date < state.prevLastNotification) {
+            return n;
+          }
+        })
+        .sort((a, b) => {
+          return (
+            new Date(b.published.seconds * 1000) -
+            new Date(a.published.seconds * 1000)
+          );
+        });
+      state.allNewNotifications = [
+        ...state.prevNewNotifications,
+        ...state.prevNewPageViews,
+      ].sort((a, b) => {
+        return (
+          new Date(b.published.seconds * 1000) -
+          new Date(a.published.seconds * 1000)
+        );
+      });
+    },
+    resetFilteredNotifications: (state, action) => {
       state.newNotifications = [];
       state.prevNewNotifications = [];
+      state.prevPastNotifications = [];
+      state.pastNotifications = [];
+      state.newPageViews = [];
+      state.prevNewPageViews = [];
+      state.prevPastPageViews = [];
     },
   },
 });
@@ -196,5 +339,8 @@ export const {
   resetNewNotifications,
   setNotificationAndPageViews,
   modifyNotificationsChange,
+  setInitialPageViews,
+  modifyPageViewsChange,
+  resetFilteredNotifications,
 } = notificationsSlice.actions;
 export default notificationsSlice;

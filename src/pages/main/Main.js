@@ -14,6 +14,8 @@ import {
   setInitialNotificationTime,
   setLastNotificationTime,
   modifyNotificationsChange,
+  setInitialPageViews,
+  modifyPageViewsChange,
 } from "../../redux/features/notificationsSlice";
 import {
   setAddToPosts,
@@ -41,6 +43,7 @@ const Main = () => {
   const dispatch = useDispatch();
 
   let tmpNotifications, modifiedNotifications;
+  let tmpPageViews, modifiedPageViews;
 
   const userNotificationsDocQuery = query(
     collection(db, "notifications"),
@@ -54,6 +57,7 @@ const Main = () => {
     });
   };
 
+  ///HANDLE INITIAL THEM SUBSEQUENT NOTIFICATIONS FETCH
   useEffect(() => {
     const notificationsQuery = query(
       collection(db, "notifications"),
@@ -61,7 +65,6 @@ const Main = () => {
     );
     initNotifications();
 
-    ///setInitialNotificationTime
     const lastNotificationTimeSnap = onSnapshot(
       userNotificationsDocQuery,
       (querySnapshot) => {
@@ -77,6 +80,7 @@ const Main = () => {
     );
 
     let type;
+    let viewType;
     const notificationsSnap = onSnapshot(
       notificationsQuery,
       (querySnapshot) => {
@@ -89,12 +93,15 @@ const Main = () => {
           console.log(change.doc.data().notifications);
           if (change.type === "added") {
             type = "initial";
+
+            //POST NOTIFICATIONS
             tmpNotifications = [
               ...tmpNotifications,
               ...change.doc
                 .data()
                 .notifications.filter((n) => n.authorId !== userObj.username),
             ];
+
             console.log("tmpNotifications is now");
             console.log(tmpNotifications);
           } else if (change.type === "modified") {
@@ -119,10 +126,45 @@ const Main = () => {
         type = "";
       }
     );
+    const pageViewsSnap = onSnapshot(
+      userNotificationsDocQuery,
+      (querySnapshot) => {
+        tmpPageViews = [];
+        modifiedPageViews = [];
+        querySnapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            viewType = "initial";
+
+            //POST NOTIFICATIONS
+            tmpPageViews = [...tmpPageViews, ...change.doc.data().pageViews];
+
+            console.log("tmpPageViews is now");
+            console.log(tmpPageViews);
+          } else if (change.type === "modified") {
+            viewType = "modify";
+            modifiedPageViews = [
+              ...tmpPageViews,
+              ...change.doc.data().pageViews,
+            ];
+          }
+        });
+        if (viewType === "initial") {
+          type = dispatch(
+            setInitialPageViews({
+              notifications: tmpPageViews,
+            })
+          );
+        } else if (viewType === "modify") {
+          dispatch(modifyPageViewsChange(modifiedPageViews));
+        }
+        viewType = "";
+      }
+    );
 
     return () => {
       lastNotificationTimeSnap();
       notificationsSnap();
+      pageViewsSnap();
     };
   }, [userObj.username]);
 
@@ -191,7 +233,7 @@ const Main = () => {
       setLoadingPosts(null);
       let followedUsers;
       // dispatch(e([]));
-      // let postsSample = [];
+      // let postsSafmple = [];
     };
   }, []);
 

@@ -1,26 +1,44 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./NotificationsPage.css";
 import Notification from "../../components/notifications/Notification";
-import { resetNewNotifications } from "../../redux/features/notificationsSlice";
+import { resetFilteredNotifications } from "../../redux/features/notificationsSlice";
 import { Timestamp } from "firebase/firestore";
 const NotificationsPage = () => {
   const dispatch = useDispatch();
+  const [newNotificationsArr, setNewNotificationsArr] = useState([]);
+  const [pastNotificationsArr, setPastNotificationsArr] = useState([]);
   const {
     newNotifications,
     pastNotifications,
     prevNewNotifications,
     prevPastNotifications,
+    prevNewPageViews,
+    prevPastPageViews,
+    allNewNotifications,
   } = useSelector((state) => state.notifications);
   const notificationsMessage =
     newNotifications.length < 1
       ? `You're all caught up! Check back later for new Notifications`
       : `You have ${newNotifications.length} new notifications`;
+
+  useEffect(() => {
+    const newNotis = [...prevNewNotifications, ...prevNewPageViews].sort(
+      (a, b) => {
+        return new Date(a.published) - new Date(b.published);
+      }
+    );
+    setNewNotificationsArr(allNewNotifications);
+  }, [
+    prevNewNotifications,
+    prevPastNotifications,
+    prevNewPageViews,
+    prevPastPageViews,
+  ]);
+
   useEffect(() => {
     return () => {
-      let date = new Date();
-      let timestamp = Timestamp.fromDate(date);
-      dispatch(resetNewNotifications());
+      dispatch(resetFilteredNotifications());
     };
   }, []);
 
@@ -35,8 +53,8 @@ const NotificationsPage = () => {
         </div>
         <div className="notifications__section2">
           <div className="NotificationsList">
-            {prevNewNotifications &&
-              prevNewNotifications.map((n, key) => (
+            {newNotificationsArr &&
+              newNotificationsArr.map((n, key) => (
                 <Notification
                   key={key}
                   newNotification={true}
@@ -44,7 +62,13 @@ const NotificationsPage = () => {
                 />
               ))}
             {prevPastNotifications &&
-              prevPastNotifications
+              prevPastPageViews &&
+              [...prevPastNotifications, ...prevPastPageViews]
+                .sort(
+                  (a, b) =>
+                    new Date(b.published.seconds * 1000) -
+                    new Date(a.published.seconds * 1000)
+                )
                 .slice(0, 10)
                 .map((n, key) => (
                   <Notification

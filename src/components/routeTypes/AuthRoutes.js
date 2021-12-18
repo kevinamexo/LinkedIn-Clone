@@ -13,6 +13,10 @@ const AuthRoute = ({ authState, ccmponent: Component, ...rest }) => {
     let i = isAuth;
     console.log("I IS " + i);
     setAuth(i);
+
+    return () => {
+      setAuth(null);
+    };
   }, []);
 
   return (
